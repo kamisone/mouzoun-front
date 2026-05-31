@@ -1,0 +1,250 @@
+.section {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Sea-light gradient */
+.bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #ccdbdc 0%, #9ad1d4 55%, #80ced7 100%);
+}
+
+/* Geometric tile overlay */
+.pattern {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23003249' stroke-width='0.4' opacity='0.12'%3E%3Cpolygon points='40,4 49,28 76,28 54,46 63,72 40,56 17,72 26,46 4,28 31,28'/%3E%3Crect x='20' y='20' width='40' height='40' transform='rotate(45 40 40)' stroke-width='0.25'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Warm horizon glow */
+.glow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 35%;
+  background: linear-gradient(to top, rgba(0, 126, 167, 0.18), transparent);
+  pointer-events: none;
+}
+
+/* Watermark stars */
+.wm1, .wm2 {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.035;
+  color: var(--gold);
+}
+.wm1 { top: 4rem; right: -5rem; }
+.wm2 { bottom: -6rem; left: -6rem; }
+
+@media (max-width: 768px) {
+  .wm1, .wm2 { display: none; }
+}
+
+/* Dune silhouette */
+.dune {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  .dune { height: 80px; }
+  .scroll { bottom: 1.25rem; }
+  .scrollLine { height: 2rem; }
+}
+
+/* Bottom fade */
+.fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6rem;
+  background: linear-gradient(to top, var(--night), transparent);
+  pointer-events: none;
+}
+
+/* Content */
+.content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 1.5rem;
+  max-width: 900px;
+  width: 100%;
+}
+
+/* Eyebrow */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.eyebrowLine {
+  height: 1px;
+  width: 2.5rem;
+  background: rgba(0, 126, 167, 0.6);
+}
+
+.eyebrowText {
+  font-size: 0.6rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.38em;
+  color: var(--gold);
+}
+
+/* Title */
+.title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(3rem, 14vw, 9rem);
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sand);
+  margin-bottom: 1.25rem;
+}
+
+/* Ornamental rule */
+.rule {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0 1.5rem;
+}
+
+.ruleLine {
+  height: 1px;
+  width: 4rem;
+  background: rgba(0, 126, 167, 0.35);
+}
+
+.ruleStar {
+  color: var(--gold);
+  opacity: 0.65;
+}
+
+/* Tagline */
+.tagline {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  color: var(--dune);
+  letter-spacing: 0.04em;
+  margin-bottom: 1.5rem;
+}
+
+/* Subtitle */
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--mist);
+  max-width: 520px;
+  line-height: 1.9;
+  letter-spacing: 0.03em;
+  margin-bottom: 3rem;
+}
+
+/* CTAs */
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gold);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  padding: 1.1rem 2.75rem;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 0 32px rgba(0, 126, 167, 0.25);
+}
+
+.ctaPrimary:hover {
+  background: var(--gold-bright);
+  box-shadow: 0 0 44px rgba(0, 126, 167, 0.4);
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 50, 73, 0.3);
+  color: var(--sand-dim);
+  font-weight: 500;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  padding: 1.1rem 2.75rem;
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+
+.ctaSecondary:hover {
+  border-color: rgba(0, 126, 167, 0.6);
+  color: var(--gold);
+}
+
+/* Scroll indicator */
+.scroll {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.scrollLine {
+  width: 1px;
+  height: 3rem;
+  background: linear-gradient(to bottom, rgba(0, 126, 167, 0.5), transparent);
+}
+
+.scrollDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0, 126, 167, 0.6);
+}
+
+@media (max-width: 600px) {
+  .ctas { flex-direction: column; align-items: stretch; }
+  .ctaPrimary, .ctaSecondary { text-align: center; padding: 1rem 2rem; }
+
+  .eyebrow { flex-wrap: wrap; justify-content: center; }
+  .eyebrowText { letter-spacing: 0.16em; font-size: 0.55rem; }
+  .eyebrowLine { width: 1.5rem; }
+
+  .tagline { font-size: 1.05rem; }
+  .subtitle { font-size: 0.8125rem; }
+
+  .rule { gap: 0.5rem; }
+  .ruleLine { width: 2.5rem; }
+}

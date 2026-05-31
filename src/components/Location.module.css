@@ -1,0 +1,137 @@
+.section {
+  background: var(--night);
+  padding: var(--section-py) var(--section-px);
+}
+
+.inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.coords {
+  font-size: 0.6rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  color: var(--gold);
+  margin-bottom: 1.25rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.5rem, 4.5vw, 3.5rem);
+  color: var(--sand);
+  margin-bottom: 1.25rem;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--mist);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+}
+
+/* Content layout */
+.layout {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  border: 1px solid rgba(0, 126, 167, 0.15);
+}
+
+/* Map */
+.mapWrap {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
+}
+
+.map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  filter: sepia(0.45) contrast(0.9) brightness(0.92) saturate(0.8) hue-rotate(8deg);
+}
+
+.mapOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 50, 73, 0.04);
+  pointer-events: none;
+}
+
+/* Details panel */
+.panel {
+  background: var(--clay);
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(0, 126, 167, 0.2);
+}
+
+.detail {
+  display: flex;
+  gap: 1rem;
+  padding: 2rem;
+  border-bottom: 1px solid rgba(0, 126, 167, 0.1);
+}
+
+.detailIcon {
+  color: rgba(0, 126, 167, 0.65);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.detailLabel {
+  font-size: 0.8125rem;
+  color: var(--sand-dim);
+  line-height: 1.7;
+}
+
+.detailSub {
+  font-size: 0.7rem;
+  color: var(--mist);
+  margin-top: 0.5rem;
+  letter-spacing: 0.08em;
+}
+
+.panelAction {
+  padding: 2rem;
+}
+
+.mapLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(0, 126, 167, 0.4);
+  color: var(--gold);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.mapLink:hover {
+  border-color: var(--gold);
+  background: rgba(0, 126, 167, 0.06);
+}
+
+@media (max-width: 640px) {
+  .layout { grid-template-columns: 1fr; }
+  .panel { border-left: none; border-top: 1px solid rgba(0, 126, 167, 0.12); }
+  .mapWrap { min-height: 240px; }
+  .header { margin-bottom: 3rem; }
+  .title { font-size: 2.25rem; }
+  .detail { padding: 1.25rem 1rem; }
+  .panelAction { padding: 1.25rem 1rem; }
+}

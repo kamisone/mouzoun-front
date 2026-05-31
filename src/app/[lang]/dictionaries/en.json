@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "about": "About",
+    "offerings": "What We Offer",
+    "location": "Visit Us",
+    "contact": "Contact"
+  },
+  "hero": {
+    "tagline": "Where Nature Meets Authenticity",
+    "subtitle": "A cooperative in the heart of Morocco — honey, fresh produce, camping under the stars, and a warm welcome since 2022.",
+    "cta_primary": "Discover Mouzoun",
+    "cta_secondary": "Plan Your Visit"
+  },
+  "about": {
+    "badge": "Est. 2022",
+    "title": "A Living Cooperative",
+    "body": "Mouzoun was born from a shared dream — to cultivate the land, preserve ancestral know-how, and open our doors to curious travellers. Rooted in the Moroccan countryside at the foot of the Anti-Atlas mountains, our cooperative brings together farmers, beekeepers, herders and hosts who care deeply about their territory.",
+    "values": [
+      { "title": "Authentic", "desc": "Real products, real people, real land" },
+      { "title": "Sustainable", "desc": "Traditional practices, lasting impact" },
+      { "title": "Welcoming", "desc": "Every visitor is a guest of the family" }
+    ]
+  },
+  "offerings": {
+    "title": "What We Offer",
+    "subtitle": "From our hives to your table, from our fields to your camping pitch — Mouzoun is an experience.",
+    "items": [
+      {
+        "id": "honey",
+        "title": "Artisan Honey",
+        "desc": "Pure, raw honey harvested from our apiaries nestled in wild thyme and sidr blossom. Every jar tells a story of the flowers and the bees."
+      },
+      {
+        "id": "agriculture",
+        "title": "Farm Produce",
+        "desc": "Seasonal vegetables, argan products, and traditional cereals grown with care and without shortcuts."
+      },
+      {
+        "id": "camping",
+        "title": "Camping",
+        "desc": "Pitch your tent under a sky full of stars. Wake up to birdsong, birdsong, and fresh mountain air. Our site has everything you need and nothing you don't."
+      },
+      {
+        "id": "cattle",
+        "title": "Cattle & Livestock",
+        "desc": "Our herd graze the open hills. Visit, learn, and taste farm-fresh dairy products made from our own animals."
+      },
+      {
+        "id": "tourism",
+        "title": "Experiences",
+        "desc": "Guided hikes, cultural tours, traditional cooking classes and more — curated to help you connect with this place and its people."
+      }
+    ]
+  },
+  "location": {
+    "title": "Find Us",
+    "subtitle": "We are located in the south of Morocco, in the foothills of the Anti-Atlas range — a landscape of wild beauty and silence.",
+    "region": "Tata Region, Souss-Massa, Morocco",
+    "gps": "31.2389° N, 4.7013° W",
+    "directions": "From Agadir, take the N1 south to Tiznit, then follow the P1702 toward Tata. We are signposted from the main road."
+  },
+  "contact": {
+    "title": "Get In Touch",
+    "subtitle": "Planning a visit? Have a question about our products? We would love to hear from you.",
+    "email_label": "Email us",
+    "phone_label": "Call us",
+    "email": "contact@mouzoun.ma",
+    "phone": "+212 600 000 000",
+    "cta": "Send a Message"
+  },
+  "footer": {
+    "tagline": "A cooperative rooted in the land of Morocco.",
+    "rights": "All rights reserved.",
+    "links": {
+      "privacy": "Privacy",
+      "legal": "Legal"
+    }
+  }
+}

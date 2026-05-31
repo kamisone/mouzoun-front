@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "about": "À propos",
+    "offerings": "Nos offres",
+    "location": "Nous rendre visite",
+    "contact": "Contact"
+  },
+  "hero": {
+    "tagline": "Là où la nature rencontre l'authenticité",
+    "subtitle": "Une coopérative au cœur du Maroc — miel, produits frais, camping sous les étoiles et accueil chaleureux depuis 2022.",
+    "cta_primary": "Découvrir Mouzoun",
+    "cta_secondary": "Planifier ma visite"
+  },
+  "about": {
+    "badge": "Fondée en 2022",
+    "title": "Une coopérative vivante",
+    "body": "Mouzoun est née d'un rêve partagé — cultiver la terre, préserver les savoir-faire ancestraux et ouvrir nos portes aux voyageurs curieux. Ancrée dans la campagne marocaine au pied des montagnes de l'Anti-Atlas, notre coopérative réunit agriculteurs, apiculteurs, éleveurs et hôtes profondément attachés à leur territoire.",
+    "values": [
+      { "title": "Authentique", "desc": "Des vrais produits, de vraies personnes, une vraie terre" },
+      { "title": "Durable", "desc": "Pratiques traditionnelles, impact durable" },
+      { "title": "Accueillant", "desc": "Chaque visiteur est l'invité de la famille" }
+    ]
+  },
+  "offerings": {
+    "title": "Nos offres",
+    "subtitle": "De nos ruches à votre table, de nos champs à votre emplacement de camping — Mouzoun est une expérience.",
+    "items": [
+      {
+        "id": "honey",
+        "title": "Miel artisanal",
+        "desc": "Miel pur et brut récolté dans nos ruchers nichés au milieu du thym sauvage et des fleurs de jujubier. Chaque pot raconte l'histoire des fleurs et des abeilles."
+      },
+      {
+        "id": "agriculture",
+        "title": "Produits de la ferme",
+        "desc": "Légumes de saison, produits d'argan et céréales traditionnelles cultivés avec soin et sans compromis."
+      },
+      {
+        "id": "camping",
+        "title": "Camping",
+        "desc": "Plantez votre tente sous un ciel étoilé. Réveillez-vous au chant des oiseaux et à l'air pur de la montagne. Notre site dispose de tout le nécessaire et rien de superflu."
+      },
+      {
+        "id": "cattle",
+        "title": "Élevage",
+        "desc": "Notre troupeau paît dans les collines ouvertes. Venez visiter, apprendre et goûter les produits laitiers frais fabriqués à partir de nos propres animaux."
+      },
+      {
+        "id": "tourism",
+        "title": "Expériences",
+        "desc": "Randonnées guidées, visites culturelles, cours de cuisine traditionnelle et bien plus — conçus pour vous aider à vous connecter à ce lieu et à ses habitants."
+      }
+    ]
+  },
+  "location": {
+    "title": "Nous trouver",
+    "subtitle": "Nous sommes situés dans le sud du Maroc, au pied de la chaîne de l'Anti-Atlas — un paysage d'une beauté sauvage et silencieuse.",
+    "region": "Région de Tata, Souss-Massa, Maroc",
+    "gps": "31.2389° N, 4.7013° O",
+    "directions": "Depuis Agadir, prenez la N1 vers le sud jusqu'à Tiznit, puis suivez la P1702 en direction de Tata. Nous sommes indiqués depuis la route principale."
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "subtitle": "Vous planifiez une visite ? Vous avez une question sur nos produits ? Nous serions ravis de vous entendre.",
+    "email_label": "Écrivez-nous",
+    "phone_label": "Appelez-nous",
+    "email": "contact@mouzoun.ma",
+    "phone": "+212 600 000 000",
+    "cta": "Envoyer un message"
+  },
+  "footer": {
+    "tagline": "Une coopérative ancrée dans la terre du Maroc.",
+    "rights": "Tous droits réservés.",
+    "links": {
+      "privacy": "Confidentialité",
+      "legal": "Mentions légales"
+    }
+  }
+}
