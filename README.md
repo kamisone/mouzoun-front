@@ -36,15 +36,16 @@ Requires Node `^22.21 || ^24.11 || >=26`.
 
 `.github/workflows/deploy-dev.yml`: typecheck + build → image `<DOCKER_HUB_USERNAME>/mouzoun_front:v<run_number>`
 → `deploy/deploy.sh` on the VPS: zero-downtime blue/green (127.0.0.1:13001 / :13002), health gate on
-`/healthz` plus a real server-side render of `/fr` before nginx switches traffic.
+`/healthz` plus a real server-side render of `/fr`, then both colors serve for 15 s and the old one is
+stopped. The front never touches nginx (owned by the back repo, which lists both front ports).
 
 Server-side rendering calls the API through nginx's loopback listener `127.0.0.1:18080`, so it always
-reaches the live back release. The back must be deployed once before the front (it installs nginx).
+reaches the live back release. The front can be deployed before or after the back.
 
 GitHub → Settings → Environments → `dev`: existing secrets `SERVER_HOST`, `SERVER_USER`,
 `SERVER_SSH_PRIVATE_KEY`, `SERVER_USER_PASSWORD`, `DOCKER_HUB_USERNAME`, `DOCKER_HUB_PASSWORD`;
 **to add**: `APP_URL` (e.g. `https://mouzoun.com`). The front has no secrets and no env file:
-`deploy.sh <image> <APP_URL>` derives the public URLs and the API URL (`https://api.<domain>`)
+`deploy.sh <image> <APP_URL>` derives the public URLs and the API URL (`<APP_URL>/api`)
 and passes them to the container.
 Rollback: Actions → "CI/CD - DEV - FRONT" → Run workflow → `image_tag: v41`.
 Full server setup: see the back README.
