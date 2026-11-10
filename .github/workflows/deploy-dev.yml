@@ -72,24 +72,6 @@ jobs:
             echo "ref=${{ needs.build.outputs.image }}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: prepare release files
-        env:
-          APP_URL: ${{ secrets.APP_URL }}
-        run: |
-          test -n "$APP_URL" || { echo "::error::Missing secret APP_URL on the 'dev' environment"; exit 1; }
-          app_url="${APP_URL%/}"
-          domain="${app_url#*://}"
-          domain="${domain#www.}"
-          mkdir -p release
-          cp deploy/deploy.sh release/
-          umask 077
-          printf '%s\n' \
-            "NODE_ENV=production" \
-            "NUXT_API_INTERNAL_BASE=http://127.0.0.1:18080" \
-            "NUXT_PUBLIC_API_BASE=https://api.$domain" \
-            "NUXT_PUBLIC_SITE_URL=$app_url" \
-            "NUXT_PUBLIC_I18N_BASE_URL=$app_url" > release/front.env
-
       - name: copy release files
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -97,7 +79,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
           password: ${{ secrets.SERVER_USER_PASSWORD }}
-          source: release/*
+          source: deploy/deploy.sh
           target: mouzoun/front
           strip_components: 1
           overwrite: true
@@ -106,6 +88,7 @@ jobs:
         uses: appleboy/ssh-action@v1.2.0
         env:
           IMAGE_REF: ${{ steps.image.outputs.ref }}
+          APP_URL: ${{ secrets.APP_URL }}
           DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_PASS: ${{ secrets.DOCKER_HUB_PASSWORD }}
           SUDO_PASS: ${{ secrets.SERVER_USER_PASSWORD }}
@@ -114,11 +97,12 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
           password: ${{ secrets.SERVER_USER_PASSWORD }}
-          envs: IMAGE_REF,DOCKER_USER,DOCKER_PASS,SUDO_PASS
+          envs: IMAGE_REF,APP_URL,DOCKER_USER,DOCKER_PASS,SUDO_PASS
           command_timeout: 15m
           script: |
             set -e
             # Everything runs as root through sudo (password from SERVER_USER_PASSWORD, never echoed).
             # sudo reads its password line, docker login reads the next one.
             { printf '%s\n' "$SUDO_PASS"; printf '%s\n' "$DOCKER_PASS"; } | sudo -S -p '' docker login -u "$DOCKER_USER" --password-stdin >/dev/null
-            printf '%s\n' "$SUDO_PASS" | sudo -S -p '' bash "$HOME/mouzoun/front/deploy.sh" "$IMAGE_REF"
+            test -n "$APP_URL" || { echo "Missing secret APP_URL"; exit 1; }
+            printf '%s\n' "$SUDO_PASS" | sudo -S -p '' bash "$HOME/mouzoun/front/deploy.sh" "$IMAGE_REF" "$APP_URL"

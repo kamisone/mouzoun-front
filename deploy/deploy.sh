@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Zero-downtime blue/green deployment of the Mouzoun front (Nuxt) on a single VPS (no Kubernetes).
 #
-# Called by GitHub Actions over SSH, as root:   sudo bash ~/mouzoun/front/deploy.sh <image:tag>
-# front.env, uploaded next to this script by the CI, is installed into $ROOT (/srv/mouzoun/front).
+# Called by GitHub Actions over SSH, as root:   sudo bash ~/mouzoun/front/deploy.sh <image:tag> <app_url>
+# The front has no secrets: its runtime config is derived from APP_URL (e.g. https://mouzoun.com).
 #
 # The container uses the host network and listens on a loopback port only, so server-side
 # rendering reaches the API through nginx's internal listener (127.0.0.1:18080), whichever
@@ -16,12 +16,16 @@
 
 set -Eeuo pipefail
 
-IMAGE="${1:?usage: deploy.sh <image:tag>}"
-RELEASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+IMAGE="${1:?usage: deploy.sh <image:tag> <app_url>}"
+APP_URL="${2:?usage: deploy.sh <image:tag> <app_url>}"
+APP_URL="${APP_URL%/}"
+DOMAIN="${APP_URL#*://}"
+DOMAIN="${DOMAIN#www.}"
 
 PREFIX="${PREFIX:-mouzoun}"
 ROOT="${ROOT:-/srv/mouzoun/front}"
-ENV_FILE="${ENV_FILE:-$ROOT/front.env}"
+# Server-side rendering → API through nginx's loopback listener (see back/deploy/nginx/default.conf).
+API_INTERNAL_BASE="${API_INTERNAL_BASE:-http://127.0.0.1:18080}"
 NGINX_DIR="${NGINX_DIR:-/etc/nginx/mouzoun}"
 NGINX_TEST="${NGINX_TEST:-nginx -t -q}"
 NGINX_RELOAD="${NGINX_RELOAD:-systemctl reload nginx}"
@@ -42,13 +46,6 @@ container_running() { [ "$(docker container inspect -f '{{.State.Running}}' "$1"
 
 [ "$(id -u)" -eq 0 ] || [ -n "${ALLOW_NON_ROOT:-}" ] || fail "must run as root (sudo bash deploy.sh ...)"
 mkdir -p "$ROOT"
-chmod 700 "$ROOT"
-if [ "$RELEASE_DIR" != "$ROOT" ] && [ -f "$RELEASE_DIR/front.env" ]; then
-  install -m 600 "$RELEASE_DIR/front.env" "$ENV_FILE"
-  rm -f "$RELEASE_DIR/front.env"
-fi
-[ -f "$ENV_FILE" ] || fail "missing env file $ENV_FILE"
-chmod 600 "$ENV_FILE"
 [ -f "$NGINX_DIR/back-upstream.conf" ] || fail "nginx is not configured yet: deploy the back first"
 
 ACTIVE="$(cat "$STATE_FILE" 2>/dev/null || echo none)"
@@ -69,7 +66,12 @@ else
   NET_ARGS=(-p "127.0.0.1:$NEW_PORT:3000" -e HOST=0.0.0.0 -e PORT=3000)
 fi
 docker run -d --name "$NEW_CONTAINER" --restart unless-stopped --init \
-  --env-file "$ENV_FILE" "${NET_ARGS[@]}" \
+  -e NODE_ENV=production \
+  -e NUXT_API_INTERNAL_BASE="$API_INTERNAL_BASE" \
+  -e NUXT_PUBLIC_API_BASE="https://api.$DOMAIN" \
+  -e NUXT_PUBLIC_SITE_URL="$APP_URL" \
+  -e NUXT_PUBLIC_I18N_BASE_URL="$APP_URL" \
+  "${NET_ARGS[@]}" \
   --stop-timeout 30 --log-opt max-size=20m --log-opt max-file=5 \
   "$IMAGE" >/dev/null
 

@@ -43,8 +43,9 @@ reaches the live back release. The back must be deployed once before the front (
 
 GitHub → Settings → Environments → `dev`: existing secrets `SERVER_HOST`, `SERVER_USER`,
 `SERVER_SSH_PRIVATE_KEY`, `SERVER_USER_PASSWORD`, `DOCKER_HUB_USERNAME`, `DOCKER_HUB_PASSWORD`;
-**to add**: `APP_URL` (e.g. `https://mouzoun.com`). The public URLs and the API URL
-(`https://api.<domain>`) are derived from it on every deploy.
+**to add**: `APP_URL` (e.g. `https://mouzoun.com`). The front has no secrets and no env file:
+`deploy.sh <image> <APP_URL>` derives the public URLs and the API URL (`https://api.<domain>`)
+and passes them to the container.
 Rollback: Actions → "CI/CD - DEV - FRONT" → Run workflow → `image_tag: v41`.
 Full server setup: see the back README.
 
