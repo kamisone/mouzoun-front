@@ -14,8 +14,14 @@ async function submit() {
   try {
     await login(email.value, password.value)
     await navigateTo(typeof route.query.redirect === 'string' ? route.query.redirect : '/admin')
-  } catch {
-    error.value = 'Identifiants invalides'
+  } catch (e: unknown) {
+    const status = (e as { statusCode?: number }).statusCode
+    error.value =
+      status === 429
+        ? 'Trop de tentatives, réessayez dans une minute'
+        : status === 401 || status === 400 || status === 422 || (e as Error).message === 'forbidden'
+          ? 'Identifiants invalides'
+          : 'Service indisponible, réessayez plus tard'
   } finally {
     loading.value = false
   }
