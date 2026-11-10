@@ -1,0 +1,124 @@
+name: CI/CD - DEV - FRONT
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Rollback: redeploy an existing image tag (e.g. v42) without rebuilding. Empty = build this commit."
+        required: false
+        default: ""
+
+concurrency:
+  group: deploy-dev-front
+  cancel-in-progress: false
+
+jobs:
+  # ── Quality gate ──────────────────────────────────────────────────────────────────────────
+  test:
+    if: inputs.image_tag == ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx nuxt typecheck
+      - run: npm run build
+
+  # ── Build the image once, tag it with the run number (immutable) ──────────────────────────
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: meta
+        run: echo "image=${{ secrets.DOCKER_HUB_USERNAME }}/mouzoun_front:v${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.image }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/mouzoun_front:dev
+          cache-from: type=gha,scope=front
+          cache-to: type=gha,scope=front,mode=max
+
+  # ── Ship to the VPS: blue/green switch with health gate (see deploy/deploy.sh) ────────────
+  deploy:
+    needs: [test, build]
+    if: always() && (needs.build.result == 'success' || (inputs.image_tag != '' && needs.build.result == 'skipped'))
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: resolve image
+        id: image
+        run: |
+          if [ -n "${{ inputs.image_tag }}" ]; then
+            echo "ref=${{ secrets.DOCKER_HUB_USERNAME }}/mouzoun_front:${{ inputs.image_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=${{ needs.build.outputs.image }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: prepare release files
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+        run: |
+          test -n "$APP_URL" || { echo "::error::Missing secret APP_URL on the 'dev' environment"; exit 1; }
+          app_url="${APP_URL%/}"
+          domain="${app_url#*://}"
+          domain="${domain#www.}"
+          mkdir -p release
+          cp deploy/deploy.sh release/
+          umask 077
+          printf '%s\n' \
+            "NODE_ENV=production" \
+            "NUXT_API_INTERNAL_BASE=http://127.0.0.1:18080" \
+            "NUXT_PUBLIC_API_BASE=https://api.$domain" \
+            "NUXT_PUBLIC_SITE_URL=$app_url" \
+            "NUXT_PUBLIC_I18N_BASE_URL=$app_url" > release/front.env
+
+      - name: copy release files
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SERVER_USER_PASSWORD }}
+          source: release/*
+          target: mouzoun/front
+          strip_components: 1
+          overwrite: true
+
+      - name: deploy
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          IMAGE_REF: ${{ steps.image.outputs.ref }}
+          DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_PASS: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          SUDO_PASS: ${{ secrets.SERVER_USER_PASSWORD }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SERVER_USER_PASSWORD }}
+          envs: IMAGE_REF,DOCKER_USER,DOCKER_PASS,SUDO_PASS
+          command_timeout: 15m
+          script: |
+            set -e
+            # Everything runs as root through sudo (password from SERVER_USER_PASSWORD, never echoed).
+            # sudo reads its password line, docker login reads the next one.
+            { printf '%s\n' "$SUDO_PASS"; printf '%s\n' "$DOCKER_PASS"; } | sudo -S -p '' docker login -u "$DOCKER_USER" --password-stdin >/dev/null
+            printf '%s\n' "$SUDO_PASS" | sudo -S -p '' bash "$HOME/mouzoun/front/deploy.sh" "$IMAGE_REF"

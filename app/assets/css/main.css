@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-sand-50: #fbf7f0;
+  --color-sand-100: #f4ead8;
+  --color-sand-500: #c89b5a;
+  --color-terracotta-500: #c0582f;
+  --color-terracotta-600: #a3461f;
+  --color-oasis-600: #2f6b4f;
+  --color-night-900: #1d1a17;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  @apply bg-sand-50 text-night-900 antialiased;
+}
+
+/* Admin UI primitives */
+@layer components {
+  .input {
+    @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-terracotta-500 focus:outline-none;
+  }
+  .btn {
+    @apply inline-flex items-center rounded-lg bg-terracotta-500 px-4 py-2 text-sm font-semibold text-white hover:bg-terracotta-600 disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-100 disabled:opacity-50;
+  }
+}

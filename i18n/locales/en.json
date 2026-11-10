@@ -1,0 +1,13 @@
+{
+  "nav": { "activities": "Activities" },
+  "home": {
+    "title": "Oases, desert and traditions of southern Morocco",
+    "subtitle": "Camping under the stars, Anti-Atlas treks and authentic encounters with the Mouzoun cooperative.",
+    "cta": "Explore our activities",
+    "featured": "Featured activities",
+    "seoTitle": "Mouzoun — Tourism, camping and oases in southern Morocco",
+    "seoDescription": "Mouzoun cooperative: camping, oases, treks and authentic tourism experiences in the Tata region."
+  },
+  "activity": { "from": "From", "empty": "No activities yet." },
+  "footer": { "tagline": "Tourism cooperative, Tata region, Morocco" }
+}
