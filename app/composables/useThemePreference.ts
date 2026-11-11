@@ -8,6 +8,15 @@ export type ThemeChoice = 'light' | 'dark' | 'system'
 
 const EXPLICIT_KEY = 'mz-color-mode-explicit'
 
+function hasExplicitChoice(): boolean {
+  try {
+    return localStorage.getItem(EXPLICIT_KEY) === '1'
+  }
+  catch {
+    return false
+  }
+}
+
 export function useThemePreference() {
   const colorMode = useColorMode()
 
@@ -27,14 +36,7 @@ export function useThemePreference() {
   /** Applies an area's default unless the person chose explicitly. Client only. */
   function applyDefault(fallback: ThemeChoice) {
     if (import.meta.server) return
-    let explicit = false
-    try {
-      explicit = localStorage.getItem(EXPLICIT_KEY) === '1'
-    }
-    catch {
-      explicit = false
-    }
-    if (!explicit && colorMode.preference !== fallback) colorMode.preference = fallback
+    if (!hasExplicitChoice() && colorMode.preference !== fallback) colorMode.preference = fallback
   }
 
   return { preference, applyDefault, isDark: computed(() => colorMode.value === 'dark') }

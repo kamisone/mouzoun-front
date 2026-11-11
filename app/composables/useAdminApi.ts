@@ -24,7 +24,7 @@ export function useAdminApi() {
       list: (query: { kind?: MediaKind; page?: number; per_page?: number } = {}) =>
         http<Paginated<Media>>('/media', { query }),
       get: (id: string) => http<Media>(`/media/${id}`),
-      remove: (id: string) => http<void>(`/media/${id}`, { method: 'DELETE' }),
+      remove: (id: string) => http<null>(`/media/${id}`, { method: 'DELETE' }),
       createUpload: (body: { filename: string; content_type: string; size_bytes: number; visibility: MediaVisibility }) =>
         http<UploadTicket>('/media/uploads', { method: 'POST', body }),
       complete: (id: string) => http<Media>(`/media/${id}/complete`, { method: 'POST' }),

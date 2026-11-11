@@ -16,6 +16,8 @@ const model = defineModel<number | null>({ default: null })
 const emit = defineEmits<{ invalid: [text: string] }>()
 
 const { t, locale } = useI18n()
+const attrs = useAttrs()
+const ariaLabel = computed(() => (attrs['aria-label'] as string | undefined) ?? t('forms.money'))
 const { size } = useDensity()
 const text = ref(centsToInput(model.value, locale.value))
 const invalid = ref(false)
@@ -58,7 +60,7 @@ const symbol = computed(() =>
     :color="invalid ? 'error' : undefined"
     :highlight="invalid"
     :aria-invalid="invalid || undefined"
-    :aria-label="$attrs['aria-label'] as string | undefined ?? t('forms.money')"
+    :aria-label="ariaLabel"
     dir="ltr"
     class="w-full"
     :ui="{ base: 'text-end tabular-nums' }"

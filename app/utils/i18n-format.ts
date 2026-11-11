@@ -28,14 +28,16 @@ export function formatMoney(cents: number, currency = 'EUR', locale = 'fr', opti
  * without floating-point drift. Returns null when it is not an amount.
  */
 export function parseMoneyToCents(input: string): number | null {
-  const raw = input.replace(/[\s  €$£]|EUR|MAD|USD/gi, '').replace(/^\+/, '')
+  const raw = input.replace(/[\s\u00A0\u202F€$£]|EUR|MAD|USD/gi, '').replace(/^\+/, '')
   if (!raw) return null
   const negative = raw.startsWith('-')
   const body = negative ? raw.slice(1) : raw
   // The last "," or "." followed by 1–2 digits is the decimal separator; the others group.
   const decimal = body.match(/[.,](\d{1,2})$/)
-  const intPart = (decimal ? body.slice(0, -decimal[0].length) : body).replace(/[.,'’]/g, '')
-  if (!/^\d+$/.test(intPart || '0') || (decimal && !/^\d{1,2}$/.test(decimal[1]!))) return null
+  const grouped = decimal ? body.slice(0, -decimal[0].length) : body
+  // Digits, optionally grouped by thousands ("1.250.000", "1,250", "1'250").
+  if (!/^(?:\d+|\d{1,3}(?:[.,'’]\d{3})+)?$/.test(grouped) || (!grouped && !decimal)) return null
+  const intPart = grouped.replace(/[.,'’]/g, '')
   // "1.250" (3 digits after the separator) is a thousands group, never 1.25: handled above,
   // since only 1–2 trailing digits are read as decimals.
   const cents = Number(intPart || '0') * 100 + (decimal ? Number(decimal[1]!.padEnd(2, '0')) : 0)

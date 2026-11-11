@@ -23,11 +23,10 @@ const sizes = { sm: 'text-sm', md: 'text-base', lg: 'text-2xl' }
 </script>
 
 <template>
+  <!-- Real spaces between the parts (not only CSS gaps): copy-paste and screen readers. -->
   <span class="inline-flex flex-wrap items-baseline gap-x-1" data-testid="mz-price">
-    <span v-if="props.from && !isFree" class="text-sm text-muted">{{ t('common.from') }}</span>
-    <span class="font-semibold text-highlighted tabular-nums" :class="sizes[props.size]">
-      {{ isFree ? t('price.free') : formatted }}
-    </span>
-    <span v-if="unitLabel && !isFree" class="text-sm text-muted">{{ unitLabel }}</span>
+    <span v-if="props.from && !isFree" class="text-sm text-muted">{{ `${t('common.from')} ` }}</span>
+    <span class="font-semibold text-highlighted tabular-nums" :class="sizes[props.size]">{{ isFree ? t('price.free') : formatted }}</span>
+    <span v-if="unitLabel && !isFree" class="text-sm text-muted">{{ ` ${unitLabel}` }}</span>
   </span>
 </template>
