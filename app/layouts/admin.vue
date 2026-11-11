@@ -13,7 +13,7 @@ function isActive(to: string) {
 }
 
 async function onLogout() {
-  logout()
+  await logout()
   await navigateTo('/admin/login')
 }
 

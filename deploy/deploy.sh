@@ -70,7 +70,6 @@ docker run -d --name "$NEW_CONTAINER" --restart unless-stopped --init \
   -e NODE_ENV=production \
   -e NUXT_API_INTERNAL_BASE="$API_INTERNAL_BASE" \
   -e NUXT_PUBLIC_API_BASE="$APP_URL/api" \
-  -e NUXT_PUBLIC_SITE_URL="$APP_URL" \
   -e NUXT_PUBLIC_I18N_BASE_URL="$APP_URL" \
   "${NET_ARGS[@]}" \
   --stop-timeout 30 --log-opt max-size=20m --log-opt max-file=5 \

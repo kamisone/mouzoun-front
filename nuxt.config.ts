@@ -13,7 +13,6 @@ export default defineNuxtConfig({
     public: {
       // Browser-side API URL; override with NUXT_PUBLIC_API_BASE
       apiBase: 'http://localhost:8080',
-      siteUrl: 'http://localhost:3001',
       // Absolute base for hreflang/canonical SEO links; override with NUXT_PUBLIC_I18N_BASE_URL
       i18n: { baseUrl: 'http://localhost:3001' },
     },
@@ -33,12 +32,10 @@ export default defineNuxtConfig({
 
   // Public pages: cache rendered HTML at the server (stale-while-revalidate) — huge win under load
   routeRules: {
-    '/': { redirect: '/fr' },
     '/fr/**': { swr: 300 },
     '/en/**': { swr: 300 },
     // Admin back-office: client-rendered SPA, never cached or indexed
     '/admin/**': { ssr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store' } },
-    '/admin': { ssr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store' } },
   },
 
   app: {

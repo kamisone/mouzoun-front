@@ -1,4 +1,4 @@
-import type { Media, MediaVisibility, UploadTicket } from '~/utils/types'
+import type { Media, MediaVisibility } from '~/utils/types'
 
 export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif']
 
@@ -8,7 +8,7 @@ export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'i
  * 3. ask the API to verify and publish it.
  */
 export function useMediaUpload() {
-  const api = useAdminApi()
+  const { media } = useAdminApi()
   const uploading = ref(false)
   const error = ref('')
 
@@ -16,18 +16,20 @@ export function useMediaUpload() {
     error.value = ''
     uploading.value = true
     try {
-      const ticket = await api<UploadTicket>('/v1/media/uploads', {
-        method: 'POST',
-        body: { filename: file.name, content_type: file.type, size_bytes: file.size, visibility },
+      const ticket = await media.createUpload({
+        filename: file.name,
+        content_type: file.type,
+        size_bytes: file.size,
+        visibility,
       })
-      // Plain fetch: the signed URL must not receive our API Authorization header.
+      // Plain fetch (default credentials): the session cookie is never sent to the storage bucket.
       const res = await fetch(ticket.upload.url, {
         method: ticket.upload.method,
         headers: ticket.upload.headers,
         body: file,
       })
       if (!res.ok) throw new Error(`storage upload failed (${res.status})`)
-      return await api<Media>(`/v1/media/${ticket.media.id}/complete`, { method: 'POST' })
+      return await media.complete(ticket.media.id)
     } catch (e: unknown) {
       const details = (e as { data?: { error?: { details?: unknown } } }).data?.error?.details
       error.value = typeof details === 'string' ? details : "Échec de l'envoi du fichier"

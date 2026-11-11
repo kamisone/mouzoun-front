@@ -8,11 +8,11 @@ export interface User {
   created_at: string
 }
 
-export interface LoginResponse {
-  access_token: string
-  token_type: 'Bearer'
-  expires_in: number
+/** The session token itself is an HttpOnly cookie: it never appears in a response body. */
+export interface SessionResponse {
   user: User
+  /** Session lifetime in seconds. */
+  expires_in: number
 }
 
 export interface Paginated<T> {

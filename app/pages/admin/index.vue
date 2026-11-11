@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import type { Activity, Paginated } from '~/utils/types'
-
 definePageMeta({ layout: 'admin', middleware: 'admin-auth', i18n: false })
 
-const api = useAdminApi()
+const { activities } = useAdminApi()
 const activitiesTotal = ref<number | null>(null)
 
 onMounted(async () => {
-  const res = await api<Paginated<Activity>>('/v1/activities/admin', { query: { per_page: 1 } })
+  const res = await activities.list({ per_page: 1 })
   activitiesTotal.value = res.total
 })
 </script>

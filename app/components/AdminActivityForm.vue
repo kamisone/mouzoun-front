@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Activity, ActivityInput } from '~/utils/types'
+import type { ActivityInput } from '~/utils/types'
 
 const props = defineProps<{ id?: string }>()
-const api = useAdminApi()
+const { activities } = useAdminApi()
 const { upload, uploading, error: uploadError } = useMediaUpload()
 const coverPreview = ref<string | null>(null)
 
@@ -22,7 +22,7 @@ const saving = ref(false)
 
 onMounted(async () => {
   if (!props.id) return
-  const a = await api<Activity>(`/v1/activities/id/${props.id}`)
+  const a = await activities.get(props.id)
   Object.assign(form, {
     slug: a.slug,
     title_fr: a.title_fr,
@@ -59,8 +59,8 @@ async function save() {
   saving.value = true
   const body = { ...form }
   try {
-    if (props.id) await api(`/v1/activities/id/${props.id}`, { method: 'PUT', body })
-    else await api('/v1/activities', { method: 'POST', body })
+    if (props.id) await activities.update(props.id, body)
+    else await activities.create(body)
     await navigateTo('/admin/activities')
   } catch (e: unknown) {
     const status = (e as { statusCode?: number }).statusCode

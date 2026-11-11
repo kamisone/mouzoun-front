@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Activity, Paginated } from '~/utils/types'
+import type { Activity } from '~/utils/types'
 
 definePageMeta({ layout: 'admin', middleware: 'admin-auth', i18n: false })
 
-const api = useAdminApi()
+const { activities } = useAdminApi()
 const items = ref<Activity[]>([])
 const page = ref(1)
 const total = ref(0)
@@ -13,9 +13,7 @@ const loading = ref(false)
 async function load() {
   loading.value = true
   try {
-    const res = await api<Paginated<Activity>>('/v1/activities/admin', {
-      query: { page: page.value, per_page: perPage },
-    })
+    const res = await activities.list({ page: page.value, per_page: perPage })
     items.value = res.data
     total.value = res.total
   } finally {
@@ -25,7 +23,7 @@ async function load() {
 
 async function remove(a: Activity) {
   if (!confirm(`Supprimer « ${a.title_fr} » ?`)) return
-  await api(`/v1/activities/id/${a.id}`, { method: 'DELETE' })
+  await activities.remove(a.id)
   await load()
 }
 

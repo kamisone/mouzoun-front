@@ -5,7 +5,9 @@ Nuxt 4 (Vue 3) · Tailwind CSS 4 · @nuxtjs/i18n (fr default, en)
 One app, two parts:
 
 - **Public site**: `/fr/...`, `/en/...`, server-rendered for SEO, HTML cached with stale-while-revalidate (`routeRules` in `nuxt.config.ts`).
-- **Admin**: `/admin/...`, client-rendered SPA, not localized, noindex, protected by the `admin-auth` middleware (JWT from the API).
+- **Admin**: `/admin/...`, client-rendered SPA, not localized, noindex. The session is an HttpOnly
+  cookie set by the API (never readable by JavaScript); the `admin-auth` middleware asks
+  `/v1/auth/me` whether a session exists, and every request uses `credentials: 'include'`.
 
 ## Run locally
 
@@ -24,9 +26,11 @@ app/
   pages/            public pages (localized) + pages/admin/* (definePageMeta({ i18n: false }))
   layouts/          default (site) and admin
   components/       SiteHeader, SiteFooter, ActivityCard, AdminActivityForm
-  composables/      useApiBase, useActivities, useAuth / useAdminApi
+  composables/      useApiBase, useActivities (public), useAuth (session),
+                    useAdminApi (typed client: every /v1/admin endpoint is declared there),
+                    useMediaUpload (direct-to-storage upload, no cookie sent to the bucket)
   middleware/       admin-auth
-  utils/types.ts    API types
+  utils/            API types
 i18n/locales/       fr.json, en.json
 ```
 

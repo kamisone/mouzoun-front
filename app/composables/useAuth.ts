@@ -1,52 +1,35 @@
-import type { LoginResponse, User } from '~/utils/types'
+import type { SessionResponse, User } from '~/utils/types'
 
-const TOKEN_KEY = 'mouzoun_admin_token'
-
-/** Admin authentication state (admin pages are client-rendered). */
+/**
+ * Back-office session. The session itself is an HttpOnly cookie set by the API: JavaScript never
+ * sees the token, it only keeps the current user.
+ */
 export function useAuth() {
-  const token = useState<string | null>('auth-token', () =>
-    import.meta.client ? localStorage.getItem(TOKEN_KEY) : null,
-  )
   const user = useState<User | null>('auth-user', () => null)
+  const config = useRuntimeConfig()
+  const api = $fetch.create({ baseURL: config.public.apiBase, credentials: 'include' })
 
   async function login(email: string, password: string) {
-    const res = await useAdminApi()<LoginResponse>('/v1/auth/login', {
-      method: 'POST',
-      body: { email, password },
-    })
-    if (res.user.role === 'customer') throw new Error('forbidden')
-    token.value = res.access_token
-    localStorage.setItem(TOKEN_KEY, res.access_token)
+    const res = await api<SessionResponse>('/v1/auth/login', { method: 'POST', body: { email, password } })
+    if (res.user.role === 'customer') {
+      await logout()
+      throw new Error('forbidden')
+    }
     user.value = res.user
   }
 
+  /** Loads the current user from the session cookie; throws (401) when there is no session. */
   async function fetchMe() {
-    user.value = await useAdminApi()<User>('/v1/auth/me')
+    user.value = await api<User>('/v1/auth/me')
   }
 
-  function logout() {
-    token.value = null
-    user.value = null
-    localStorage.removeItem(TOKEN_KEY)
+  async function logout() {
+    try {
+      await api('/v1/auth/logout', { method: 'POST' })
+    } finally {
+      user.value = null
+    }
   }
 
-  return { token, user, login, fetchMe, logout }
-}
-
-/** $fetch instance for admin calls: adds the Bearer token, logs out on 401. */
-export function useAdminApi() {
-  const token = useState<string | null>('auth-token')
-  return $fetch.create({
-    baseURL: useRuntimeConfig().public.apiBase,
-    onRequest({ options }) {
-      if (token.value) options.headers.set('Authorization', `Bearer ${token.value}`)
-    },
-    async onResponseError({ response }) {
-      if (response.status === 401) {
-        token.value = null
-        localStorage.removeItem(TOKEN_KEY)
-        await navigateTo('/admin/login')
-      }
-    },
-  })
+  return { user, login, fetchMe, logout }
 }
