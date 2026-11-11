@@ -10,9 +10,6 @@ const otherLocales = computed(() => locales.value.filter((l) => l.code !== local
     <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
       <NuxtLink :to="localePath('/')" class="text-xl font-bold text-terracotta-600">Mouzoun</NuxtLink>
       <div class="flex items-center gap-6 text-sm font-medium">
-        <NuxtLink :to="localePath('/activities')" class="hover:text-terracotta-500">
-          {{ $t('nav.activities') }}
-        </NuxtLink>
         <NuxtLink
           v-for="l in otherLocales"
           :key="l.code"

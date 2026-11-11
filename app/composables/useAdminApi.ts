@@ -1,9 +1,4 @@
-import type { Activity, ActivityInput, Media, MediaVisibility, Paginated, UploadTicket, User } from '~/utils/types'
-
-export interface PageQuery {
-  page?: number
-  per_page?: number
-}
+import type { Media, MediaKind, MediaVisibility, Paginated, UploadTicket, User } from '~/utils/types'
 
 /**
  * Typed client of the back-office API (`/v1/admin/...`): every admin endpoint is declared here,
@@ -25,14 +20,11 @@ export function useAdminApi() {
   })
 
   return {
-    activities: {
-      list: (query: PageQuery = {}) => http<Paginated<Activity>>('/activities', { query }),
-      get: (id: string) => http<Activity>(`/activities/${id}`),
-      create: (body: ActivityInput) => http<Activity>('/activities', { method: 'POST', body }),
-      update: (id: string, body: ActivityInput) => http<Activity>(`/activities/${id}`, { method: 'PUT', body }),
-      remove: (id: string) => http<void>(`/activities/${id}`, { method: 'DELETE' }),
-    },
     media: {
+      list: (query: { kind?: MediaKind; page?: number; per_page?: number } = {}) =>
+        http<Paginated<Media>>('/media', { query }),
+      get: (id: string) => http<Media>(`/media/${id}`),
+      remove: (id: string) => http<void>(`/media/${id}`, { method: 'DELETE' }),
       createUpload: (body: { filename: string; content_type: string; size_bytes: number; visibility: MediaVisibility }) =>
         http<UploadTicket>('/media/uploads', { method: 'POST', body }),
       complete: (id: string) => http<Media>(`/media/${id}/complete`, { method: 'POST' }),

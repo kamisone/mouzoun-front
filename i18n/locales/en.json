@@ -1,13 +1,11 @@
 {
-  "nav": { "activities": "Activities" },
   "home": {
     "title": "Oases, desert and traditions of southern Morocco",
-    "subtitle": "Camping under the stars, Anti-Atlas treks and authentic encounters with the Mouzoun cooperative.",
-    "cta": "Explore our activities",
-    "featured": "Featured activities",
-    "seoTitle": "Mouzoun — Tourism, camping and oases in southern Morocco",
-    "seoDescription": "Mouzoun cooperative: camping, oases, treks and authentic tourism experiences in the Tata region."
+    "subtitle": "Camping under the stars in M'ssici, between Alnif and Rissani: dunes, palm grove, a working farm and authentic encounters with the Mouzoun cooperative.",
+    "seoTitle": "Mouzoun — Desert camping in M'ssici, southern Morocco",
+    "seoDescription": "Mouzoun cooperative: camping, nomad tents, quad tours, camel rides and farm visits in M'ssici, between Alnif and Rissani."
   },
-  "activity": { "from": "From", "empty": "No activities yet." },
-  "footer": { "tagline": "Tourism cooperative, Tata region, Morocco" }
+  "footer": {
+    "tagline": "Tourism cooperative, M'ssici, near Alnif and Rissani, Morocco"
+  }
 }

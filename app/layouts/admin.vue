@@ -4,8 +4,7 @@ const route = useRoute()
 
 const nav = [
   { to: '/admin', label: 'Tableau de bord' },
-  { to: '/admin/activities', label: 'Activités' },
-  // Upcoming: camps, bookings, products, customers, settings
+  // Upcoming: products, bookings, customers, content, settings
 ]
 
 function isActive(to: string) {
@@ -38,7 +37,7 @@ useHead({ title: 'Mouzoun Admin', meta: [{ name: 'robots', content: 'noindex, no
     </aside>
     <div class="flex flex-1 flex-col">
       <header class="flex items-center justify-end gap-4 border-b bg-white px-6 py-3 text-sm">
-        <span>{{ user?.full_name }} · {{ user?.role }}</span>
+        <span>{{ user?.full_name }} · {{ user?.roles.join(', ') }}</span>
         <button class="btn-ghost" @click="onLogout">Déconnexion</button>
       </header>
       <main class="flex-1 p-6">

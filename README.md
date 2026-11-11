@@ -25,14 +25,17 @@ Admin login: http://localhost:3001/admin/login with the `ADMIN_EMAIL` / `ADMIN_P
 app/
   pages/            public pages (localized) + pages/admin/* (definePageMeta({ i18n: false }))
   layouts/          default (site) and admin
-  components/       SiteHeader, SiteFooter, ActivityCard, AdminActivityForm
-  composables/      useApiBase, useActivities (public), useAuth (session),
+  components/       SiteHeader, SiteFooter
+  composables/      useApiBase, useAuth (session; staff only, profile with roles + permissions),
                     useAdminApi (typed client: every /v1/admin endpoint is declared there),
                     useMediaUpload (direct-to-storage upload, no cookie sent to the bucket)
   middleware/       admin-auth
   utils/            API types
 i18n/locales/       fr.json, en.json
 ```
+
+The catalogue pages (accommodations, activities, packages) will be rebuilt on the new product
+endpoints; the database and its demo content already exist (`cargo run --bin seed_dev` in `back/`).
 
 Requires Node `^22.21 || ^24.11 || >=26`.
 

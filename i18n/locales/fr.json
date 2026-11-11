@@ -1,13 +1,11 @@
 {
-  "nav": { "activities": "Activités" },
   "home": {
     "title": "Oasis, désert et traditions du Sud marocain",
-    "subtitle": "Camping sous les étoiles, randonnées dans l'Anti-Atlas et rencontres authentiques avec la coopérative Mouzoun.",
-    "cta": "Découvrir nos activités",
-    "featured": "Activités à la une",
-    "seoTitle": "Mouzoun — Tourisme, camping et oasis au Sud du Maroc",
-    "seoDescription": "Coopérative Mouzoun : camping, oasis, randonnées et activités touristiques authentiques dans la région de Tata."
+    "subtitle": "Camping sous les étoiles à M'ssici, entre Alnif et Rissani : dunes, palmeraie, ferme et rencontres authentiques avec la coopérative Mouzoun.",
+    "seoTitle": "Mouzoun — Camping dans le désert à M'ssici, Sud du Maroc",
+    "seoDescription": "Coopérative Mouzoun : camping, tentes nomades, quad, balades à dos de dromadaire et visite de la ferme à M'ssici, entre Alnif et Rissani."
   },
-  "activity": { "from": "À partir de", "empty": "Aucune activité pour le moment." },
-  "footer": { "tagline": "Coopérative touristique, région de Tata, Maroc" }
+  "footer": {
+    "tagline": "Coopérative touristique, M'ssici, près d'Alnif et de Rissani, Maroc"
+  }
 }

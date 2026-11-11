@@ -29,7 +29,7 @@ export function useMediaUpload() {
         body: file,
       })
       if (!res.ok) throw new Error(`storage upload failed (${res.status})`)
-      return await media.complete(ticket.media.id)
+      return await media.complete(ticket.media_id)
     } catch (e: unknown) {
       const details = (e as { data?: { error?: { details?: unknown } } }).data?.error?.details
       error.value = typeof details === 'string' ? details : "Échec de l'envoi du fichier"

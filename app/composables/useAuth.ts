@@ -11,7 +11,7 @@ export function useAuth() {
 
   async function login(email: string, password: string) {
     const res = await api<SessionResponse>('/v1/auth/login', { method: 'POST', body: { email, password } })
-    if (res.user.role === 'customer') {
+    if (!res.user.is_staff) {
       await logout()
       throw new Error('forbidden')
     }

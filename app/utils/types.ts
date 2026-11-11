@@ -1,10 +1,14 @@
-export type Role = 'admin' | 'staff' | 'customer'
-
+/** Profile returned by `/v1/auth/login` and `/v1/auth/me`. */
 export interface User {
   id: string
   email: string
   full_name: string
-  role: Role
+  /** Only staff accounts may use the back office. */
+  is_staff: boolean
+  /** Role codes, e.g. `super_admin`, `manager`, `reception`. */
+  roles: string[]
+  /** Permission codes, e.g. `bookings.write`. */
+  permissions: string[]
   created_at: string
 }
 
@@ -22,42 +26,26 @@ export interface Paginated<T> {
   total: number
 }
 
-export interface Activity {
-  id: string
-  slug: string
-  title_fr: string
-  title_en: string
-  description_fr: string
-  description_en: string
-  price_mad: number
-  duration_minutes: number
-  cover_media_id: string | null
-  /** Resolved public URL of the cover (read-only, computed by the API). */
-  cover_image_url: string | null
-  is_published: boolean
-  created_at: string
-  updated_at: string
-}
-
-export type ActivityInput = Omit<Activity, 'id' | 'cover_image_url' | 'created_at' | 'updated_at'>
-
-export type MediaStatus = 'pending' | 'ready'
+export type MediaKind = 'image' | 'video' | 'document' | 'audio' | 'other'
 export type MediaVisibility = 'public' | 'private'
 
 export interface Media {
   id: string
-  status: MediaStatus
+  kind: MediaKind
   visibility: MediaVisibility
-  content_type: string
+  mime_type: string
   size_bytes: number
   original_filename: string
-  url: string | null
+  /** Public URL, or a short-lived signed URL for private media. */
+  url: string
+  width: number | null
+  height: number | null
   created_at: string
-  completed_at: string | null
 }
 
 export interface UploadTicket {
-  media: Media
+  media_id: string
+  expires_at: string
   upload: {
     url: string
     method: 'PUT'
