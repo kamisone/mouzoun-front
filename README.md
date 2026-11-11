@@ -1,10 +1,13 @@
 # Mouzoun — front (Vue / Nuxt 4)
 
-Nuxt 4 (Vue 3) · Tailwind CSS 4 · @nuxtjs/i18n (fr default, en)
+Nuxt 4 (Vue 3) · Nuxt UI 4 (Tailwind CSS 4) · @nuxtjs/i18n (fr default, en, ar RTL) · @nuxt/image · @nuxt/fonts
+
+Design system (tokens, components, RTL and accessibility rules): [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md),
+live at `/_styleguide` in development.
 
 One app, two parts:
 
-- **Public site**: `/fr/...`, `/en/...`, server-rendered for SEO, HTML cached with stale-while-revalidate (`routeRules` in `nuxt.config.ts`).
+- **Public site**: `/...` (French), `/en/...`, `/ar/...` (right-to-left), server-rendered for SEO, HTML cached with stale-while-revalidate (`routeRules` in `nuxt.config.ts`).
 - **Admin**: `/admin/...`, client-rendered SPA, not localized, noindex. The session is an HttpOnly
   cookie set by the API (never readable by JavaScript); the `admin-auth` middleware asks
   `/v1/auth/me` whether a session exists, and every request uses `credentials: 'include'`.
@@ -25,25 +28,35 @@ Admin login: http://localhost:3001/admin/login with the `ADMIN_EMAIL` / `ADMIN_P
 app/
   pages/            public pages (localized) + pages/admin/* (definePageMeta({ i18n: false }))
   layouts/          default (site) and admin
-  components/       SiteHeader, SiteFooter
-  composables/      useApiBase, useAuth (session; staff only, profile with roles + permissions),
+  assets/css/       main.css: design tokens (colours, type, radius, shadows, rhythm)
+  theme/            brand palettes (OKLCH generator), colour maths
+  components/       Mz components: base/ layout/ marketing/ forms/ admin/
+  composables/      useMoney, useDate, useLocalized, useSeo, useValidation, useThemePreference,
+                    useDensity, useTableQuery, useApiBase, useAuth (session; staff only),
                     useAdminApi (typed client: every /v1/admin endpoint is declared there),
                     useMediaUpload (direct-to-storage upload, no cookie sent to the bucket)
-  middleware/       admin-auth
-  utils/            API types
-i18n/locales/       fr.json, en.json
+  middleware/       admin-auth, styleguide
+  utils/            API types, Intl formatting
+i18n/locales/       fr.json, en.json, ar.json (namespaced keys)
+tests/              unit/ (Vitest), components/ (@nuxt/test-utils), e2e/ (Playwright + axe)
 ```
 
 The catalogue pages (accommodations, activities, packages) will be rebuilt on the new product
 endpoints; the database and its demo content already exist (`cargo run --bin seed_dev` in `back/`).
 
-Requires Node `^22.21 || ^24.11 || >=26`.
+Requires Node ≥ 24.11 (older versions have time-zone data from before Morocco moved to UTC+0).
+
+```bash
+npm run lint        # ESLint + design-token guard
+npm test            # Vitest: formatting, localisation, WCAG contrast, components
+npm run build && npm run test:e2e   # Playwright smoke + accessibility (npx playwright install chromium once)
+```
 
 ## CI/CD — push to `dev` = deployed
 
 `.github/workflows/deploy-dev.yml`: typecheck + build → image `<DOCKER_HUB_USERNAME>/mouzoun_front:v<run_number>`
 → `deploy/deploy.sh` on the VPS: zero-downtime blue/green (127.0.0.1:13001 / :13002), health gate on
-`/healthz` plus a real server-side render of `/fr`, then both colors serve for 15 s and the old one is
+`/healthz` plus a real server-side render of `/` (French home), then both colors serve for 15 s and the old one is
 stopped. The front never touches nginx (owned by the back repo, which lists both front ports).
 
 Server-side rendering calls the API through nginx's loopback listener `127.0.0.1:18080`, so it always
