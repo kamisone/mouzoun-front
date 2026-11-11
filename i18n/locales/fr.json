@@ -1,11 +1,179 @@
 {
+  "common": {
+    "siteName": "Mouzoun",
+    "book": "Réserver",
+    "learnMore": "En savoir plus",
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "loading": "Chargement…",
+    "search": "Rechercher",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "from": "À partir de",
+    "perPerson": "par personne",
+    "perNight": "par nuit",
+    "minutes": "{n} min",
+    "hours": "{n} h",
+    "optional": "facultatif",
+    "required": "obligatoire",
+    "openInMaps": "Ouvrir dans Google Maps",
+    "backHome": "Retour à l'accueil"
+  },
+  "nav": {
+    "home": "Accueil",
+    "stay": "Hébergements",
+    "activities": "Activités",
+    "farm": "La ferme",
+    "village": "Le village",
+    "contact": "Contact",
+    "menu": "Menu",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "mainNavigation": "Navigation principale"
+  },
+  "a11y": {
+    "skipToContent": "Aller au contenu",
+    "imageGallery": "Galerie d'images",
+    "imageOf": "Image {index} sur {total}",
+    "rating": "Note : {value} sur 5",
+    "externalLink": "(ouvre un nouvel onglet)"
+  },
+  "theme": {
+    "label": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "locale": {
+    "label": "Langue"
+  },
   "home": {
     "title": "Oasis, désert et traditions du Sud marocain",
     "subtitle": "Camping sous les étoiles à M'ssici, entre Alnif et Rissani : dunes, palmeraie, ferme et rencontres authentiques avec la coopérative Mouzoun.",
     "seoTitle": "Mouzoun — Camping dans le désert à M'ssici, Sud du Maroc",
-    "seoDescription": "Coopérative Mouzoun : camping, tentes nomades, quad, balades à dos de dromadaire et visite de la ferme à M'ssici, entre Alnif et Rissani."
+    "seoDescription": "Coopérative Mouzoun : camping, tentes nomades, quad, balades à dos de dromadaire et visite de la ferme à M'ssici, entre Alnif et Rissani.",
+    "eyebrow": "Éco-camping à M'ssici",
+    "discover": "Découvrir le camp",
+    "featuresEyebrow": "[À rédiger] Le camp",
+    "featuresTitle": "[À rédiger] Un camp vivant, entre désert et oasis",
+    "featuresDescription": "[À rédiger] Texte de présentation du camp, de la ferme et du village.",
+    "featureCamp": "Camping et tentes nomades",
+    "featureCampText": "[À rédiger] Description courte.",
+    "featureFarm": "Ferme et palmeraie",
+    "featureFarmText": "[À rédiger] Description courte.",
+    "featureVillage": "Village de M'ssici",
+    "featureVillageText": "[À rédiger] Description courte.",
+    "ctaTitle": "[À rédiger] Prêt pour une nuit sous les étoiles ?",
+    "ctaText": "[À rédiger] Phrase d'appel à la réservation."
   },
   "footer": {
-    "tagline": "Coopérative touristique, M'ssici, près d'Alnif et de Rissani, Maroc"
+    "tagline": "Coopérative touristique, M'ssici, près d'Alnif et de Rissani, Maroc",
+    "contact": "Contact",
+    "followUs": "Suivez-nous",
+    "legal": "Mentions légales",
+    "privacy": "Confidentialité",
+    "rights": "Tous droits réservés."
+  },
+  "price": {
+    "free": "Gratuit",
+    "fromPrice": "À partir de {price}"
+  },
+  "empty": {
+    "title": "Rien à afficher pour le moment",
+    "description": "Revenez un peu plus tard."
+  },
+  "map": {
+    "title": "Carte",
+    "consent": "La carte est fournie par OpenStreetMap. Elle ne se charge qu'à votre demande.",
+    "load": "Afficher la carte"
+  },
+  "gallery": {
+    "open": "Agrandir l'image {index}",
+    "close": "Fermer la galerie"
+  },
+  "forms": {
+    "money": "Montant en euros",
+    "translations": "Traductions",
+    "missingTranslation": "Traduction manquante",
+    "chooseImage": "Choisir une image",
+    "replaceImage": "Remplacer l'image",
+    "removeImage": "Retirer l'image",
+    "uploading": "Envoi en cours…",
+    "uploadFailed": "Échec de l'envoi du fichier",
+    "dateRange": "Dates",
+    "selectDates": "Choisir les dates"
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire.",
+    "email": "Adresse e-mail invalide.",
+    "minLength": "Au moins {min} caractères.",
+    "maxLength": "Au plus {max} caractères.",
+    "positive": "Le montant doit être positif.",
+    "money": "Montant invalide (ex. 120,50).",
+    "dateRange": "La date de fin doit suivre la date de début."
+  },
+  "table": {
+    "noData": "Aucun résultat",
+    "rowsPerPage": "Lignes par page",
+    "results": "{total} résultat | {total} résultats",
+    "filter": "Filtrer…"
+  },
+  "status": {
+    "draft": "Brouillon",
+    "pending": "En attente",
+    "awaiting_payment": "Attente de paiement",
+    "confirmed": "Confirmée",
+    "checked_in": "Arrivé",
+    "completed": "Terminée",
+    "cancelled": "Annulée",
+    "no_show": "Non présenté",
+    "expired": "Expirée",
+    "published": "Publié",
+    "archived": "Archivé",
+    "succeeded": "Réussi",
+    "failed": "Échoué",
+    "refunded": "Remboursé"
+  },
+  "confirm": {
+    "title": "Êtes-vous sûr ?",
+    "irreversible": "Cette action est définitive."
+  },
+  "auth": {
+    "title": "Administration",
+    "subtitle": "Connectez-vous pour gérer le camp.",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "invalid": "E-mail ou mot de passe incorrect.",
+    "forbidden": "Ce compte n'a pas accès à l'administration.",
+    "tooMany": "Trop de tentatives, réessayez dans une minute.",
+    "error": "Connexion impossible, réessayez.",
+    "logout": "Se déconnecter",
+    "backToSite": "Retour au site"
+  },
+  "admin": {
+    "title": "Administration",
+    "dashboard": "Tableau de bord",
+    "welcome": "Bienvenue, {name}.",
+    "upcoming": "Bientôt",
+    "bookings": "Réservations",
+    "products": "Produits",
+    "customers": "Clients",
+    "content": "Contenu",
+    "media": "Médiathèque",
+    "settings": "Paramètres",
+    "styleguide": "Guide de style",
+    "collapse": "Réduire le menu",
+    "breadcrumb": "Fil d'Ariane",
+    "userMenu": "Menu utilisateur",
+    "statsPlaceholder": "Les indicateurs apparaîtront avec les premières réservations."
+  },
+  "error": {
+    "notFound": "Page introuvable",
+    "generic": "Une erreur est survenue"
   }
 }

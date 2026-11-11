@@ -1,29 +1,239 @@
-@import 'tailwindcss';
+/*
+ * Mouzoun design tokens — the single source of truth for colours, type, radius, shadows, spacing
+ * rhythm, layers and motion. Components use SEMANTIC classes only (bg-default, text-muted,
+ * border-default, text-primary...), never raw colours. See docs/DESIGN_SYSTEM.md.
+ * This is the only file allowed to contain colour literals (checked by `npm run lint:tokens`).
+ */
+@import "tailwindcss";
+@import "@nuxt/ui";
 
 @theme {
-  --color-sand-50: #fbf7f0;
-  --color-sand-100: #f4ead8;
-  --color-sand-500: #c89b5a;
-  --color-terracotta-500: #c0582f;
-  --color-terracotta-600: #a3461f;
-  --color-oasis-600: #2f6b4f;
-  --color-night-900: #1d1a17;
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  /* ---- Typography (loaded by @nuxt/fonts, swapped for Arabic below) ---- */
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display-ar: "Noto Kufi Arabic", "Fraunces", serif;
+  --font-sans-ar: "IBM Plex Sans Arabic", "Inter", system-ui, sans-serif;
+
+  /* ---- Radius ---- */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.25rem;
+  --radius-full: 9999px;
+
+  /* ---- Shadows: soft and warm-tinted (dune hue), never neutral grey ---- */
+  --shadow-soft: 0 1px 2px oklch(30% 0.03 65 / 0.06), 0 2px 8px oklch(30% 0.03 65 / 0.06);
+  --shadow-warm: 0 4px 12px oklch(30% 0.04 60 / 0.08), 0 12px 32px oklch(30% 0.04 60 / 0.10);
+  --shadow-lifted: 0 8px 24px oklch(30% 0.05 55 / 0.12), 0 24px 56px oklch(30% 0.05 55 / 0.14);
+
+  /* ---- Containers (max-w-page, max-w-prose-wide...) ---- */
+  --container-page: 80rem;
+  --container-narrow: 48rem;
+  --container-prose-wide: 42rem;
+
+  /* ---- Motion ---- */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* BEGIN generated brand scales (npm run tokens) */
+  --color-terracotta-50: oklch(97.5% 0.013 40.6);
+  --color-terracotta-100: oklch(91.9% 0.036 40.6);
+  --color-terracotta-200: oklch(85.0% 0.065 40.6);
+  --color-terracotta-300: oklch(76.9% 0.101 40.6);
+  --color-terracotta-400: oklch(68.2% 0.130 40.6);
+  --color-terracotta-500: oklch(60.0% 0.145 40.6);
+  --color-terracotta-600: oklch(51.5% 0.138 40.6);
+  --color-terracotta-700: oklch(42.9% 0.123 40.6);
+  --color-terracotta-800: oklch(35.3% 0.104 40.6);
+  --color-terracotta-900: oklch(28.7% 0.084 40.6);
+  --color-terracotta-950: oklch(22.0% 0.065 40.6);
+
+  --color-palm-50: oklch(97.5% 0.012 130.4);
+  --color-palm-100: oklch(91.0% 0.024 130.4);
+  --color-palm-200: oklch(83.0% 0.044 130.4);
+  --color-palm-300: oklch(73.6% 0.069 130.4);
+  --color-palm-400: oklch(63.4% 0.088 130.4);
+  --color-palm-500: oklch(54.0% 0.098 130.4);
+  --color-palm-600: oklch(46.8% 0.093 130.4);
+  --color-palm-700: oklch(39.6% 0.083 130.4);
+  --color-palm-800: oklch(33.2% 0.071 130.4);
+  --color-palm-900: oklch(27.6% 0.057 130.4);
+  --color-palm-950: oklch(22.0% 0.044 130.4);
+
+  --color-dune-50: oklch(97.7% 0.010 81.8);
+  --color-dune-100: oklch(92.9% 0.015 71.7);
+  --color-dune-200: oklch(87.0% 0.027 71.7);
+  --color-dune-300: oklch(80.0% 0.042 71.7);
+  --color-dune-400: oklch(72.5% 0.054 71.7);
+  --color-dune-500: oklch(65.5% 0.060 71.7);
+  --color-dune-600: oklch(55.6% 0.057 71.7);
+  --color-dune-700: oklch(45.7% 0.051 71.7);
+  --color-dune-800: oklch(36.8% 0.043 71.7);
+  --color-dune-900: oklch(29.1% 0.035 71.7);
+  --color-dune-950: oklch(21.4% 0.015 66.9);
+
+  --color-saffron-50: oklch(97.5% 0.016 78.7);
+  --color-saffron-100: oklch(94.0% 0.033 78.7);
+  --color-saffron-200: oklch(89.8% 0.060 78.7);
+  --color-saffron-300: oklch(84.8% 0.093 78.7);
+  --color-saffron-400: oklch(79.4% 0.119 78.7);
+  --color-saffron-500: oklch(74.4% 0.133 78.7);
+  --color-saffron-600: oklch(62.6% 0.126 78.7);
+  --color-saffron-700: oklch(50.8% 0.106 78.7);
+  --color-saffron-800: oklch(40.4% 0.084 78.7);
+  --color-saffron-900: oklch(31.2% 0.065 78.7);
+  --color-saffron-950: oklch(22.0% 0.046 78.7);
+
+  --color-indigo-50: oklch(97.5% 0.012 264.8);
+  --color-indigo-100: oklch(89.2% 0.028 264.8);
+  --color-indigo-200: oklch(79.1% 0.050 264.8);
+  --color-indigo-300: oklch(67.1% 0.078 264.8);
+  --color-indigo-400: oklch(54.2% 0.100 264.8);
+  --color-indigo-500: oklch(42.3% 0.111 264.8);
+  --color-indigo-600: oklch(37.7% 0.106 264.8);
+  --color-indigo-700: oklch(33.1% 0.095 264.8);
+  --color-indigo-800: oklch(29.1% 0.080 264.8);
+  --color-indigo-900: oklch(25.5% 0.065 264.8);
+  --color-indigo-950: oklch(22.0% 0.050 264.8);
+
+  --color-clay-50: oklch(97.5% 0.012 29.0);
+  --color-clay-100: oklch(90.6% 0.041 29.0);
+  --color-clay-200: oklch(82.3% 0.073 29.0);
+  --color-clay-300: oklch(72.4% 0.114 29.0);
+  --color-clay-400: oklch(61.7% 0.147 29.0);
+  --color-clay-500: oklch(51.8% 0.163 29.0);
+  --color-clay-600: oklch(45.1% 0.155 29.0);
+  --color-clay-700: oklch(38.4% 0.139 29.0);
+  --color-clay-800: oklch(32.4% 0.118 29.0);
+  --color-clay-900: oklch(27.2% 0.095 29.0);
+  --color-clay-950: oklch(22.0% 0.073 29.0);
+  /* END generated brand scales */
 }
 
-body {
-  @apply bg-sand-50 text-night-900 antialiased;
+:root {
+  /* Vertical rhythm of page sections (MzSection) and their inner gaps. */
+  --section-y: clamp(3.5rem, 2rem + 6vw, 7rem);
+  --section-gap: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+
+  /* Layers */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 40;
+  --z-overlay: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+
+  /* Motion durations (honoured only when motion is allowed, see below) */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 360ms;
+
+  /* Nuxt UI base radius (components derive their radii from it) and container. */
+  --ui-radius: 0.5rem;
+  --ui-container: var(--container-page);
+  --ui-header-height: 4.5rem;
 }
 
-/* Admin UI primitives */
-@layer components {
-  .input {
-    @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-terracotta-500 focus:outline-none;
+/*
+ * Semantic tokens. Unlayered on purpose: they override Nuxt UI's defaults (layer theme) and the
+ * runtime colour plugin. Every pair is checked for WCAG AA by tests/unit/contrast.spec.ts.
+ *
+ * Light = warm sand. Brand shade 500 is too light for text on sand, so text-level brand
+ * colours use 600/700 here.
+ */
+:root,
+.light {
+  --ui-bg: var(--ui-color-neutral-50);
+  --ui-bg-muted: var(--ui-color-neutral-100);
+  --ui-bg-elevated: oklch(99.4% 0.004 80);
+  --ui-bg-accented: var(--ui-color-neutral-200);
+  --ui-bg-inverted: var(--ui-color-neutral-900);
+
+  --ui-text-dimmed: var(--ui-color-neutral-500);
+  --ui-text-muted: var(--ui-color-neutral-600);
+  --ui-text-toned: var(--ui-color-neutral-700);
+  --ui-text: var(--ui-color-neutral-800);
+  --ui-text-highlighted: var(--ui-color-neutral-950);
+  --ui-text-inverted: var(--ui-color-neutral-50);
+
+  --ui-border: var(--ui-color-neutral-200);
+  --ui-border-muted: var(--ui-color-neutral-100);
+  --ui-border-accented: var(--ui-color-neutral-300);
+  --ui-border-inverted: var(--ui-color-neutral-900);
+
+  --ui-primary: var(--ui-color-primary-600);
+  --ui-secondary: var(--ui-color-secondary-600);
+  --ui-success: var(--ui-color-success-600);
+  --ui-info: var(--ui-color-info-500);
+  --ui-warning: var(--ui-color-warning-700);
+  --ui-error: var(--ui-color-error-600);
+}
+
+/* Dark = "desert night": warm brown-black, never blue-grey. */
+.dark {
+  --ui-bg: var(--ui-color-neutral-950);
+  --ui-bg-muted: var(--ui-color-neutral-900);
+  --ui-bg-elevated: var(--ui-color-neutral-900);
+  --ui-bg-accented: var(--ui-color-neutral-800);
+  --ui-bg-inverted: var(--ui-color-neutral-50);
+
+  --ui-text-dimmed: var(--ui-color-neutral-500);
+  --ui-text-muted: var(--ui-color-neutral-400);
+  --ui-text-toned: var(--ui-color-neutral-300);
+  --ui-text: var(--ui-color-neutral-200);
+  --ui-text-highlighted: var(--ui-color-neutral-50);
+  --ui-text-inverted: var(--ui-color-neutral-950);
+
+  --ui-border: var(--ui-color-neutral-800);
+  --ui-border-muted: var(--ui-color-neutral-900);
+  --ui-border-accented: var(--ui-color-neutral-700);
+  --ui-border-inverted: var(--ui-color-neutral-50);
+
+  --ui-primary: var(--ui-color-primary-400);
+  --ui-secondary: var(--ui-color-secondary-400);
+  --ui-success: var(--ui-color-success-400);
+  --ui-info: var(--ui-color-info-300);
+  --ui-warning: var(--ui-color-warning-400);
+  --ui-error: var(--ui-color-error-400);
+
+  color-scheme: dark;
+}
+
+/* Arabic: the same type roles with Arabic faces. */
+html[lang="ar"] {
+  --font-sans: var(--font-sans-ar);
+  --font-display: var(--font-display-ar);
+}
+
+@layer base {
+  body {
+    @apply bg-default text-default font-sans antialiased;
   }
-  .btn {
-    @apply inline-flex items-center rounded-lg bg-terracotta-500 px-4 py-2 text-sm font-semibold text-white hover:bg-terracotta-600 disabled:opacity-50;
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    @apply text-highlighted;
   }
-  .btn-ghost {
-    @apply inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-100 disabled:opacity-50;
+
+  /* One visible focus ring for everything focusable (WCAG 2.4.7 / 2.4.11). */
+  :focus-visible {
+    outline: 2px solid var(--ui-primary);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--ui-color-primary-200);
+    color: var(--ui-color-neutral-950);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

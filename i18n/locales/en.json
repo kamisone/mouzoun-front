@@ -1,11 +1,179 @@
 {
+  "common": {
+    "siteName": "Mouzoun",
+    "book": "Book",
+    "learnMore": "Learn more",
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading…",
+    "search": "Search",
+    "previous": "Previous",
+    "next": "Next",
+    "from": "From",
+    "perPerson": "per person",
+    "perNight": "per night",
+    "minutes": "{n} min",
+    "hours": "{n} h",
+    "optional": "optional",
+    "required": "required",
+    "openInMaps": "Open in Google Maps",
+    "backHome": "Back to home"
+  },
+  "nav": {
+    "home": "Home",
+    "stay": "Stay",
+    "activities": "Activities",
+    "farm": "The farm",
+    "village": "The village",
+    "contact": "Contact",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "mainNavigation": "Main navigation"
+  },
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "imageGallery": "Image gallery",
+    "imageOf": "Image {index} of {total}",
+    "rating": "Rated {value} out of 5",
+    "externalLink": "(opens in a new tab)"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "locale": {
+    "label": "Language"
+  },
   "home": {
     "title": "Oases, desert and traditions of southern Morocco",
     "subtitle": "Camping under the stars in M'ssici, between Alnif and Rissani: dunes, palm grove, a working farm and authentic encounters with the Mouzoun cooperative.",
     "seoTitle": "Mouzoun — Desert camping in M'ssici, southern Morocco",
-    "seoDescription": "Mouzoun cooperative: camping, nomad tents, quad tours, camel rides and farm visits in M'ssici, between Alnif and Rissani."
+    "seoDescription": "Mouzoun cooperative: camping, nomad tents, quad tours, camel rides and farm visits in M'ssici, between Alnif and Rissani.",
+    "eyebrow": "Eco-camping in M'ssici",
+    "discover": "Discover the camp",
+    "featuresEyebrow": "[To write] The camp",
+    "featuresTitle": "[To write] A living camp between desert and oasis",
+    "featuresDescription": "[To write] Introduction to the camp, the farm and the village.",
+    "featureCamp": "Camping and nomad tents",
+    "featureCampText": "[To write] Short description.",
+    "featureFarm": "Farm and palm grove",
+    "featureFarmText": "[To write] Short description.",
+    "featureVillage": "M'ssici village",
+    "featureVillageText": "[To write] Short description.",
+    "ctaTitle": "[To write] Ready for a night under the stars?",
+    "ctaText": "[To write] Call to book."
   },
   "footer": {
-    "tagline": "Tourism cooperative, M'ssici, near Alnif and Rissani, Morocco"
+    "tagline": "Tourism cooperative, M'ssici, near Alnif and Rissani, Morocco",
+    "contact": "Contact",
+    "followUs": "Follow us",
+    "legal": "Legal notice",
+    "privacy": "Privacy",
+    "rights": "All rights reserved."
+  },
+  "price": {
+    "free": "Free",
+    "fromPrice": "From {price}"
+  },
+  "empty": {
+    "title": "Nothing to show yet",
+    "description": "Please check back a little later."
+  },
+  "map": {
+    "title": "Map",
+    "consent": "The map is provided by OpenStreetMap. It only loads when you ask for it.",
+    "load": "Show the map"
+  },
+  "gallery": {
+    "open": "Enlarge image {index}",
+    "close": "Close gallery"
+  },
+  "forms": {
+    "money": "Amount in euros",
+    "translations": "Translations",
+    "missingTranslation": "Missing translation",
+    "chooseImage": "Choose an image",
+    "replaceImage": "Replace image",
+    "removeImage": "Remove image",
+    "uploading": "Uploading…",
+    "uploadFailed": "The upload failed",
+    "dateRange": "Dates",
+    "selectDates": "Select dates"
+  },
+  "validation": {
+    "required": "This field is required.",
+    "email": "Invalid email address.",
+    "minLength": "At least {min} characters.",
+    "maxLength": "At most {max} characters.",
+    "positive": "The amount must be positive.",
+    "money": "Invalid amount (e.g. 120.50).",
+    "dateRange": "The end date must be after the start date."
+  },
+  "table": {
+    "noData": "No results",
+    "rowsPerPage": "Rows per page",
+    "results": "{total} result | {total} results",
+    "filter": "Filter…"
+  },
+  "status": {
+    "draft": "Draft",
+    "pending": "Pending",
+    "awaiting_payment": "Awaiting payment",
+    "confirmed": "Confirmed",
+    "checked_in": "Checked in",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "no_show": "No-show",
+    "expired": "Expired",
+    "published": "Published",
+    "archived": "Archived",
+    "succeeded": "Succeeded",
+    "failed": "Failed",
+    "refunded": "Refunded"
+  },
+  "confirm": {
+    "title": "Are you sure?",
+    "irreversible": "This cannot be undone."
+  },
+  "auth": {
+    "title": "Back office",
+    "subtitle": "Sign in to manage the camp.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "invalid": "Wrong email or password.",
+    "forbidden": "This account cannot access the back office.",
+    "tooMany": "Too many attempts, try again in a minute.",
+    "error": "Cannot sign in, please try again.",
+    "logout": "Sign out",
+    "backToSite": "Back to the website"
+  },
+  "admin": {
+    "title": "Back office",
+    "dashboard": "Dashboard",
+    "welcome": "Welcome, {name}.",
+    "upcoming": "Soon",
+    "bookings": "Bookings",
+    "products": "Products",
+    "customers": "Customers",
+    "content": "Content",
+    "media": "Media library",
+    "settings": "Settings",
+    "styleguide": "Style guide",
+    "collapse": "Collapse menu",
+    "breadcrumb": "Breadcrumb",
+    "userMenu": "User menu",
+    "statsPlaceholder": "Figures will appear with the first bookings."
+  },
+  "error": {
+    "notFound": "Page not found",
+    "generic": "Something went wrong"
   }
 }

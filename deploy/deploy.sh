@@ -7,7 +7,7 @@
 # (blue 127.0.0.1:13001, green 127.0.0.1:13002) and skips whichever is not running:
 #
 #   1. starts the new release on the free color's port
-#   2. waits for /healthz, then renders the home page once (catches broken SSR before visitors)
+#   2. waits for /healthz, then renders the (French) home page once (catches broken SSR before visitors)
 #   3. both colors serve for DRAIN_SECONDS, then the previous one is stopped gracefully
 #      (requests reaching it while it stops are retried by nginx on the new one)
 #
@@ -83,7 +83,7 @@ for ((i = 0; i < HEALTH_TIMEOUT; i++)); do
   container_running "$NEW_CONTAINER" || break
   sleep 1
 done
-if [ "$ready" = true ] && ! curl -fsS -m 15 -o /dev/null "http://127.0.0.1:$NEW_PORT/fr"; then
+if [ "$ready" = true ] && ! curl -fsS -m 15 -o /dev/null "http://127.0.0.1:$NEW_PORT/"; then
   ready=false
 fi
 if [ "$ready" != true ]; then
