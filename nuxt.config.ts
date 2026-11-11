@@ -73,8 +73,9 @@ export default defineNuxtConfig({
     '/**': { swr: 300 },
     // Admin back-office: client-rendered SPA, never cached or indexed
     '/admin/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store' } },
-    '/_styleguide': { swr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
-    '/*/_styleguide': { swr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
+    // Style guide: client-rendered review tool, guarded by app/middleware/styleguide.ts
+    '/_styleguide': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
+    '/*/_styleguide': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
   },
 
   app: {

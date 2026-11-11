@@ -149,10 +149,10 @@
   --ui-bg-accented: var(--ui-color-neutral-200);
   --ui-bg-inverted: var(--ui-color-neutral-900);
 
-  --ui-text-dimmed: var(--ui-color-neutral-500);
-  --ui-text-muted: var(--ui-color-neutral-600);
-  --ui-text-toned: var(--ui-color-neutral-700);
-  --ui-text: var(--ui-color-neutral-800);
+  --ui-text-dimmed: var(--ui-color-neutral-600);
+  --ui-text-muted: var(--ui-color-neutral-700);
+  --ui-text-toned: var(--ui-color-neutral-800);
+  --ui-text: var(--ui-color-neutral-900);
   --ui-text-highlighted: var(--ui-color-neutral-950);
   --ui-text-inverted: var(--ui-color-neutral-50);
 
@@ -194,15 +194,17 @@
   --ui-success: var(--ui-color-success-400);
   --ui-info: var(--ui-color-info-300);
   --ui-warning: var(--ui-color-warning-400);
-  --ui-error: var(--ui-color-error-400);
+  --ui-error: var(--ui-color-error-300);
 
   color-scheme: dark;
 }
 
-/* Arabic: the same type roles with Arabic faces. */
-html[lang="ar"] {
+/* Arabic: the same type roles with Arabic faces — for the whole page (html[lang^="ar"]) and
+   for any Arabic fragment inside another language (e.g. the AR tab of a translatable field). */
+:lang(ar) {
   --font-sans: var(--font-sans-ar);
   --font-display: var(--font-display-ar);
+  font-family: var(--font-sans);
 }
 
 @layer base {

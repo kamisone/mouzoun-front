@@ -22,7 +22,7 @@ async function submit(event: FormSubmitEvent<Schema>) {
   loading.value = true
   try {
     await login(event.data.email, event.data.password)
-    const redirect = typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/admin') ? route.query.redirect : '/admin'
+    const redirect = typeof route.query.redirect === 'string' && /^\/(?:admin|_styleguide)(?:[/?]|$)/.test(route.query.redirect) ? route.query.redirect : '/admin'
     await navigateTo(redirect)
   }
   catch (e: unknown) {
