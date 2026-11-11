@@ -9,6 +9,7 @@ export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'i
  */
 export function useMediaUpload() {
   const { media } = useAdminApi()
+  const { t } = useI18n()
   const uploading = ref(false)
   const error = ref('')
 
@@ -32,7 +33,7 @@ export function useMediaUpload() {
       return await media.complete(ticket.media_id)
     } catch (e: unknown) {
       const details = (e as { data?: { error?: { details?: unknown } } }).data?.error?.details
-      error.value = typeof details === 'string' ? details : "Échec de l'envoi du fichier"
+      error.value = typeof details === 'string' ? details : t('forms.uploadFailed')
       return null
     } finally {
       uploading.value = false

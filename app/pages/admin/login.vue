@@ -1,48 +1,61 @@
 <script setup lang="ts">
-definePageMeta({ layout: false, middleware: 'admin-auth', i18n: false })
+import type { FormSubmitEvent } from '@nuxt/ui'
+import { z } from 'zod'
 
+definePageMeta({ layout: 'auth', middleware: 'admin-auth', i18n: false })
+
+const { t } = useI18n()
 const { login } = useAuth()
 const route = useRoute()
-const email = ref('')
-const password = ref('')
+const v = useValidation()
+
+const schema = computed(() => z.object({ email: v.email(), password: v.required() }))
+type Schema = z.output<typeof schema.value>
+const state = reactive({ email: '', password: '' })
 const error = ref('')
 const loading = ref(false)
 
-async function submit() {
+useHead({ title: () => t('auth.title'), meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
+
+async function submit(event: FormSubmitEvent<Schema>) {
   error.value = ''
   loading.value = true
   try {
-    await login(email.value, password.value)
-    await navigateTo(typeof route.query.redirect === 'string' ? route.query.redirect : '/admin')
-  } catch (e: unknown) {
+    await login(event.data.email, event.data.password)
+    const redirect = typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/admin') ? route.query.redirect : '/admin'
+    await navigateTo(redirect)
+  }
+  catch (e: unknown) {
     const status = (e as { statusCode?: number }).statusCode
-    error.value =
-      status === 429
-        ? 'Trop de tentatives, réessayez dans une minute'
-        : status === 401 || status === 400 || status === 422 || (e as Error).message === 'forbidden'
-          ? 'Identifiants invalides'
-          : 'Service indisponible, réessayez plus tard'
-  } finally {
+    error.value = (e as Error).message === 'forbidden'
+      ? t('auth.forbidden')
+      : status === 429
+        ? t('auth.tooMany')
+        : status === 401 || status === 400 || status === 422
+          ? t('auth.invalid')
+          : t('auth.error')
+  }
+  finally {
     loading.value = false
   }
 }
 </script>
 
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-sand-50 p-4">
-    <form class="w-full max-w-sm space-y-4 rounded-2xl bg-white p-8 shadow" @submit.prevent="submit">
-      <h1 class="text-2xl font-bold">Mouzoun Admin</h1>
-      <input v-model="email" type="email" required placeholder="Email" class="input" autocomplete="username" />
-      <input
-        v-model="password"
-        type="password"
-        required
-        placeholder="Mot de passe"
-        class="input"
-        autocomplete="current-password"
-      />
-      <p v-if="error" class="text-sm text-red-600">{{ error }}</p>
-      <button class="btn w-full justify-center" :disabled="loading">Se connecter</button>
-    </form>
+  <div class="flex flex-col gap-6">
+    <div>
+      <h1 class="font-display text-2xl font-semibold">{{ t('auth.title') }}</h1>
+      <p class="mt-1 text-sm text-muted">{{ t('auth.subtitle') }}</p>
+    </div>
+    <UForm :schema="schema" :state="state" class="flex flex-col gap-4" @submit="submit">
+      <MzFormField name="email" :label="t('auth.email')" required>
+        <UInput v-model="state.email" type="email" autocomplete="username" class="w-full" />
+      </MzFormField>
+      <MzFormField name="password" :label="t('auth.password')" required>
+        <UInput v-model="state.password" type="password" autocomplete="current-password" class="w-full" />
+      </MzFormField>
+      <UAlert v-if="error" :title="error" color="error" variant="subtle" icon="i-lucide-circle-alert" role="alert" />
+      <UButton type="submit" :label="t('auth.submit')" :loading="loading" block size="lg" />
+    </UForm>
   </div>
 </template>
