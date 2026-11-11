@@ -5,6 +5,20 @@ import { UI_COLORS } from './theme/colors'
  * Only semantic classes (bg-default, text-muted, ring-default...) are allowed.
  */
 export default defineAppConfig({
+  /**
+   * Public contact details. PLACEHOLDERS until the public settings API exists (the database
+   * already stores them: contact.*, social.*, location.* settings).
+   */
+  site: {
+    email: 'contact@mouzoun.com',
+    phone: '',
+    whatsapp: '',
+    address: "M'ssici, Alnif — Rissani, Maroc",
+    location: { lat: 31.238933, lng: -4.701349 },
+    social: { instagram: '', facebook: '', tiktok: '' },
+    /** Background of the sign-in page (public bucket URL). Empty: a desert gradient. */
+    authBackground: '',
+  },
   ui: {
     colors: UI_COLORS,
     icons: {
