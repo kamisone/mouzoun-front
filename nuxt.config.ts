@@ -11,6 +11,8 @@ export default defineNuxtConfig({
   // @nuxt/ui brings Tailwind CSS v4, color-mode, icons and @nuxt/fonts.
   modules: ['@nuxt/ui', '@nuxtjs/i18n', '@nuxt/image', '@vueuse/nuxt', '@nuxt/eslint'],
   css: ['~/assets/css/main.css'],
+  // Components are organised in folders (base/, layout/...) but named by their file: <MzPrice>.
+  components: [{ path: '~/components', pathPrefix: false }],
 
   // Public site: light by default (an explicit choice is remembered; admin defaults to
   // "system", see app/composables/useThemePreference.ts). The inline script avoids any flash.
@@ -46,6 +48,10 @@ export default defineNuxtConfig({
       apiBase: 'http://localhost:8080',
       // Absolute base for hreflang/canonical SEO links; override with NUXT_PUBLIC_I18N_BASE_URL
       i18n: { baseUrl: 'http://localhost:3001' },
+      // Default social sharing image (absolute URL); override with NUXT_PUBLIC_OG_IMAGE
+      ogImage: '',
+      // Serve /_styleguide outside dev without staff login (CI accessibility checks only)
+      styleguide: false,
     },
   },
 
