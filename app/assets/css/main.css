@@ -7,7 +7,10 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-@theme {
+/* `static`: emit every token, even those no utility uses — the brand scales are read at runtime
+   by Nuxt UI's colour plugin (--ui-color-primary-500: var(--color-terracotta-500)), so Tailwind's
+   tree-shaking must not drop them (it would silently fall back to Tailwind's default palette). */
+@theme static {
   /* ---- Typography (loaded by @nuxt/fonts, swapped for Arabic below) ---- */
   --font-display: "Fraunces", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -42,7 +45,7 @@
   --color-terracotta-300: oklch(76.9% 0.101 40.6);
   --color-terracotta-400: oklch(68.2% 0.130 40.6);
   --color-terracotta-500: oklch(60.0% 0.145 40.6);
-  --color-terracotta-600: oklch(51.5% 0.138 40.6);
+  --color-terracotta-600: oklch(50.5% 0.138 40.6);
   --color-terracotta-700: oklch(42.9% 0.123 40.6);
   --color-terracotta-800: oklch(35.3% 0.104 40.6);
   --color-terracotta-900: oklch(28.7% 0.084 40.6);
@@ -54,7 +57,7 @@
   --color-palm-300: oklch(73.6% 0.069 130.4);
   --color-palm-400: oklch(63.4% 0.088 130.4);
   --color-palm-500: oklch(54.0% 0.098 130.4);
-  --color-palm-600: oklch(46.8% 0.093 130.4);
+  --color-palm-600: oklch(46.0% 0.093 130.4);
   --color-palm-700: oklch(39.6% 0.083 130.4);
   --color-palm-800: oklch(33.2% 0.071 130.4);
   --color-palm-900: oklch(27.6% 0.057 130.4);
@@ -66,7 +69,7 @@
   --color-dune-300: oklch(80.0% 0.042 71.7);
   --color-dune-400: oklch(72.5% 0.054 71.7);
   --color-dune-500: oklch(65.5% 0.060 71.7);
-  --color-dune-600: oklch(55.6% 0.057 71.7);
+  --color-dune-600: oklch(54.5% 0.057 71.7);
   --color-dune-700: oklch(45.7% 0.051 71.7);
   --color-dune-800: oklch(36.8% 0.043 71.7);
   --color-dune-900: oklch(29.1% 0.035 71.7);
@@ -78,7 +81,7 @@
   --color-saffron-300: oklch(84.8% 0.093 78.7);
   --color-saffron-400: oklch(79.4% 0.119 78.7);
   --color-saffron-500: oklch(74.4% 0.133 78.7);
-  --color-saffron-600: oklch(62.6% 0.126 78.7);
+  --color-saffron-600: oklch(61.3% 0.126 78.7);
   --color-saffron-700: oklch(50.8% 0.106 78.7);
   --color-saffron-800: oklch(40.4% 0.084 78.7);
   --color-saffron-900: oklch(31.2% 0.065 78.7);
@@ -90,7 +93,7 @@
   --color-indigo-300: oklch(67.1% 0.078 264.8);
   --color-indigo-400: oklch(54.2% 0.100 264.8);
   --color-indigo-500: oklch(42.3% 0.111 264.8);
-  --color-indigo-600: oklch(37.7% 0.106 264.8);
+  --color-indigo-600: oklch(37.2% 0.106 264.8);
   --color-indigo-700: oklch(33.1% 0.095 264.8);
   --color-indigo-800: oklch(29.1% 0.080 264.8);
   --color-indigo-900: oklch(25.5% 0.065 264.8);
@@ -102,7 +105,7 @@
   --color-clay-300: oklch(72.4% 0.114 29.0);
   --color-clay-400: oklch(61.7% 0.147 29.0);
   --color-clay-500: oklch(51.8% 0.163 29.0);
-  --color-clay-600: oklch(45.1% 0.155 29.0);
+  --color-clay-600: oklch(44.3% 0.155 29.0);
   --color-clay-700: oklch(38.4% 0.139 29.0);
   --color-clay-800: oklch(32.4% 0.118 29.0);
   --color-clay-900: oklch(27.2% 0.095 29.0);
@@ -177,10 +180,10 @@
   --ui-bg-accented: var(--ui-color-neutral-800);
   --ui-bg-inverted: var(--ui-color-neutral-50);
 
-  --ui-text-dimmed: var(--ui-color-neutral-500);
-  --ui-text-muted: var(--ui-color-neutral-400);
-  --ui-text-toned: var(--ui-color-neutral-300);
-  --ui-text: var(--ui-color-neutral-200);
+  --ui-text-dimmed: var(--ui-color-neutral-400);
+  --ui-text-muted: var(--ui-color-neutral-300);
+  --ui-text-toned: var(--ui-color-neutral-200);
+  --ui-text: var(--ui-color-neutral-100);
   --ui-text-highlighted: var(--ui-color-neutral-50);
   --ui-text-inverted: var(--ui-color-neutral-950);
 
@@ -190,8 +193,8 @@
   --ui-border-inverted: var(--ui-color-neutral-50);
 
   --ui-primary: var(--ui-color-primary-400);
-  --ui-secondary: var(--ui-color-secondary-400);
-  --ui-success: var(--ui-color-success-400);
+  --ui-secondary: var(--ui-color-secondary-300);
+  --ui-success: var(--ui-color-success-300);
   --ui-info: var(--ui-color-info-300);
   --ui-warning: var(--ui-color-warning-400);
   --ui-error: var(--ui-color-error-300);

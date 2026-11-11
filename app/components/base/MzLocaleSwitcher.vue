@@ -36,7 +36,7 @@ const items = computed<DropdownMenuItem[]>(() =>
       variant="ghost"
       :size="props.size ?? densitySize"
       :label="props.showLabel ? current?.code.toUpperCase() : undefined"
-      :aria-label="`${t('locale.label')}: ${current?.name ?? locale}`"
+      :aria-label="props.showLabel ? `${current?.code.toUpperCase()} — ${t('locale.label')}: ${current?.name ?? locale}` : `${t('locale.label')}: ${current?.name ?? locale}`"
     />
     <!-- Screen readers pronounce each language name in its own language. -->
     <template #item-label="{ item }">

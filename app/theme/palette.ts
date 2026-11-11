@@ -34,7 +34,7 @@ export type BrandColorName = keyof typeof BRAND_COLORS
 
 /** Lightness of each shade relative to the ends: perceptually even steps in OKLCH. */
 const POSITION: Record<Shade, number> = {
-  50: 0, 100: 0.09, 200: 0.2, 300: 0.33, 400: 0.47, 500: 0.6, 600: 0.69, 700: 0.78, 800: 0.86, 900: 0.93, 950: 1,
+  50: 0, 100: 0.09, 200: 0.2, 300: 0.33, 400: 0.47, 500: 0.6, 600: 0.7, 700: 0.78, 800: 0.86, 900: 0.93, 950: 1,
 }
 /** Chroma relative to the base: full in the middle of the scale, softer at the ends. */
 const CHROMA: Record<Shade, number> = {

@@ -10,7 +10,7 @@ import {
 } from '../../app/utils/i18n-format'
 
 // Intl output uses special spaces: normalise them to compare readable strings.
-const plain = (s: string) => s.replace(/[  ]/g, ' ').replace(/‏/g, '')
+const plain = (s: string) => s.replace(/[\u00A0\u202F]/g, ' ').replace(/\u200F/g, '')
 
 describe('formatMoney (cents → localized EUR)', () => {
   const cases: Array<[number, string, string, string]> = [

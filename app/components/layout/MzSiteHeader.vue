@@ -10,14 +10,15 @@ const open = ref(false)
 const route = useRoute()
 watch(() => route.fullPath, () => { open.value = false })
 
-// Feature pages come later: the links point to the home page sections until then.
+// Feature pages come later: the links point to the home page sections until then (never shown
+// as "current page", since they all share the home path).
 const items = computed<NavigationMenuItem[]>(() => [
   { label: t('nav.stay'), to: `${localePath('/')}#stay` },
   { label: t('nav.activities'), to: `${localePath('/')}#activities` },
   { label: t('nav.farm'), to: `${localePath('/')}#farm` },
   { label: t('nav.village'), to: `${localePath('/')}#village` },
   { label: t('nav.contact'), to: '#contact' },
-])
+].map(item => ({ ...item, active: false })))
 </script>
 
 <template>

@@ -23,7 +23,7 @@ const mapsUrl = computed(() => `https://www.google.com/maps?q=${props.lat},${pro
 
 <template>
   <div class="flex flex-col gap-3">
-    <div class="relative overflow-hidden rounded-lg bg-muted" :style="{ aspectRatio: props.ratio }">
+    <div class="relative overflow-hidden rounded-lg bg-elevated ring ring-default" :style="{ aspectRatio: props.ratio }">
       <iframe
         v-if="loaded"
         :src="embedUrl"

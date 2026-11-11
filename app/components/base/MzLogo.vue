@@ -21,7 +21,7 @@ const sizes = {
   <NuxtLink
     v-if="target"
     :to="target"
-    class="inline-flex items-center gap-2 rounded-md text-primary"
+    class="inline-flex min-h-11 items-center gap-2 rounded-md text-primary"
     :aria-label="props.iconOnly ? t('common.siteName') : undefined"
   >
     <UIcon name="i-lucide-tent-tree" :class="sizes[props.size].icon" aria-hidden="true" />

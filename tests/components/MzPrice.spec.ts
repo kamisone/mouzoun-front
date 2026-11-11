@@ -2,7 +2,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import MzPrice from '~/components/base/MzPrice.vue'
 
-const plain = (s: string) => s.replace(/[  ‏]/g, ' ').replace(/\s+/g, ' ').trim()
+const plain = (s: string) => s.replace(/[\u00A0\u202F\u200F]/g, ' ').replace(/\s+/g, ' ').trim()
 
 describe('MzPrice', () => {
   it('formats cents in the current locale', async () => {

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { contrastRatio } from '../../app/theme/color-math'
+import { contrastRatio, parseColor, rgbToHex } from '../../app/theme/color-math'
 import { UI_COLORS } from '../../app/theme/colors'
 
 /**
@@ -44,7 +44,8 @@ const pairs: Pair[] = [
   ['ui-text-muted', 'ui-bg', BODY],
   ['ui-text-muted', 'ui-bg-elevated', BODY],
   ['ui-text-muted', 'ui-bg-muted', BODY],
-  ['ui-text-dimmed', 'ui-bg', LARGE], // placeholders and disabled hints only
+  ['ui-text-dimmed', 'ui-bg', BODY], // placeholders are text too (WCAG 1.4.3)
+  ['ui-text-dimmed', 'ui-bg-elevated', BODY],
   ['ui-primary', 'ui-bg', BODY], // links, text-primary
   ['ui-primary', 'ui-bg-elevated', BODY],
   ['ui-secondary', 'ui-bg', BODY],
@@ -64,6 +65,28 @@ describe.each([['light', light], ['dark', dark]] as const)('%s theme', (_, theme
   it.each(pairs)('%s on %s ≥ %d:1', (fg, bg, min) => {
     const ratio = contrastRatio(resolve(theme, fg), resolve(theme, bg))
     expect(ratio, `${fg} on ${bg}: ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(min)
+  })
+})
+
+/** `color` at `alpha` over `bg` (sRGB blend, what the browser paints for bg-primary/15). */
+function over(color: string, alpha: number, bg: string): string {
+  const [a, b] = [parseColor(color), parseColor(bg)]
+  return rgbToHex(a.map((v, i) => v * alpha + b[i]! * (1 - alpha)) as [number, number, number])
+}
+
+// Soft / subtle buttons, badges and alerts: tinted text on a tint of the same colour
+// (app.config.ts: shade 700 in light mode, the semantic colour in dark mode).
+describe.each(['primary', 'secondary', 'success', 'info', 'warning', 'error'])('tinted %s', (alias) => {
+  const palette = UI_COLORS[alias as keyof typeof UI_COLORS]
+  it.each([0.1, 0.15])('light: %s tint', (alpha) => {
+    const text = scales.get(`${palette}-${alias === 'warning' ? 800 : 700}`)!
+    const bg = over(resolve(light, `ui-${alias}`), alpha, resolve(light, 'ui-bg'))
+    expect(contrastRatio(text, bg)).toBeGreaterThanOrEqual(BODY)
+  })
+  it.each([0.1, 0.15])('dark: %s tint', (alpha) => {
+    const text = resolve(dark, `ui-${alias}`)
+    const bg = over(text, alpha, resolve(dark, 'ui-bg'))
+    expect(contrastRatio(text, bg)).toBeGreaterThanOrEqual(BODY)
   })
 })
 

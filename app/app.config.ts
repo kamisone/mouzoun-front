@@ -1,6 +1,16 @@
 import { UI_COLORS } from './theme/colors'
 
 /**
+ * "Soft" and "subtle" variants put coloured text on a 10–15 % tint of the same colour: in light
+ * mode the text uses shade 700 so it keeps 4.5:1 (checked by tests/unit/contrast.spec.ts).
+ */
+const TINTED_COLORS = ['primary', 'secondary', 'success', 'info', 'warning', 'error'] as const
+// Saffron is light by nature: its tinted text needs one more step.
+const tintedText = (color: string) => (color === 'warning' ? 'text-warning-800 dark:text-warning' : `text-${color}-700 dark:text-${color}`)
+const tinted = <V extends string>(variants: V[], cls: (color: string) => string | Record<string, string>) =>
+  TINTED_COLORS.flatMap(color => variants.map(variant => ({ color, variant, class: cls(color) })))
+
+/**
  * Global look of Nuxt UI components, configured ONCE here (never re-styled per usage).
  * Only semantic classes (bg-default, text-muted, ring-default...) are allowed.
  */
@@ -38,6 +48,7 @@ export default defineAppConfig({
           xl: { base: 'min-h-14 px-6 py-3.5 text-base' },
         },
       },
+      compoundVariants: tinted(['soft', 'subtle', 'ghost'], tintedText),
       defaultVariants: { size: 'md' },
     },
     input: {
@@ -57,6 +68,10 @@ export default defineAppConfig({
     },
     badge: {
       slots: { base: 'rounded-full font-semibold' },
+      compoundVariants: tinted(['soft', 'subtle', 'outline'], tintedText),
+    },
+    alert: {
+      compoundVariants: tinted(['soft', 'subtle', 'outline'], color => ({ root: tintedText(color) })),
     },
     formField: {
       slots: { label: 'font-semibold text-highlighted', error: 'mt-1.5 text-error' },
