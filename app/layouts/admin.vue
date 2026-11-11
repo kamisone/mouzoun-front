@@ -56,7 +56,8 @@ useHead({ title, meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
     <UDashboardPanel>
       <template #header>
-        <UDashboardNavbar :title="title">
+        <!-- The page itself owns the single <h1> (MzPageHeader): the bar title is a paragraph. -->
+        <UDashboardNavbar :title="title" :as="{ title: 'p' }">
           <template #leading>
             <UDashboardSidebarCollapse :aria-label="t('admin.collapse')" />
           </template>
