@@ -19,14 +19,14 @@ const { money } = useMoney()
 const formatted = computed(() => money(props.cents, props.currency, { trimZeroCents: props.trimZeroCents }))
 const isFree = computed(() => props.cents === 0 && !props.showZero)
 const unitLabel = computed(() => (props.unit === 'night' ? t('common.perNight') : props.unit === 'person' ? t('common.perPerson') : ''))
-const sizes = { sm: 'text-sm', md: 'text-base', lg: 'text-2xl' }
+const sizes = { sm: 'text-small', md: 'text-body', lg: 'font-display text-h2' }
 </script>
 
 <template>
   <!-- Real spaces between the parts (not only CSS gaps): copy-paste and screen readers. -->
   <span class="inline-flex flex-wrap items-baseline gap-x-1" data-testid="mz-price">
-    <span v-if="props.from && !isFree" class="text-sm text-muted">{{ `${t('common.from')} ` }}</span>
-    <span class="font-semibold text-highlighted tabular-nums" :class="sizes[props.size]">{{ isFree ? t('price.free') : formatted }}</span>
-    <span v-if="unitLabel && !isFree" class="text-sm text-muted">{{ ` ${unitLabel}` }}</span>
+    <span v-if="props.from && !isFree" class="text-small text-muted">{{ `${t('common.from')} ` }}</span>
+    <span class="font-medium text-highlighted tabular-nums" :class="sizes[props.size]">{{ isFree ? t('price.free') : formatted }}</span>
+    <span v-if="unitLabel && !isFree" class="text-small text-muted">{{ ` ${unitLabel}` }}</span>
   </span>
 </template>

@@ -2,6 +2,7 @@
 //  - no colour literals (#hex, rgb(), hsl(), oklch()) — use semantic tokens (bg-default, text-muted...)
 //  - no raw palette classes (bg-terracotta-500, text-orange-600...) — use bg-primary, text-error...
 //  - no physical direction utilities (ml-, pr-, left-, text-right...) — use ms-, pe-, start-, text-end
+//  - no @nuxt/image `sizes` without breakpoint prefix
 // app/assets/css/main.css and app/theme/ are the only places allowed to hold raw colours.
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
@@ -10,6 +11,8 @@ const root = new URL('..', import.meta.url).pathname
 const ALLOWED = [/^app\/assets\/css\//, /^app\/theme\//]
 const PALETTES = 'terracotta|palm|dune|saffron|indigo|clay|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|violet|purple|fuchsia|pink|rose|slate|gray|zinc|neutral|stone|black|white'
 const RULES = [
+  // @nuxt/image: an unprefixed size ("100vw") becomes a 1 px srcset candidate. Use "xs:100vw ...".
+  { name: 'image sizes without breakpoint (use xs:100vw ...)', re: /\bsizes(?:="|:\s*')\s*\d+(?:vw|px)/g },
   { name: 'colour literal', re: /(?<![\w&/-])#[0-9a-fA-F]{3,8}\b(?![\w-])|\b(?:rgba?|hsla?|oklch|oklab)\(/g },
   { name: 'raw palette class', re: new RegExp(String.raw`(?<![\w-])(?:[a-z]+:)*(?:bg|text|border|ring|outline|fill|stroke|from|via|to|divide|decoration|shadow|accent|caret)-(?:${PALETTES})(?:-\d{2,3})?(?:\/\d+)?(?![\w-])`, 'g') },
   {

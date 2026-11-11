@@ -1,14 +1,14 @@
 <script setup lang="ts">
-/** Horizontal page frame: max width + responsive gutters (16 px on phones). */
+/** Page frame: 1280 px max, 24 px gutters on mobile, 48 px on desktop. `editorial` = 680 px text column. */
 const props = withDefaults(defineProps<{
   as?: string
-  size?: 'page' | 'narrow' | 'prose'
+  size?: 'page' | 'narrow' | 'editorial'
 }>(), { as: 'div', size: 'page' })
-const widths = { page: 'max-w-page', narrow: 'max-w-narrow', prose: 'max-w-prose-wide' }
+const widths = { page: 'max-w-page', narrow: 'max-w-narrow', editorial: 'max-w-editorial' }
 </script>
 
 <template>
-  <component :is="props.as" class="mx-auto w-full px-4 sm:px-6 lg:px-8" :class="widths[props.size]">
+  <component :is="props.as" class="mx-auto w-full px-6 lg:px-12" :class="widths[props.size]">
     <slot />
   </component>
 </template>

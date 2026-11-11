@@ -1,8 +1,9 @@
 /*
- * Mouzoun design tokens — the single source of truth for colours, type, radius, shadows, spacing
- * rhythm, layers and motion. Components use SEMANTIC classes only (bg-default, text-muted,
- * border-default, text-primary...), never raw colours. See docs/DESIGN_SYSTEM.md.
- * This is the only file allowed to contain colour literals (checked by `npm run lint:tokens`).
+ * Mouzoun design tokens — quiet, editorial, photography-led.
+ * Restraint: ivory/ink neutrals and photography; ONE accent (muted terracotta) used rarely.
+ * Components use SEMANTIC classes only (bg-default, text-muted, border-default, text-primary...),
+ * the type scale (text-display-xl … text-caption) and the 4/8 spacing scale. This is the only
+ * file allowed to contain colour literals (checked by `npm run lint:tokens`). See docs/DESIGN_SYSTEM.md.
  */
 @import "tailwindcss";
 @import "@nuxt/ui";
@@ -11,113 +12,153 @@
    by Nuxt UI's colour plugin (--ui-color-primary-500: var(--color-terracotta-500)), so Tailwind's
    tree-shaking must not drop them (it would silently fall back to Tailwind's default palette). */
 @theme static {
-  /* ---- Typography (loaded by @nuxt/fonts, swapped for Arabic below) ---- */
-  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  /* ---- Typography: serif display, calm sans body (Arabic faces swapped below) ---- */
+  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display-ar: "Noto Kufi Arabic", "Fraunces", serif;
+  --font-display-ar: "Noto Naskh Arabic", "Cormorant Garamond", serif;
   --font-sans-ar: "IBM Plex Sans Arabic", "Inter", system-ui, sans-serif;
 
-  /* ---- Radius ---- */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.625rem;
-  --radius-lg: 0.875rem;
-  --radius-xl: 1.25rem;
+  /* Fluid type scale (390 → 1440 px viewport). text-display-xl … text-caption. */
+  --text-display-xl: clamp(3.5rem, 2.3857rem + 4.5714vw, 6.5rem);
+  --text-display-xl--line-height: 1.05;
+  --text-display-xl--letter-spacing: -0.02em;
+  --text-display-lg: clamp(2.75rem, 2.1rem + 2.6667vw, 4.5rem);
+  --text-display-lg--line-height: 1.08;
+  --text-display-lg--letter-spacing: -0.015em;
+  --text-h1: clamp(2.25rem, 1.7857rem + 1.9048vw, 3.5rem);
+  --text-h1--line-height: 1.1;
+  --text-h1--letter-spacing: -0.01em;
+  --text-h2: clamp(1.75rem, 1.4714rem + 1.1429vw, 2.5rem);
+  --text-h2--line-height: 1.15;
+  --text-h3: clamp(1.375rem, 1.2357rem + 0.5714vw, 1.75rem);
+  --text-h3--line-height: 1.2;
+  --text-body-lg: clamp(1.125rem, 1.0786rem + 0.1905vw, 1.25rem);
+  --text-body-lg--line-height: 1.6;
+  --text-body: clamp(1rem, 0.9768rem + 0.0952vw, 1.0625rem);
+  --text-body--line-height: 1.6;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.55;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.5;
+
+  /* Tracking: small uppercase labels and buttons (never in Arabic, see below) */
+  --tracking-label: 0.14em;
+  --tracking-button: 0.04em;
+
+  /* ---- Shape: small and consistent. 2 px inputs, 4 px cards and images, full = pills ---- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
+  --radius-2xl: 4px;
   --radius-full: 9999px;
 
-  /* ---- Shadows: soft and warm-tinted (dune hue), never neutral grey ---- */
-  --shadow-soft: 0 1px 2px oklch(30% 0.03 65 / 0.06), 0 2px 8px oklch(30% 0.03 65 / 0.06);
-  --shadow-warm: 0 4px 12px oklch(30% 0.04 60 / 0.08), 0 12px 32px oklch(30% 0.04 60 / 0.10);
-  --shadow-lifted: 0 8px 24px oklch(30% 0.05 55 / 0.12), 0 24px 56px oklch(30% 0.05 55 / 0.14);
+  /* ---- Shadows: almost none. Borders and surfaces do the work; one soft shadow for overlays ---- */
+  --shadow-2xs: 0 0 #0000;
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 0 #0000;
+  --shadow-md: 0 0 #0000;
+  --shadow-overlay: 0 12px 40px -12px oklch(20% 0.02 60 / 0.18), 0 2px 6px oklch(20% 0.02 60 / 0.06);
+  --shadow-lg: var(--shadow-overlay);
+  --shadow-xl: var(--shadow-overlay);
 
-  /* ---- Containers (max-w-page, max-w-prose-wide...) ---- */
+  /* ---- Grid: 1280 container, 680 editorial column ---- */
   --container-page: 80rem;
-  --container-narrow: 48rem;
-  --container-prose-wide: 42rem;
+  --container-editorial: 42.5rem;
+  --container-narrow: 56rem;
 
-  /* ---- Motion ---- */
-  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  /* ---- Motion: slow and subtle ---- */
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* BEGIN generated brand scales (npm run tokens) */
-  --color-terracotta-50: oklch(97.5% 0.013 40.6);
-  --color-terracotta-100: oklch(91.9% 0.036 40.6);
-  --color-terracotta-200: oklch(85.0% 0.065 40.6);
-  --color-terracotta-300: oklch(76.9% 0.101 40.6);
-  --color-terracotta-400: oklch(68.2% 0.130 40.6);
-  --color-terracotta-500: oklch(60.0% 0.145 40.6);
-  --color-terracotta-600: oklch(50.5% 0.138 40.6);
-  --color-terracotta-700: oklch(42.9% 0.123 40.6);
-  --color-terracotta-800: oklch(35.3% 0.104 40.6);
-  --color-terracotta-900: oklch(28.7% 0.084 40.6);
-  --color-terracotta-950: oklch(22.0% 0.065 40.6);
+  --color-terracotta-50: oklch(97.5% 0.013 41.3);
+  --color-terracotta-100: oklch(90.8% 0.030 41.3);
+  --color-terracotta-200: oklch(82.6% 0.054 41.3);
+  --color-terracotta-300: oklch(73.0% 0.084 41.3);
+  --color-terracotta-400: oklch(62.6% 0.108 41.3);
+  --color-terracotta-500: oklch(52.9% 0.121 41.3);
+  --color-terracotta-600: oklch(46.9% 0.109 40.1);
+  --color-terracotta-700: oklch(39.0% 0.102 41.3);
+  --color-terracotta-800: oklch(32.8% 0.087 41.3);
+  --color-terracotta-900: oklch(27.4% 0.070 41.3);
+  --color-terracotta-950: oklch(22.0% 0.054 41.3);
 
-  --color-palm-50: oklch(97.5% 0.012 130.4);
-  --color-palm-100: oklch(91.0% 0.024 130.4);
-  --color-palm-200: oklch(83.0% 0.044 130.4);
-  --color-palm-300: oklch(73.6% 0.069 130.4);
-  --color-palm-400: oklch(63.4% 0.088 130.4);
-  --color-palm-500: oklch(54.0% 0.098 130.4);
-  --color-palm-600: oklch(46.0% 0.093 130.4);
-  --color-palm-700: oklch(39.6% 0.083 130.4);
-  --color-palm-800: oklch(33.2% 0.071 130.4);
-  --color-palm-900: oklch(27.6% 0.057 130.4);
-  --color-palm-950: oklch(22.0% 0.044 130.4);
+  --color-olive-50: oklch(97.5% 0.005 130.5);
+  --color-olive-100: oklch(88.7% 0.010 130.5);
+  --color-olive-200: oklch(78.0% 0.018 130.5);
+  --color-olive-300: oklch(65.4% 0.028 130.5);
+  --color-olive-400: oklch(51.8% 0.036 130.5);
+  --color-olive-500: oklch(39.1% 0.040 130.5);
+  --color-olive-600: oklch(34.9% 0.038 130.5);
+  --color-olive-700: oklch(31.4% 0.034 130.5);
+  --color-olive-800: oklch(28.0% 0.029 130.5);
+  --color-olive-900: oklch(25.0% 0.023 130.5);
+  --color-olive-950: oklch(22.0% 0.018 130.5);
 
-  --color-dune-50: oklch(97.7% 0.010 81.8);
-  --color-dune-100: oklch(92.9% 0.015 71.7);
-  --color-dune-200: oklch(87.0% 0.027 71.7);
-  --color-dune-300: oklch(80.0% 0.042 71.7);
-  --color-dune-400: oklch(72.5% 0.054 71.7);
-  --color-dune-500: oklch(65.5% 0.060 71.7);
-  --color-dune-600: oklch(54.5% 0.057 71.7);
-  --color-dune-700: oklch(45.7% 0.051 71.7);
-  --color-dune-800: oklch(36.8% 0.043 71.7);
-  --color-dune-900: oklch(29.1% 0.035 71.7);
-  --color-dune-950: oklch(21.4% 0.015 66.9);
+  --color-stone-50: oklch(96.5% 0.010 81.8);
+  --color-stone-100: oklch(91.2% 0.006 78.1);
+  --color-stone-200: oklch(84.7% 0.011 78.1);
+  --color-stone-300: oklch(77.1% 0.018 78.1);
+  --color-stone-400: oklch(68.8% 0.023 78.1);
+  --color-stone-500: oklch(61.1% 0.025 78.1);
+  --color-stone-600: oklch(50.2% 0.024 78.1);
+  --color-stone-700: oklch(41.5% 0.021 78.1);
+  --color-stone-800: oklch(32.7% 0.018 78.1);
+  --color-stone-900: oklch(25.1% 0.015 78.1);
+  --color-stone-950: oklch(17.4% 0.007 78.1);
 
-  --color-saffron-50: oklch(97.5% 0.016 78.7);
-  --color-saffron-100: oklch(94.0% 0.033 78.7);
-  --color-saffron-200: oklch(89.8% 0.060 78.7);
-  --color-saffron-300: oklch(84.8% 0.093 78.7);
-  --color-saffron-400: oklch(79.4% 0.119 78.7);
-  --color-saffron-500: oklch(74.4% 0.133 78.7);
-  --color-saffron-600: oklch(61.3% 0.126 78.7);
-  --color-saffron-700: oklch(50.8% 0.106 78.7);
-  --color-saffron-800: oklch(40.4% 0.084 78.7);
-  --color-saffron-900: oklch(31.2% 0.065 78.7);
-  --color-saffron-950: oklch(22.0% 0.046 78.7);
+  --color-sage-50: oklch(97.5% 0.008 137.2);
+  --color-sage-100: oklch(90.6% 0.016 137.2);
+  --color-sage-200: oklch(82.1% 0.028 137.2);
+  --color-sage-300: oklch(72.2% 0.044 137.2);
+  --color-sage-400: oklch(61.4% 0.057 137.2);
+  --color-sage-500: oklch(51.4% 0.063 137.2);
+  --color-sage-600: oklch(44.1% 0.060 137.2);
+  --color-sage-700: oklch(38.2% 0.054 137.2);
+  --color-sage-800: oklch(32.3% 0.045 137.2);
+  --color-sage-900: oklch(27.2% 0.037 137.2);
+  --color-sage-950: oklch(22.0% 0.028 137.2);
 
-  --color-indigo-50: oklch(97.5% 0.012 264.8);
-  --color-indigo-100: oklch(89.2% 0.028 264.8);
-  --color-indigo-200: oklch(79.1% 0.050 264.8);
-  --color-indigo-300: oklch(67.1% 0.078 264.8);
-  --color-indigo-400: oklch(54.2% 0.100 264.8);
-  --color-indigo-500: oklch(42.3% 0.111 264.8);
-  --color-indigo-600: oklch(37.2% 0.106 264.8);
-  --color-indigo-700: oklch(33.1% 0.095 264.8);
-  --color-indigo-800: oklch(29.1% 0.080 264.8);
-  --color-indigo-900: oklch(25.5% 0.065 264.8);
-  --color-indigo-950: oklch(22.0% 0.050 264.8);
+  --color-dusk-50: oklch(97.5% 0.007 258.0);
+  --color-dusk-100: oklch(90.1% 0.014 258.0);
+  --color-dusk-200: oklch(81.0% 0.025 258.0);
+  --color-dusk-300: oklch(70.3% 0.040 258.0);
+  --color-dusk-400: oklch(58.8% 0.051 258.0);
+  --color-dusk-500: oklch(48.1% 0.056 258.0);
+  --color-dusk-600: oklch(41.6% 0.054 258.0);
+  --color-dusk-700: oklch(36.4% 0.048 258.0);
+  --color-dusk-800: oklch(31.1% 0.041 258.0);
+  --color-dusk-900: oklch(26.6% 0.033 258.0);
+  --color-dusk-950: oklch(22.0% 0.025 258.0);
 
-  --color-clay-50: oklch(97.5% 0.012 29.0);
-  --color-clay-100: oklch(90.6% 0.041 29.0);
-  --color-clay-200: oklch(82.3% 0.073 29.0);
-  --color-clay-300: oklch(72.4% 0.114 29.0);
-  --color-clay-400: oklch(61.7% 0.147 29.0);
-  --color-clay-500: oklch(51.8% 0.163 29.0);
-  --color-clay-600: oklch(44.3% 0.155 29.0);
-  --color-clay-700: oklch(38.4% 0.139 29.0);
-  --color-clay-800: oklch(32.4% 0.118 29.0);
-  --color-clay-900: oklch(27.2% 0.095 29.0);
-  --color-clay-950: oklch(22.0% 0.073 29.0);
+  --color-ochre-50: oklch(97.5% 0.013 72.9);
+  --color-ochre-100: oklch(91.3% 0.026 72.9);
+  --color-ochre-200: oklch(83.7% 0.047 72.9);
+  --color-ochre-300: oklch(74.8% 0.073 72.9);
+  --color-ochre-400: oklch(65.1% 0.094 72.9);
+  --color-ochre-500: oklch(56.2% 0.105 72.9);
+  --color-ochre-600: oklch(47.6% 0.100 72.9);
+  --color-ochre-700: oklch(40.8% 0.087 72.9);
+  --color-ochre-800: oklch(34.0% 0.073 72.9);
+  --color-ochre-900: oklch(28.0% 0.060 72.9);
+  --color-ochre-950: oklch(22.0% 0.047 72.9);
+
+  --color-clay-50: oklch(97.5% 0.012 29.6);
+  --color-clay-100: oklch(90.3% 0.034 29.6);
+  --color-clay-200: oklch(81.5% 0.062 29.6);
+  --color-clay-300: oklch(71.0% 0.097 29.6);
+  --color-clay-400: oklch(59.8% 0.124 29.6);
+  --color-clay-500: oklch(49.4% 0.138 29.6);
+  --color-clay-600: oklch(42.5% 0.131 29.6);
+  --color-clay-700: oklch(37.1% 0.117 29.6);
+  --color-clay-800: oklch(31.6% 0.099 29.6);
+  --color-clay-900: oklch(26.8% 0.080 29.6);
+  --color-clay-950: oklch(22.0% 0.062 29.6);
   /* END generated brand scales */
 }
 
 :root {
-  /* Vertical rhythm of page sections (MzSection) and their inner gaps. */
-  --section-y: clamp(3.5rem, 2rem + 6vw, 7rem);
-  --section-gap: clamp(1.5rem, 1rem + 2vw, 2.5rem);
-
   /* Layers */
   --z-base: 0;
   --z-raised: 10;
@@ -126,98 +167,139 @@
   --z-modal: 60;
   --z-toast: 70;
 
-  /* Motion durations (honoured only when motion is allowed, see below) */
-  --duration-fast: 120ms;
-  --duration-base: 200ms;
-  --duration-slow: 360ms;
+  /* Motion durations (all neutralised under prefers-reduced-motion) */
+  --duration-header: 300ms;
+  --duration-reveal: 600ms;
+  --duration-zoom: 600ms;
 
-  /* Nuxt UI base radius (components derive their radii from it) and container. */
-  --ui-radius: 0.5rem;
+  --ui-radius: 2px;
   --ui-container: var(--container-page);
-  --ui-header-height: 4.5rem;
+  --ui-header-height: 5rem;
 }
 
 /*
- * Semantic tokens. Unlayered on purpose: they override Nuxt UI's defaults (layer theme) and the
+ * Semantic colours. Unlayered on purpose: they override Nuxt UI's defaults (layer theme) and its
  * runtime colour plugin. Every pair is checked for WCAG AA by tests/unit/contrast.spec.ts.
- *
- * Light = warm sand. Brand shade 500 is too light for text on sand, so text-level brand
- * colours use 600/700 here.
  */
 :root,
 .light {
-  --ui-bg: var(--ui-color-neutral-50);
-  --ui-bg-muted: var(--ui-color-neutral-100);
-  --ui-bg-elevated: oklch(99.4% 0.004 80);
-  --ui-bg-accented: var(--ui-color-neutral-200);
-  --ui-bg-inverted: var(--ui-color-neutral-900);
+  --ui-bg: #F7F3EC;            /* ivory */
+  --ui-bg-elevated: #FFFDF9;   /* elevated surface */
+  --ui-bg-muted: #EDE6DA;      /* sand: subtle surface */
+  --ui-bg-accented: #E2D9CA;
+  --ui-bg-inverted: #1C1915;
 
-  --ui-text-dimmed: var(--ui-color-neutral-600);
-  --ui-text-muted: var(--ui-color-neutral-700);
-  --ui-text-toned: var(--ui-color-neutral-800);
-  --ui-text: var(--ui-color-neutral-900);
-  --ui-text-highlighted: var(--ui-color-neutral-950);
-  --ui-text-inverted: var(--ui-color-neutral-50);
+  --ui-text-highlighted: #1C1915; /* ink */
+  --ui-text: #2A251F;
+  --ui-text-toned: #4A433B;
+  --ui-text-muted: #6B6258;
+  --ui-text-dimmed: #73695D;   /* placeholders: still 4.5:1 */
+  --ui-text-inverted: #F7F3EC;
 
-  --ui-border: var(--ui-color-neutral-200);
-  --ui-border-muted: var(--ui-color-neutral-100);
-  --ui-border-accented: var(--ui-color-neutral-300);
-  --ui-border-inverted: var(--ui-color-neutral-900);
+  --ui-border: #E2D9CA;
+  --ui-border-muted: #EDE6DA;
+  --ui-border-accented: #CDC2B1;
+  --ui-border-inverted: #1C1915;
 
-  --ui-primary: var(--ui-color-primary-600);
-  --ui-secondary: var(--ui-color-secondary-600);
-  --ui-success: var(--ui-color-success-600);
+  --ui-primary: var(--ui-color-primary-500);
+  --ui-secondary: var(--ui-color-secondary-500);
+  --ui-success: var(--ui-color-success-500);
   --ui-info: var(--ui-color-info-500);
-  --ui-warning: var(--ui-color-warning-700);
-  --ui-error: var(--ui-color-error-600);
+  --ui-warning: var(--ui-color-warning-600);
+  --ui-error: var(--ui-color-error-500);
 }
 
-/* Dark = "desert night": warm brown-black, never blue-grey. */
 .dark {
-  --ui-bg: var(--ui-color-neutral-950);
-  --ui-bg-muted: var(--ui-color-neutral-900);
-  --ui-bg-elevated: var(--ui-color-neutral-900);
-  --ui-bg-accented: var(--ui-color-neutral-800);
-  --ui-bg-inverted: var(--ui-color-neutral-50);
+  --ui-bg: #12100D;
+  --ui-bg-elevated: #1B1814;
+  --ui-bg-muted: #1B1814;
+  --ui-bg-accented: #2C2721;
+  --ui-bg-inverted: #F2ECE2;
 
-  --ui-text-dimmed: var(--ui-color-neutral-400);
-  --ui-text-muted: var(--ui-color-neutral-300);
-  --ui-text-toned: var(--ui-color-neutral-200);
-  --ui-text: var(--ui-color-neutral-100);
-  --ui-text-highlighted: var(--ui-color-neutral-50);
-  --ui-text-inverted: var(--ui-color-neutral-950);
+  --ui-text-highlighted: #F2ECE2;
+  --ui-text: #E7E0D4;
+  --ui-text-toned: #CBC1B1;
+  --ui-text-muted: #A39886;
+  --ui-text-dimmed: #978C7A;
+  --ui-text-inverted: #12100D;
 
-  --ui-border: var(--ui-color-neutral-800);
-  --ui-border-muted: var(--ui-color-neutral-900);
-  --ui-border-accented: var(--ui-color-neutral-700);
-  --ui-border-inverted: var(--ui-color-neutral-50);
+  --ui-border: #2C2721;
+  --ui-border-muted: #221E19;
+  --ui-border-accented: #3A342C;
+  --ui-border-inverted: #F2ECE2;
 
-  --ui-primary: var(--ui-color-primary-400);
-  --ui-secondary: var(--ui-color-secondary-300);
+  --ui-primary: var(--ui-color-primary-300);
+  --ui-secondary: var(--ui-color-secondary-200);
   --ui-success: var(--ui-color-success-300);
   --ui-info: var(--ui-color-info-300);
-  --ui-warning: var(--ui-color-warning-400);
+  --ui-warning: var(--ui-color-warning-300);
   --ui-error: var(--ui-color-error-300);
 
   color-scheme: dark;
 }
 
-/* Arabic: the same type roles with Arabic faces — for the whole page (html[lang^="ar"]) and
-   for any Arabic fragment inside another language (e.g. the AR tab of a translatable field). */
+/* Arabic: the same type roles with Arabic faces; no tracking, no uppercase (they do not apply
+   to Arabic script). For the whole page and for Arabic fragments inside other languages. */
 :lang(ar) {
   --font-sans: var(--font-sans-ar);
   --font-display: var(--font-display-ar);
+  --tracking-label: 0;
+  --tracking-button: 0;
   font-family: var(--font-sans);
 }
 
+/* Small uppercase tracked label above titles. */
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ui-text-muted);
+  &:lang(ar) {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: var(--text-small);
+  }
+}
+
+/* Tertiary action: text link with an underline that draws in on hover. */
+@utility link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 100% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  padding-bottom: 2px;
+  transition: background-size var(--duration-header) var(--ease-editorial);
+  &:hover {
+    background-size: 0% 1px;
+    background-position: 100% 100%;
+  }
+  &:lang(ar):hover,
+  [dir="rtl"] &:hover {
+    background-position: 0 100%;
+  }
+}
+
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
-    @apply bg-default text-default font-sans antialiased;
+    @apply bg-default text-default font-sans text-body antialiased;
   }
 
   h1, h2, h3, .font-display {
     font-family: var(--font-display);
+    font-weight: 400;
     @apply text-highlighted;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   /* One visible focus ring for everything focusable (WCAG 2.4.7 / 2.4.11). */
@@ -227,8 +309,8 @@
   }
 
   ::selection {
-    background-color: var(--ui-color-primary-200);
-    color: var(--ui-color-neutral-950);
+    background-color: var(--ui-bg-accented);
+    color: var(--ui-text-highlighted);
   }
 }
 

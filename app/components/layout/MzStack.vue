@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Flex stack with a spacing scale; `direction="row"` wraps on small screens. */
+/** Flex stack on the spacing scale (4 · 8 · 16 · 24 · 48 px); `direction="row"` wraps. */
 const props = withDefaults(defineProps<{
   direction?: 'column' | 'row'
   gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
@@ -9,7 +9,7 @@ const props = withDefaults(defineProps<{
   as?: string
 }>(), { direction: 'column', gap: 'md', align: 'stretch', justify: 'start', wrap: false, as: 'div' })
 
-const gaps = { xs: 'gap-1', sm: 'gap-2', md: 'gap-4', lg: 'gap-6', xl: 'gap-10' }
+const gaps = { xs: 'gap-1', sm: 'gap-2', md: 'gap-4', lg: 'gap-6', xl: 'gap-12' }
 const aligns = { start: 'items-start', center: 'items-center', end: 'items-end', stretch: 'items-stretch', baseline: 'items-baseline' }
 const justifies = { start: 'justify-start', center: 'justify-center', end: 'justify-end', between: 'justify-between' }
 </script>

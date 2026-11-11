@@ -53,7 +53,7 @@ const pairs: Pair[] = [
   ['ui-info', 'ui-bg', BODY],
   ['ui-warning', 'ui-bg', BODY],
   ['ui-error', 'ui-bg', BODY],
-  ['ui-text-inverted', 'ui-primary', BODY], // solid buttons, CTA banner
+  ['ui-text-inverted', 'ui-primary', BODY], // solid primary buttons
   ['ui-text-inverted', 'ui-secondary', BODY],
   ['ui-text-inverted', 'ui-error', BODY],
   ['ui-text-inverted', 'ui-bg-inverted', BODY],
@@ -91,15 +91,16 @@ describe.each(['primary', 'secondary', 'success', 'info', 'warning', 'error'])('
 })
 
 describe('palette', () => {
-  it('keeps each brand colour exact at 500 and the dune ends exact', async () => {
+  it('keeps each brand colour exact at 500, the specified hover and the stone ends exact', async () => {
     const { BRAND_COLORS, scale } = await import('../../app/theme/palette')
     const { oklchToRgb, rgbToHex } = await import('../../app/theme/color-math')
     for (const [name, color] of Object.entries(BRAND_COLORS)) {
       expect(rgbToHex(oklchToRgb(scale(color)[500])).toLowerCase(), name).toBe(color.base.toLowerCase())
     }
-    const dune = scale(BRAND_COLORS.dune)
-    expect(rgbToHex(oklchToRgb(dune[50]))).toBe('#fbf7f0')
-    expect(rgbToHex(oklchToRgb(dune[950]))).toBe('#1e1812')
+    expect(rgbToHex(oklchToRgb(scale(BRAND_COLORS.terracotta)[600]))).toBe('#8c4227')
+    const stone = scale(BRAND_COLORS.stone)
+    expect(rgbToHex(oklchToRgb(stone[50]))).toBe('#f7f3ec')
+    expect(rgbToHex(oklchToRgb(stone[950]))).toBe('#12100d')
   })
 
   it('is in sync with main.css (run `npm run tokens` after editing palette.ts)', async () => {

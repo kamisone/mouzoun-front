@@ -8,7 +8,9 @@ const props = withDefaults(defineProps<{
   /** `route`: go to the same page in the other language (public site). `state`: switch the
    *  language in place, for pages without localized URLs (admin). */
   mode?: 'route' | 'state'
-}>(), { size: undefined, showLabel: true, mode: 'route' })
+  /** `text`: just the language code (editorial header); `icon`: with the languages icon. */
+  variant?: 'icon' | 'text'
+}>(), { size: undefined, showLabel: true, mode: 'route', variant: 'icon' })
 
 const { t, locale, locales, setLocale } = useI18n()
 const switchLocalePath = useSwitchLocalePath()
@@ -31,7 +33,7 @@ const items = computed<DropdownMenuItem[]>(() =>
 <template>
   <UDropdownMenu :items="items" :content="{ align: 'end' }">
     <UButton
-      icon="i-lucide-languages"
+      :icon="props.variant === 'icon' ? 'i-lucide-languages' : undefined"
       color="neutral"
       variant="ghost"
       :size="props.size ?? densitySize"

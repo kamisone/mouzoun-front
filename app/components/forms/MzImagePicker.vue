@@ -8,9 +8,9 @@ import { ACCEPTED_IMAGE_TYPES } from '~/composables/useMediaUpload'
  */
 const props = withDefaults(defineProps<{
   label?: string
-  ratio?: string
+  ratio?: '16/9' | '3/2' | '4/5' | '1/1' | '4/3'
   disabled?: boolean
-}>(), { label: undefined, ratio: '4/3', disabled: false })
+}>(), { label: undefined, ratio: '3/2', disabled: false })
 
 const model = defineModel<Pick<Media, 'id' | 'url'> | null>({ default: null })
 const { t } = useI18n()
@@ -29,7 +29,7 @@ async function onFile(event: Event) {
 
 <template>
   <div class="flex flex-col gap-3">
-    <div class="relative overflow-hidden rounded-lg border border-dashed border-accented bg-muted" :style="{ aspectRatio: props.ratio }">
+    <div class="relative overflow-hidden rounded-sm border border-dashed border-accented bg-muted" :style="{ aspectRatio: props.ratio }">
       <MzImage v-if="model?.url" :src="model.url" :alt="props.label ?? ''" :decorative="!props.label" :ratio="props.ratio" :rounded="false" />
       <div v-else class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted">
         <UIcon name="i-lucide-image-plus" class="size-8" aria-hidden="true" />

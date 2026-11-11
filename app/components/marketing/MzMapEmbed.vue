@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
- * Map of a place. Privacy first: nothing is loaded from a third party until the visitor asks
- * (OpenStreetMap embed), and a plain link to Google Maps always works.
+ * Map of a place. Privacy first: nothing loads from a third party until the visitor asks
+ * (OpenStreetMap embed); a plain link to Google Maps always works.
  */
 const props = withDefaults(defineProps<{
   lat: number
@@ -9,7 +9,9 @@ const props = withDefaults(defineProps<{
   zoom?: number
   title?: string
   ratio?: string
-}>(), { zoom: 11, title: undefined, ratio: '16/9' })
+  /** Photograph shown until the map is requested (srcset from usePhoto). */
+  preview?: { src: string, srcset?: string, lqip?: string }
+}>(), { zoom: 11, title: undefined, ratio: '16/9', preview: undefined })
 
 const { t } = useI18n()
 const loaded = ref(false)
@@ -22,8 +24,8 @@ const mapsUrl = computed(() => `https://www.google.com/maps?q=${props.lat},${pro
 </script>
 
 <template>
-  <div class="flex flex-col gap-3">
-    <div class="relative overflow-hidden rounded-lg bg-elevated ring ring-default" :style="{ aspectRatio: props.ratio }">
+  <div class="flex flex-col gap-4">
+    <div class="relative overflow-hidden rounded-sm bg-muted" :style="{ aspectRatio: props.ratio }">
       <iframe
         v-if="loaded"
         :src="embedUrl"
@@ -32,16 +34,17 @@ const mapsUrl = computed(() => `https://www.google.com/maps?q=${props.lat},${pro
         loading="lazy"
         referrerpolicy="no-referrer"
       />
-      <div v-else class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
-        <UIcon name="i-lucide-map" class="size-8 text-primary" aria-hidden="true" />
-        <p class="max-w-sm text-sm text-muted">{{ t('map.consent') }}</p>
-        <UButton :label="t('map.load')" icon="i-lucide-map-pin" variant="soft" @click="loaded = true" />
+      <div v-else class="absolute inset-0 flex flex-col items-start justify-end gap-4 p-6 lg:p-8" :class="props.preview && 'dark'">
+        <template v-if="props.preview">
+          <MzImage fill decorative alt="" :src="props.preview.src" :srcset="props.preview.srcset" :lqip="props.preview.lqip" sizes="xs:100vw lg:50vw" />
+          <div class="absolute inset-0 bg-linear-to-t from-default/85 to-default/10" aria-hidden="true" />
+        </template>
+        <p class="relative max-w-sm text-small text-highlighted">{{ t('map.consent') }}</p>
+        <UButton :label="t('map.load')" color="neutral" variant="outline" size="sm" class="relative" @click="loaded = true" />
       </div>
     </div>
-    <ULink :to="mapsUrl" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-      <UIcon name="i-lucide-external-link" class="size-4" aria-hidden="true" />
-      {{ t('common.openInMaps') }}
-      <span class="sr-only">{{ t('a11y.externalLink') }}</span>
+    <ULink :to="mapsUrl" target="_blank" rel="noopener" class="link-underline self-start text-small font-medium text-highlighted">
+      {{ t('common.openInMaps') }}<span class="sr-only"> {{ t('a11y.externalLink') }}</span>
     </ULink>
   </div>
 </template>

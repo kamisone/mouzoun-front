@@ -13,21 +13,22 @@ export interface BrandColor {
   /** Optional exact ends of the scale (otherwise derived from the base). */
   lightest?: string
   darkest?: string
+  /** Optional exact shades (e.g. a specified hover colour). */
+  fixed?: Partial<Record<Shade, string>>
 }
 
 export const BRAND_COLORS = {
-  /** Earth, kasbah walls — primary. */
-  terracotta: { base: '#C65D35' },
-  /** Oasis, olive and date trees — secondary, success. */
-  palm: { base: '#5B7A3A' },
-  /** Warm sand neutral: never pure grey or black. */
-  dune: { base: '#A88B68', lightest: '#FBF7F0', darkest: '#1E1812' },
-  /** Dates, sunset — warning, accent. */
-  saffron: { base: '#D9A13B' },
-  /** Tuareg blue, night sky — info. */
-  indigo: { base: '#2F4A8A' },
-  /** Clay red — error. */
-  clay: { base: '#B3362B' },
+  /** Muted terracotta — the one accent: primary CTA, links, focus ring, small highlights. */
+  terracotta: { base: '#A4502F', fixed: { 600: '#8C4227' } },
+  /** Deep olive — secondary, used sparingly (tags, small details). */
+  olive: { base: '#3E4A33' },
+  /** Warm stone neutral: ivory to night, never pure white or black. */
+  stone: { base: '#8C8273', lightest: '#F7F3EC', darkest: '#12100D' },
+  /** Desaturated status colours (forms and admin only). */
+  sage: { base: '#56704C' },
+  dusk: { base: '#4A5F7E' },
+  ochre: { base: '#9A6A22' },
+  clay: { base: '#A13B2F' },
 } satisfies Record<string, BrandColor>
 
 export type BrandColorName = keyof typeof BRAND_COLORS
@@ -47,6 +48,8 @@ export function scale(color: BrandColor): Record<Shade, Oklch> {
   const darkest = color.darkest ? rgbToOklch(hexToRgb(color.darkest)) : { l: 0.22, c: base.c * CHROMA[950], h: base.h }
   const out = {} as Record<Shade, Oklch>
   for (const shade of SHADES) {
+    const fixed = color.fixed?.[shade]
+    if (fixed) { out[shade] = rgbToOklch(hexToRgb(fixed)); continue }
     if (shade === 500) { out[shade] = base; continue }
     if (shade === 50 && color.lightest) { out[shade] = lightest; continue }
     if (shade === 950 && color.darkest) { out[shade] = darkest; continue }

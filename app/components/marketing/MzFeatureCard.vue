@@ -1,23 +1,22 @@
 <script setup lang="ts">
-/** Icon + title + text, optionally a link (the whole card is clickable, one link only). */
+/** Short text block (number or label, serif title, text), no border, no icon tile. */
 const props = withDefaults(defineProps<{
-  icon: string
   title: string
   description?: string
+  /** Small label or number above the title ("01", "Le camp"). */
+  label?: string
   to?: string
-}>(), { description: undefined, to: undefined })
+}>(), { description: undefined, label: undefined, to: undefined })
 </script>
 
 <template>
-  <UCard class="relative h-full transition-shadow duration-200 has-[a:hover]:shadow-warm">
-    <span class="mb-4 flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
-      <UIcon :name="props.icon" class="size-6" aria-hidden="true" />
-    </span>
-    <h3 class="font-display text-lg font-semibold">
+  <div class="relative flex flex-col border-t border-default pt-6">
+    <p v-if="props.label" class="eyebrow mb-4">{{ props.label }}</p>
+    <h3 class="text-h3">
       <NuxtLink v-if="props.to" :to="props.to" class="after:absolute after:inset-0 after:content-['']">{{ props.title }}</NuxtLink>
       <template v-else>{{ props.title }}</template>
     </h3>
-    <p v-if="props.description" class="mt-2 text-muted">{{ props.description }}</p>
+    <p v-if="props.description" class="mt-3 text-body text-muted">{{ props.description }}</p>
     <slot />
-  </UCard>
+  </div>
 </template>

@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
 import { BRAND_COLORS, SHADES } from '~/theme/palette'
-import type { GalleryImage } from '~/components/marketing/MzGallery.vue'
 
 /**
- * Visual review tool of the design system: tokens, type, and every Mz component with its
- * variants, in light/dark and LTR/RTL. Dev only (or staff in production).
+ * Visual review tool of the design system: tokens, type, buttons, section templates and every
+ * Mz component, in light/dark and LTR/RTL. Dev only (or staff in production).
  */
 definePageMeta({ middleware: 'styleguide' })
 useHead({ title: 'Style guide', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
 const { t } = useI18n()
 const toast = useToast()
+const { photo } = usePhoto()
 
 // ---- Direction override (checks RTL without switching language) ----
 const direction = ref<'ltr' | 'rtl'>('ltr')
@@ -19,27 +19,42 @@ const pageDir = useTextDirection({ selector: 'html' })
 watch(direction, d => (pageDir.value = d))
 onMounted(() => (direction.value = pageDir.value === 'rtl' ? 'rtl' : 'ltr'))
 
-const colors = Object.keys(BRAND_COLORS)
-const semanticBg = ['bg-default', 'bg-muted', 'bg-elevated', 'bg-accented', 'bg-inverted']
-const semanticText = ['text-highlighted', 'text-default', 'text-toned', 'text-muted', 'text-dimmed', 'text-primary', 'text-secondary', 'text-success', 'text-info', 'text-warning', 'text-error']
-const radii = ['rounded-sm', 'rounded-md', 'rounded-lg', 'rounded-xl', 'rounded-full']
-const shadows = ['shadow-soft', 'shadow-warm', 'shadow-lifted']
-const buttonColors = ['primary', 'secondary', 'success', 'info', 'warning', 'error', 'neutral'] as const
-const buttonVariants = ['solid', 'outline', 'soft', 'subtle', 'ghost', 'link'] as const
+const semantic = [
+  ['bg-default', 'Background'],
+  ['bg-elevated', 'Elevated'],
+  ['bg-muted', 'Sand (subtle)'],
+  ['bg-accented', 'Accented'],
+  ['bg-inverted', 'Ink'],
+] as const
+const textTokens = ['text-highlighted', 'text-default', 'text-toned', 'text-muted', 'text-dimmed', 'text-primary'] as const
+const typeScale = [
+  ['text-display-xl', 'Display XL · 56→104', 'font-display'],
+  ['text-display-lg', 'Display L · 44→72', 'font-display'],
+  ['text-h1', 'H1 · 36→56', 'font-display'],
+  ['text-h2', 'H2 · 28→40', 'font-display'],
+  ['text-h3', 'H3 · 22→28', 'font-display'],
+  ['text-body-lg', 'Body L · 18→20', 'font-sans'],
+  ['text-body', 'Body · 16→17', 'font-sans'],
+  ['text-small', 'Small · 14', 'font-sans'],
+  ['text-caption', 'Caption · 12', 'font-sans'],
+] as const
+const spacing = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 40] as const
+const spacingClass: Record<number, string> = { 1: 'w-1', 2: 'w-2', 3: 'w-3', 4: 'w-4', 6: 'w-6', 8: 'w-8', 12: 'w-12', 16: 'w-16', 24: 'w-24', 32: 'w-32', 40: 'w-40' }
 
-// ---- Sample data (placeholders) ----
-// Local SVG placeholders (public/images/placeholders): no third-party requests.
-const img = (name: string) => `/images/placeholders/${name}.svg`
-const gallery: GalleryImage[] = [
-  { src: img('dunes'), alt: 'Dunes at sunset (sample)', caption: 'Dunes (sample)' },
-  { src: img('palms'), alt: 'Palm grove (sample)' },
-  { src: img('tent'), alt: 'Nomad tent (sample)' },
-  { src: img('camel'), alt: 'Camels (sample)' },
-]
+const tent = computed(() => photo('nomad-tent'))
+const night = computed(() => photo('night-sky'))
+const offers = computed(() => [
+  { title: 'Tente nomade', description: 'Tente berbère meublée, lits, tapis et lanternes.', p: photo('nomad-tent'), price: 4500, unit: 'night' as const, duration: null },
+  { title: 'Quad dans les dunes', description: 'Une heure de pistes jusqu’aux grandes dunes.', p: photo('quads'), price: 4500, unit: 'person' as const, duration: 60 },
+  { title: 'Thé au café du camp', description: 'Format 3:2, sans prix.', p: photo('mint-tea'), price: null, unit: undefined, duration: 30 },
+])
+const gallery = computed(() => (['oasis', 'mint-tea', 'host', 'sunset-ripples', 'camp'] as const).map(s => ({ src: photo(s).src, srcset: photo(s).srcset, alt: photo(s).alt, lqip: photo(s).lqip })))
+
 const price = ref<number | null>(12050)
 const title = ref<Record<string, string>>({ fr: 'Tente nomade', en: 'Nomad tent', ar: '' })
 const dates = ref({ start: '2027-01-15', end: '2027-01-17' })
 const image = ref<{ id: string, url: string } | null>(null)
+const email = ref('')
 const confirmOpen = ref(false)
 const drawerOpen = ref(false)
 const { query, update } = useTableQuery({ perPage: 5 })
@@ -60,201 +75,179 @@ const columns: TableColumn<Row>[] = [
 
 <template>
   <div class="pb-24">
-    <!-- Controls -->
-    <div class="sticky top-(--ui-header-height) z-(--z-raised) border-b border-default bg-elevated/95 backdrop-blur">
-      <MzContainer class="flex flex-wrap items-center gap-3 py-3">
-        <p class="font-display text-lg font-semibold">Style guide</p>
+    <div class="sticky top-(--ui-header-height) z-(--z-raised) border-b border-default bg-default">
+      <MzContainer class="flex flex-wrap items-center gap-4 py-3">
+        <p class="font-display text-h3">Style guide</p>
         <UFieldGroup>
           <UButton label="LTR" :variant="direction === 'ltr' ? 'solid' : 'outline'" color="neutral" size="sm" @click="direction = 'ltr'" />
           <UButton label="RTL" :variant="direction === 'rtl' ? 'solid' : 'outline'" color="neutral" size="sm" @click="direction = 'rtl'" />
         </UFieldGroup>
         <MzThemeToggle size="sm" />
-        <MzLocaleSwitcher size="sm" />
+        <MzLocaleSwitcher size="sm" variant="text" />
       </MzContainer>
     </div>
 
-    <MzSection title="Colour scales" eyebrow="Tokens" description="Generated in OKLCH from app/theme/palette.ts (npm run tokens). Base colour at 500.">
-      <div class="flex flex-col gap-4">
-        <div v-for="name in colors" :key="name">
-          <p class="mb-1 font-semibold">{{ name }}</p>
-          <div class="grid grid-cols-11 gap-1">
-            <div v-for="shade in SHADES" :key="shade" class="flex flex-col gap-1">
-              <div class="h-12 rounded-md ring ring-default" :style="{ background: `var(--color-${name}-${shade})` }" />
-              <span class="text-center text-xs text-muted tabular-nums">{{ shade }}</span>
+    <MzSection eyebrow="Tokens" title="Colour" description="Ivory and ink, photography, and one accent used rarely. Status colours appear only in forms and admin." space="md">
+      <div class="grid gap-6 md:grid-cols-2">
+        <div v-for="mode in ['light', 'dark']" :key="mode" :class="mode" class="rounded-sm bg-default p-6 ring ring-default">
+          <p class="eyebrow mb-4">{{ mode }}</p>
+          <div class="grid grid-cols-5 gap-2">
+            <div v-for="[cls, label] in semantic" :key="cls" class="flex flex-col gap-2">
+              <div class="h-16 rounded-xs ring ring-default" :class="cls" />
+              <span class="text-caption text-muted">{{ label }}</span>
             </div>
           </div>
-        </div>
-      </div>
-    </MzSection>
-
-    <MzSection title="Semantic tokens" eyebrow="Tokens" description="What components use. Light (warm sand) and dark (desert night), side by side." tone="muted">
-      <div class="grid gap-4 md:grid-cols-2">
-        <div v-for="mode in ['light', 'dark']" :key="mode" :class="mode" class="rounded-lg bg-default p-5 text-default ring ring-default">
-          <p class="mb-3 font-semibold text-highlighted">{{ mode }}</p>
-          <div class="mb-4 grid grid-cols-5 gap-2">
-            <div v-for="bg in semanticBg" :key="bg" class="flex flex-col gap-1">
-              <div class="h-10 rounded-md ring ring-default" :class="bg" />
-              <code class="text-[10px] text-muted">{{ bg }}</code>
-            </div>
-          </div>
-          <ul class="grid grid-cols-2 gap-1 text-sm">
-            <li v-for="cls in semanticText" :key="cls" :class="cls">{{ cls }}</li>
+          <ul class="mt-6 flex flex-col gap-1 text-small">
+            <li v-for="cls in textTokens" :key="cls" :class="cls">{{ cls }} — Le silence du désert</li>
           </ul>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <UButton label="Primary" />
-            <UButton label="Secondary" color="secondary" />
-            <UButton label="Neutral" color="neutral" variant="outline" />
+        </div>
+      </div>
+      <div class="mt-12 flex flex-col gap-4">
+        <div v-for="name in Object.keys(BRAND_COLORS)" :key="name" class="grid grid-cols-[6rem_1fr] items-center gap-4">
+          <span class="text-small text-muted">{{ name }}</span>
+          <div class="grid grid-cols-11 gap-1">
+            <div v-for="shade in SHADES" :key="shade" class="h-8 rounded-xs" :style="{ background: `var(--color-${name}-${shade})` }" :title="`${name}-${shade}`" />
           </div>
         </div>
       </div>
     </MzSection>
 
-    <MzSection title="Typography" eyebrow="Tokens">
-      <div class="grid gap-8 md:grid-cols-2">
-        <div class="flex flex-col gap-3">
-          <p class="font-display text-5xl font-semibold">Fraunces display</p>
-          <h2 class="text-3xl font-semibold">Heading 2 — Nuits sous les étoiles</h2>
-          <h3 class="text-xl font-semibold">Heading 3 — The farm and palm grove</h3>
-          <p class="text-lg">Lead text — Inter, regular. Camping, café, quads, farm fields, village visits.</p>
-          <p>Body — The quick brown fox jumps over the lazy dog. 0123456789 € 1 250,00</p>
-          <p class="text-sm text-muted">Small, muted — captions and help text.</p>
+    <MzSection eyebrow="Tokens" title="Typography" description="Cormorant Garamond for display, Inter for reading. Arabic: Noto Naskh Arabic and IBM Plex Sans Arabic, no tracking, no uppercase." tone="sand" space="md">
+      <div class="flex flex-col divide-y divide-default border-y border-default">
+        <div v-for="[cls, label, family] in typeScale" :key="cls" class="grid items-baseline gap-4 py-6 lg:grid-cols-12">
+          <span class="text-caption text-muted lg:col-span-2">{{ label }}</span>
+          <p class="lg:col-span-5" :class="[cls, family, family === 'font-display' && 'text-highlighted']">Le silence du désert</p>
+          <p lang="ar" dir="rtl" class="lg:col-span-5" :class="[cls, family, family === 'font-display' && 'text-highlighted']">سكون الصحراء</p>
         </div>
-        <div lang="ar" dir="rtl" class="flex flex-col gap-3">
-          <p class="font-display text-5xl font-semibold">نوتو كوفي عربي</p>
-          <h2 class="text-3xl font-semibold">عنوان ثانٍ — ليالٍ تحت النجوم</h2>
-          <h3 class="text-xl font-semibold">عنوان ثالث — المزرعة وواحة النخيل</h3>
-          <p class="text-lg">نص تمهيدي — IBM Plex Sans Arabic، تخييم ومقهى ودراجات رباعية.</p>
-          <p>نص عادي — زيارة القرية والمزرعة والماشية. 0123456789</p>
-          <p class="text-sm text-muted">نص صغير للتعليقات والمساعدة.</p>
+      </div>
+      <div class="mt-12 grid gap-6 md:grid-cols-2">
+        <p class="eyebrow">Eyebrow label · Expériences</p>
+        <p lang="ar" dir="rtl" class="eyebrow">تسمية صغيرة · التجارب</p>
+      </div>
+    </MzSection>
+
+    <MzSection eyebrow="Tokens" title="Space, shape, depth" space="md">
+      <div class="grid gap-12 lg:grid-cols-2">
+        <div class="flex flex-col gap-2">
+          <div v-for="s in spacing" :key="s" class="flex items-center gap-4">
+            <span class="w-12 text-caption text-muted tabular-nums">{{ s * 4 }}</span>
+            <div class="h-3 bg-primary" :class="spacingClass[s]" />
+          </div>
+        </div>
+        <div class="flex flex-wrap items-start gap-8">
+          <div class="flex flex-col items-center gap-2"><div class="size-20 rounded-xs bg-muted ring ring-default" /><span class="text-caption text-muted">2 px · inputs</span></div>
+          <div class="flex flex-col items-center gap-2"><div class="size-20 rounded-sm bg-muted ring ring-default" /><span class="text-caption text-muted">4 px · cards, images</span></div>
+          <div class="flex flex-col items-center gap-2"><div class="size-20 rounded-full bg-muted ring ring-default" /><span class="text-caption text-muted">full · pills</span></div>
+          <div class="flex flex-col items-center gap-2"><div class="size-20 rounded-sm bg-elevated shadow-overlay" /><span class="text-caption text-muted">overlay shadow only</span></div>
         </div>
       </div>
     </MzSection>
 
-    <MzSection title="Radius, shadows, spacing" eyebrow="Tokens" tone="muted">
-      <div class="flex flex-wrap gap-6">
-        <div v-for="r in radii" :key="r" class="flex flex-col items-center gap-2">
-          <div class="size-16 bg-primary" :class="r" />
-          <code class="text-xs text-muted">{{ r }}</code>
+    <MzSection eyebrow="Components" title="Actions" description="One primary action per view. Secondary: ink outline. Tertiary: text link." tone="sand" space="md">
+      <div class="flex flex-col gap-8">
+        <div class="flex flex-wrap items-center gap-6">
+          <UButton label="Réserver un séjour" size="lg" />
+          <UButton label="Nous écrire" color="neutral" variant="outline" size="lg" />
+          <a href="#" class="link-underline text-small font-medium text-highlighted">Voir les hébergements</a>
         </div>
-        <div v-for="s in shadows" :key="s" class="flex flex-col items-center gap-2">
-          <div class="size-16 rounded-lg bg-elevated" :class="s" />
-          <code class="text-xs text-muted">{{ s }}</code>
+        <div class="flex flex-wrap items-center gap-6">
+          <UButton label="Primary md" />
+          <UButton label="Secondary md" color="neutral" variant="outline" />
+          <UButton label="Ghost" color="neutral" variant="ghost" icon="i-lucide-sliders-horizontal" />
+          <UButton label="Small" size="sm" />
+          <UButton label="Disabled" disabled />
+        </div>
+        <div class="flex flex-wrap items-center gap-6">
+          <MzPrice :cents="4500" from unit="person" trim-zero-cents />
+          <MzPrice :cents="125050" size="lg" />
+          <MzDate value="2027-01-15" end="2027-01-17" />
+          <MzDate value="2027-01-16T08:00:00Z" with-time />
+          <MzLogo />
         </div>
       </div>
-      <p class="mt-6 text-sm text-muted">Sections use <code>py-(--section-y)</code> (fluid 3.5–7 rem) and <code>--section-gap</code> between header and content.</p>
     </MzSection>
 
-    <MzSection title="Buttons and badges" eyebrow="Nuxt UI, configured in app.config.ts">
-      <div class="flex flex-col gap-4">
-        <div v-for="variant in buttonVariants" :key="variant" class="flex flex-wrap gap-2">
-          <UButton v-for="color in buttonColors" :key="color" :label="color" :color="color" :variant="variant" />
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <MzStatusBadge v-for="s in ['draft', 'pending', 'awaiting_payment', 'confirmed', 'checked_in', 'completed', 'cancelled', 'expired']" :key="s" :status="s" />
-        </div>
-      </div>
-    </MzSection>
-
-    <MzSection title="Base" eyebrow="Components" tone="muted">
-      <MzGrid :cols="2">
-        <UCard>
-          <MzStack gap="sm">
-            <MzLogo />
-            <MzLogo size="sm" icon-only />
-            <MzPrice :cents="12050" />
-            <MzPrice :cents="4500" from unit="person" trim-zero-cents />
-            <MzPrice :cents="0" />
-            <MzPrice :cents="125000" size="lg" unit="night" />
-            <MzDate value="2027-01-15" />
-            <MzDate value="2027-01-16T08:00:00Z" with-time />
-            <MzDate value="2027-01-15" end="2027-01-17" />
-          </MzStack>
-        </UCard>
-        <MzStack>
-          <MzEmptyState>
-            <UButton :label="t('common.backHome')" variant="soft" />
-          </MzEmptyState>
-          <MzSkeleton />
-        </MzStack>
-      </MzGrid>
-    </MzSection>
-
-    <MzHero
-      eyebrow="MzHero"
-      title="Une nuit sous les étoiles de M'ssici"
-      description="Image background with overlay (placeholder photo)."
-      :image="img('night')"
-      height="md"
-    >
+    <MzHero eyebrow="MzHero" title="Le silence du désert, à M’ssici" description="Full-viewport photograph, scrim, one action." :image="photo('hero-dunes').src" :image-srcset="photo('hero-dunes').srcset" :lqip="photo('hero-dunes').lqip" next="sg-split">
       <template #actions>
-        <UButton :label="t('common.book')" size="xl" />
-        <UButton :label="t('common.learnMore')" size="xl" color="neutral" variant="outline" />
+        <UButton :label="t('home.cta')" size="lg" />
       </template>
     </MzHero>
 
-    <MzSection title="Marketing" eyebrow="Components">
+    <MzEditorialSplit id="sg-split" eyebrow="MzEditorialSplit" title="Des tentes nomades, simplement confortables" :image="tent.src" :image-srcset="tent.srcset" :image-alt="tent.alt" :lqip="tent.lqip">
+      <p>Image on 7 columns, text on 4, one column of air. Alternate with <code>reverse</code>.</p>
+      <template #actions>
+        <a href="#" class="link-underline text-small font-medium text-highlighted">Voir les hébergements</a>
+      </template>
+    </MzEditorialSplit>
+
+    <MzSection eyebrow="MzOfferCard" title="Expériences" tone="sand">
+      <MzGrid :cols="3">
+        <MzOfferCard
+          v-for="(o, i) in offers"
+          :key="o.title"
+          :title="o.title"
+          :description="o.description"
+          :image="o.p.src"
+          :image-srcset="o.p.srcset"
+          :image-alt="o.p.alt"
+          :lqip="o.p.lqip"
+          :ratio="i === 2 ? '3/2' : '4/5'"
+          :price-from-cents="o.price"
+          :price-unit="o.unit"
+          :duration-minutes="o.duration"
+          :label="i === 1 ? 'Guidé' : undefined"
+          to="#"
+        />
+      </MzGrid>
+    </MzSection>
+
+    <MzQuoteImage quote="Ici, la nuit a encore toutes ses étoiles." author="Claire" origin="Lyon" :image="night.src" :image-srcset="night.srcset" :lqip="night.lqip" />
+
+    <MzSection eyebrow="MzFacts · MzGallery · MzTestimonial" title="Rhythm" space="md">
       <MzStack gap="xl">
-        <MzGrid :cols="3">
-          <MzFeatureCard icon="i-lucide-tent" title="Camping" description="Feature card with icon." />
-          <MzFeatureCard icon="i-lucide-sprout" title="La ferme" description="Clickable variant." to="#" />
-          <MzFeatureCard icon="i-lucide-coffee" title="Le café" description="Third one." />
-        </MzGrid>
-        <MzGrid :cols="3">
-          <MzOfferCard
-            title="Tente nomade"
-            description="Tente berbère meublée, lits, tapis et lanternes."
-            :image="img('tent')"
-            image-alt="Inside a nomad tent (sample)"
-            :price-from-cents="4500"
-            price-unit="night"
-            :badges="[{ label: 'Populaire', color: 'primary' }]"
-            to="#"
-          />
-          <MzOfferCard
-            title="Quad 2 h"
-            description="Jusqu'aux grandes dunes et retour au coucher du soleil."
-            :image="img('quad')"
-            image-alt="Quad in the dunes (sample)"
-            :price-from-cents="8000"
-            price-unit="person"
-            :duration-minutes="120"
-            :badges="[{ label: 'Guidé', color: 'secondary' }, { label: '16+' }]"
-            to="#"
-          />
-          <MzOfferCard title="Sans image" description="Card without media, no link." :price-from-cents="1200" :duration-minutes="90" />
-        </MzGrid>
-        <MzGallery :images="gallery" :cols="4" />
+        <MzFacts :facts="[{ value: '6', label: 'tentes nomades' }, { value: '20', label: 'emplacements' }, { value: '45', label: 'km de Rissani' }, { value: '1', label: 'ferme familiale' }]" />
+        <MzGallery :images="gallery" />
         <MzGrid :cols="2">
           <MzTestimonial quote="Un accueil inoubliable, des nuits magiques et le meilleur tajine du voyage." author="Claire D." origin="Lyon, France" :rating="5" />
-          <MzTestimonial quote="The quad tour at sunset was the highlight of our trip to Morocco." author="Tom R." origin="Bristol, UK" :rating="4" />
+          <MzTestimonial quote="The quad tour at sunset was the highlight of our trip to Morocco." author="Tom R." origin="Bristol, UK" />
         </MzGrid>
-        <MzMapEmbed :lat="31.238933" :lng="-4.701349" />
-        <MzCtaBanner title="Prêt pour une nuit sous les étoiles ?" description="Call to action banner.">
-          <UButton :label="t('common.book')" size="lg" color="neutral" />
-        </MzCtaBanner>
       </MzStack>
     </MzSection>
 
-    <MzSection title="Forms" eyebrow="Components" tone="muted" size="narrow">
-      <UCard>
-        <MzStack>
-          <MzFormField name="price" label="MzMoneyInput" :help="`Model: ${price ?? 'null'} cents`">
-            <MzMoneyInput v-model="price" />
-          </MzFormField>
-          <MzFormField name="title" label="MzTranslatableInput" required>
-            <MzTranslatableInput v-model="title" label="Title" />
-          </MzFormField>
-          <MzFormField name="dates" label="MzDateRangePicker">
-            <MzDateRangePicker v-model="dates" min="2026-11-11" />
-          </MzFormField>
-          <MzFormField name="image" label="MzImagePicker" help="Uploads to the bucket through the media API (staff session needed).">
-            <MzImagePicker v-model="image" label="Cover" />
-          </MzFormField>
-        </MzStack>
-      </UCard>
+    <MzSection eyebrow="MzPracticalInfo" title="Venir à M’ssici">
+      <MzPracticalInfo
+        :lat="31.238933"
+        :lng="-4.701349"
+        :items="[{ title: 'Accès', text: 'Route N12, environ 45 km de Rissani.' }, { title: 'Arrivée', text: 'Accueil à partir de 14 h.' }, { title: 'Saison', text: 'D’octobre à avril.' }]"
+      />
     </MzSection>
 
-    <MzSection title="Admin" eyebrow="Components">
+    <MzCtaBanner eyebrow="MzCtaBanner" title="Une nuit sous les étoiles vous attend" description="Sand surface, serif title, one action.">
+      <UButton :label="t('home.cta')" size="lg" />
+    </MzCtaBanner>
+
+    <MzSection eyebrow="Components" title="Forms" size="narrow" space="md">
+      <UForm :state="{}" class="flex flex-col gap-8">
+        <MzFormField name="email" label="E-mail" description="Hairline field, label on top." required>
+          <UInput v-model="email" type="email" placeholder="vous@exemple.com" class="w-full" />
+        </MzFormField>
+        <MzFormField name="price" label="MzMoneyInput" :help="`Model: ${price ?? 'null'} cents`">
+          <MzMoneyInput v-model="price" />
+        </MzFormField>
+        <MzFormField name="title" label="MzTranslatableInput" required>
+          <MzTranslatableInput v-model="title" label="Title" />
+        </MzFormField>
+        <MzFormField name="dates" label="MzDateRangePicker">
+          <MzDateRangePicker v-model="dates" min="2026-11-11" />
+        </MzFormField>
+        <MzFormField name="image" label="MzImagePicker" help="Uploads through the media API (staff session needed).">
+          <MzImagePicker v-model="image" label="Cover" />
+        </MzFormField>
+        <UAlert title="Calm error state" description="Shown under a field or form, never shouting." color="error" variant="subtle" icon="i-lucide-circle-alert" />
+      </UForm>
+    </MzSection>
+
+    <MzSection eyebrow="Components" title="Admin" description="Same palette and type, denser and neutral: the accent only for primary actions." tone="sand" space="md">
       <MzStack gap="lg">
         <MzGrid :cols="4" gap="sm">
           <MzStatCard label="Réservations" :value="128" icon="i-lucide-calendar-check" :delta="0.12" />
@@ -264,13 +257,21 @@ const columns: TableColumn<Row>[] = [
         </MzGrid>
         <MzDataTable :columns="columns" :rows="rows" :total="rows.length" :query="query" :sortable="['reference', 'total']" @update="update" />
         <div class="flex flex-wrap gap-2">
-          <UButton label="MzConfirmDialog" color="error" variant="soft" @click="confirmOpen = true" />
-          <UButton label="MzFormDrawer" variant="soft" @click="drawerOpen = true" />
-          <UButton label="Toast" color="neutral" variant="outline" @click="toast.add({ title: 'Enregistré', description: 'Toast notification', color: 'success', icon: 'i-lucide-check' })" />
+          <MzStatusBadge v-for="s in ['draft', 'pending', 'awaiting_payment', 'confirmed', 'checked_in', 'completed', 'cancelled', 'expired']" :key="s" :status="s" />
         </div>
+        <div class="flex flex-wrap gap-2">
+          <UButton label="New booking" size="sm" icon="i-lucide-plus" />
+          <UButton label="MzFormDrawer" size="sm" color="neutral" variant="outline" @click="drawerOpen = true" />
+          <UButton label="MzConfirmDialog" size="sm" color="neutral" variant="outline" @click="confirmOpen = true" />
+          <UButton label="Toast" size="sm" color="neutral" variant="ghost" @click="toast.add({ title: 'Enregistré', description: 'Toast notification', color: 'success', icon: 'i-lucide-check' })" />
+        </div>
+        <MzGrid :cols="2" gap="sm">
+          <MzEmptyState />
+          <MzSkeleton variant="card" />
+        </MzGrid>
         <MzConfirmDialog v-model:open="confirmOpen" danger :confirm-label="t('common.delete')" @confirm="confirmOpen = false" />
         <MzFormDrawer v-model:open="drawerOpen" title="Modifier le produit" form-id="sg-drawer-form">
-          <UForm id="sg-drawer-form" :state="{}" class="flex flex-col gap-4" @submit="drawerOpen = false">
+          <UForm id="sg-drawer-form" :state="{}" class="flex flex-col gap-6" @submit="drawerOpen = false">
             <MzFormField name="name" label="Nom" required>
               <MzTranslatableInput v-model="title" />
             </MzFormField>

@@ -23,12 +23,12 @@ export default defineNuxtConfig({
   },
 
   fonts: {
-    defaults: { weights: [400, 500, 600, 700], styles: ['normal'], subsets: ['latin', 'latin-ext'] },
+    defaults: { weights: [400, 500], styles: ['normal'], subsets: ['latin', 'latin-ext'] },
     families: [
-      { name: 'Fraunces', provider: 'google', weights: [500, 600, 700] },
-      { name: 'Inter', provider: 'google' },
-      { name: 'Noto Kufi Arabic', provider: 'google', subsets: ['arabic'], weights: [500, 600, 700] },
-      { name: 'IBM Plex Sans Arabic', provider: 'google', subsets: ['arabic'] },
+      { name: 'Cormorant Garamond', provider: 'google', weights: [400, 500], styles: ['normal', 'italic'] },
+      { name: 'Inter', provider: 'google', weights: [400, 500] },
+      { name: 'Noto Naskh Arabic', provider: 'google', subsets: ['arabic'], weights: [400, 500, 600] },
+      { name: 'IBM Plex Sans Arabic', provider: 'google', subsets: ['arabic'], weights: [400, 500] },
     ],
   },
 

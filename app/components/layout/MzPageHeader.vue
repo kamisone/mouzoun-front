@@ -13,16 +13,16 @@ const { compact } = useDensity()
 </script>
 
 <template>
-  <div class="flex flex-col gap-3" :class="compact ? 'pb-4' : 'pb-8'">
+  <div class="flex flex-col gap-3" :class="compact ? 'pb-6' : 'pb-12'">
     <nav v-if="props.breadcrumbs?.length" :aria-label="t('admin.breadcrumb')">
       <UBreadcrumb :items="props.breadcrumbs" />
     </nav>
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div class="min-w-0">
-        <h1 class="font-display font-semibold tracking-tight text-balance" :class="compact ? 'text-2xl' : 'text-3xl sm:text-4xl'">
+        <h1 class="text-balance" :class="compact ? 'font-sans text-h3 font-medium tracking-tight' : 'text-h1'">
           {{ props.title }}
         </h1>
-        <p v-if="props.description" class="mt-2 max-w-prose-wide text-muted">{{ props.description }}</p>
+        <p v-if="props.description" class="mt-2 max-w-editorial text-muted" :class="compact ? 'text-small' : 'text-body-lg'">{{ props.description }}</p>
       </div>
       <div v-if="$slots.actions" class="flex shrink-0 flex-wrap gap-2">
         <slot name="actions" />

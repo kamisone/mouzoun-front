@@ -1,26 +1,22 @@
 <script setup lang="ts">
-/** A guest review: quote, author, origin, optional 1–5 rating (announced as text). */
+/** A guest review: serif quote, name and origin. Optional 1–5 rating announced as text. */
 const props = withDefaults(defineProps<{
   quote: string
   author: string
   origin?: string
   rating?: number
-  avatar?: string
-}>(), { origin: undefined, rating: undefined, avatar: undefined })
+}>(), { origin: undefined, rating: undefined })
 const { t } = useI18n()
 </script>
 
 <template>
-  <figure class="flex h-full flex-col gap-4 rounded-lg bg-elevated p-6 shadow-soft">
-    <p v-if="props.rating" class="flex gap-0.5 text-warning" role="img" :aria-label="t('a11y.rating', { value: props.rating })">
-      <UIcon v-for="n in 5" :key="n" :name="n <= props.rating ? 'i-lucide-star' : 'i-lucide-star-off'" class="size-4" aria-hidden="true" />
-    </p>
-    <blockquote class="flex-1 font-display text-lg text-highlighted text-pretty">“{{ props.quote }}”</blockquote>
-    <figcaption class="flex items-center gap-3">
-      <UAvatar :src="props.avatar" :alt="props.author" size="md" />
-      <span class="flex flex-col">
-        <span class="font-semibold text-highlighted">{{ props.author }}</span>
-        <span v-if="props.origin" class="text-sm text-muted">{{ props.origin }}</span>
+  <figure class="flex h-full flex-col gap-6 border-t border-default pt-6">
+    <blockquote class="flex-1 font-display text-h3 text-highlighted italic">“{{ props.quote }}”</blockquote>
+    <figcaption class="flex flex-col gap-1">
+      <span class="text-small font-medium text-highlighted">{{ props.author }}</span>
+      <span class="text-caption text-muted">
+        <template v-if="props.origin">{{ props.origin }}</template>
+        <template v-if="props.rating"> · <span :aria-label="t('a11y.rating', { value: props.rating })">{{ props.rating }}/5</span></template>
       </span>
     </figcaption>
   </figure>

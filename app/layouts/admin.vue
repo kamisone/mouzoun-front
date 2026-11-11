@@ -47,10 +47,10 @@ useHead({ title, meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
         <MzLogo size="sm" to="/admin" :icon-only="collapsed" />
       </template>
       <template #default="{ collapsed }">
-        <UNavigationMenu :items="navigation" orientation="vertical" :collapsed="collapsed" tooltip />
+        <UNavigationMenu :items="navigation" orientation="vertical" :collapsed="collapsed" color="neutral" tooltip />
       </template>
       <template #footer="{ collapsed }">
-        <UNavigationMenu :items="footerNavigation" orientation="vertical" :collapsed="collapsed" tooltip class="w-full" />
+        <UNavigationMenu :items="footerNavigation" orientation="vertical" :collapsed="collapsed" color="neutral" tooltip class="w-full" />
       </template>
     </UDashboardSidebar>
 
