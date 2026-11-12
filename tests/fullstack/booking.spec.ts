@@ -1,5 +1,6 @@
 import { type Page, expect, test } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
+import { staffSignIn } from './staff'
 
 /**
  * The booking funnel against the real API (fake payment provider). Each project runs it in its
@@ -113,12 +114,7 @@ test('booking request accepted by staff', async ({ page }, info) => {
   await expect(page.getByTestId('booking-page')).toBeVisible()
   const reference = (await page.getByTestId('booking-reference').textContent())!.trim()
 
-  await page.goto('/admin/login')
-  await ready(page)
-  await page.locator('input[type="email"]').fill(process.env.E2E_STAFF_EMAIL!)
-  await page.locator('input[type="password"]').fill(process.env.E2E_STAFF_PASSWORD!)
-  await page.locator('form button[type="submit"]').click()
-  await page.waitForURL(/\/admin$/)
+  await staffSignIn(page, ready)
   await page.goto(`/admin/bookings?q=${reference}`)
   await ready(page)
   await page.getByRole('link', { name: reference }).click()
@@ -129,12 +125,7 @@ test('booking request accepted by staff', async ({ page }, info) => {
 test('staff phone booking with a cash payment', async ({ page }, info) => {
   test.skip(!process.env.E2E_STAFF_EMAIL, 'needs E2E_STAFF_EMAIL / E2E_STAFF_PASSWORD')
   test.skip(info.project.name !== 'fr-desktop', 'staff flow once')
-  await page.goto('/admin/login')
-  await ready(page)
-  await page.locator('input[type="email"]').fill(process.env.E2E_STAFF_EMAIL!)
-  await page.locator('input[type="password"]').fill(process.env.E2E_STAFF_PASSWORD!)
-  await page.locator('form button[type="submit"]').click()
-  await page.waitForURL(/\/admin$/)
+  await staffSignIn(page, ready)
   await page.goto('/admin/bookings/new')
   await ready(page)
   await page.getByRole('button', { name: 'Prestation' }).click()
