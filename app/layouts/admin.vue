@@ -14,7 +14,7 @@ onMounted(() => applyDefault('system'))
 
 const navigation = computed<NavigationMenuItem[]>(() => [
   { label: t('admin.dashboard'), icon: 'i-lucide-layout-dashboard', to: '/admin', exact: true },
-  { label: t('admin.bookings'), icon: 'i-lucide-calendar-check', disabled: true, badge: t('admin.upcoming') },
+  { label: t('admin.bookings.title'), icon: 'i-lucide-calendar-check', to: '/admin/bookings' },
   { label: t('admin.products'), icon: 'i-lucide-tent', disabled: true, badge: t('admin.upcoming') },
   { label: t('admin.customers'), icon: 'i-lucide-users', disabled: true, badge: t('admin.upcoming') },
   { label: t('admin.content'), icon: 'i-lucide-file-text', disabled: true, badge: t('admin.upcoming') },

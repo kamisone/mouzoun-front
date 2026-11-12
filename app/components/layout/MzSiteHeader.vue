@@ -15,14 +15,19 @@ const overlay = computed(() => route.meta.headerOverlay === true)
 const scrolled = computed(() => y.value > 16)
 const transparent = computed(() => overlay.value && !scrolled.value && !open.value)
 
-// Feature pages come later: until then the links point to sections of the home page.
 const home = computed(() => localePath('/'))
 const items = computed(() => [
-  { label: t('nav.stay'), to: `${home.value}#stay` },
-  { label: t('nav.activities'), to: `${home.value}#experiences` },
+  { label: t('nav.stay'), to: localePath('/stays') },
+  { label: t('nav.activities'), to: localePath('/activities') },
   { label: t('nav.farm'), to: `${home.value}#farm` },
   { label: t('nav.practical'), to: `${home.value}#practical` },
 ])
+
+// "Your trip" badge: loaded once per visit, kept in sync by the funnel pages.
+const trip = useTrip()
+onMounted(() => {
+  if (!trip.cart.value) trip.refresh()
+})
 </script>
 
 <template>
@@ -61,8 +66,18 @@ const items = computed(() => [
       <div class="flex items-center justify-end gap-1">
         <MzLocaleSwitcher variant="text" class="hidden sm:inline-flex" />
         <MzThemeToggle class="hidden sm:inline-flex" />
+        <UChip :show="trip.count.value > 0" :text="trip.count.value" size="3xl" color="primary" inset>
+          <UButton
+            :to="localePath('/trip')"
+            icon="i-lucide-tent"
+            color="neutral"
+            variant="ghost"
+            :aria-label="trip.count.value ? t('booking.trip.badge', { n: trip.count.value }, trip.count.value) : t('booking.trip.title')"
+            data-testid="trip-badge"
+          />
+        </UChip>
         <UButton
-          :to="`${home}#book`"
+          :to="localePath('/stays')"
           :label="t('common.book')"
           :color="transparent ? 'neutral' : 'primary'"
           :variant="transparent ? 'outline' : 'solid'"
@@ -95,7 +110,7 @@ const items = computed(() => [
             <MzLocaleSwitcher variant="text" />
             <MzThemeToggle />
           </div>
-          <UButton :to="`${home}#book`" :label="t('common.book')" size="lg" block @click="open = false" />
+          <UButton :to="localePath('/stays')" :label="t('common.book')" size="lg" block @click="open = false" />
         </div>
       </template>
     </UModal>

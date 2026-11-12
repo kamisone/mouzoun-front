@@ -52,6 +52,8 @@ export default defineNuxtConfig({
       ogImage: '',
       // Serve /_styleguide outside dev without staff login (CI accessibility checks only)
       styleguide: false,
+      // Cloudflare Turnstile site key (bot check on checkout and "find my booking"); empty = off
+      turnstileSiteKey: '',
     },
   },
 
@@ -76,6 +78,16 @@ export default defineNuxtConfig({
     // Style guide: client-rendered review tool, guarded by app/middleware/styleguide.ts
     '/_styleguide': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
     '/*/_styleguide': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
+    // Booking funnel and guest pages: personal, never cached nor indexed.
+    '/trip': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/trip': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/checkout': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/checkout': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/booking/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    '/*/booking/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    // Availability-dependent search results: short cache only.
+    '/stays': { swr: 30 },
+    '/*/stays': { swr: 30 },
   },
 
   app: {

@@ -1,4 +1,6 @@
 import type { Media, MediaKind, MediaVisibility, Paginated, UploadTicket, User } from '~/utils/types'
+import type { PaymentOption, RegisterGuest, TripItem, TripQuote } from '~/utils/booking-types'
+import type { AdminBookingRow, AdminBookingView, AdminTask, TodayDashboard } from '~/utils/admin-types'
 
 /**
  * Typed client of the back-office API (`/v1/admin/...`): every admin endpoint is declared here,
@@ -20,6 +22,54 @@ export function useAdminApi() {
   })
 
   return {
+    dashboard: () => http<TodayDashboard>('/dashboard/today'),
+    quote: (body: { items: TripItem[], rate_plan_id?: string | null, promo_code?: string | null, locale?: string }) =>
+      http<{ quote: TripQuote }>('/quote', { method: 'POST', body }),
+    customers: (q: string) => http<{ id: string, first_name: string, last_name: string | null, email: string | null, phone: string | null, country_code: string | null, bookings: number }[]>('/customers', { query: { q } }),
+    tasks: {
+      list: (status = 'open') => http<AdminTask[]>('/tasks', { query: { status } }),
+      update: (id: string, status: 'open' | 'done' | 'dismissed') => http(`/tasks/${id}`, { method: 'PATCH', body: { status } }),
+    },
+    bookings: {
+      list: (query: Record<string, string | number | boolean | undefined>) => http<Paginated<AdminBookingRow>>('/bookings', { query }),
+      exportUrl: (query: Record<string, string | number | boolean | undefined>) => {
+        const params = new URLSearchParams(Object.entries(query).filter(([, v]) => v !== undefined && v !== '').map(([k, v]) => [k, String(v)]))
+        return `${useRuntimeConfig().public.apiBase}/v1/admin/bookings/export.csv?${params}`
+      },
+      get: (id: string) => http<AdminBookingView>(`/bookings/${id}`),
+      create: (body: {
+        items: TripItem[]
+        rate_plan_id?: string | null
+        promo_code?: string | null
+        customer_id?: string | null
+        customer?: { first_name: string, last_name?: string, email?: string, phone?: string, country_code?: string } | null
+        source: string
+        payment_option: PaymentOption
+        locale?: string
+        special_requests?: string | null
+        skip_guest_emails?: boolean
+        price_override?: { total: string, reason: string } | null
+        payment?: { provider: string, amount: string, note?: string } | null
+        internal_note?: string | null
+      }) => http<{ id: string, reference: string, status: string, total_minor: number }>('/bookings', { method: 'POST', body }),
+      update: (id: string, body: { estimated_arrival_time?: string | null, special_requests?: string | null, internal_notes?: string | null }) =>
+        http<AdminBookingView>(`/bookings/${id}`, { method: 'PATCH', body }),
+      accept: (id: string) => http<{ status: string }>(`/bookings/${id}/accept`, { method: 'POST' }),
+      decline: (id: string, reason?: string) => http(`/bookings/${id}/decline`, { method: 'POST', body: { reason } }),
+      setStatus: (id: string, status: 'checked_in' | 'completed' | 'no_show' | 'confirmed', note?: string) =>
+        http(`/bookings/${id}/status`, { method: 'POST', body: { status, note } }),
+      cancel: (id: string, body: { reason?: string, refund: 'policy' | 'custom' | 'none', amount?: string }) =>
+        http<{ refund_minor: number }>(`/bookings/${id}/cancel`, { method: 'POST', body }),
+      cancelItems: (id: string, body: { item_ids: string[], refund: 'policy' | 'custom' | 'none', amount?: string }) =>
+        http<{ refund_minor: number }>(`/bookings/${id}/items/cancel`, { method: 'POST', body }),
+      note: (id: string, body: string) => http(`/bookings/${id}/notes`, { method: 'POST', body: { body } }),
+      recordPayment: (id: string, body: { provider: string, purpose: string, amount: string, note?: string }) =>
+        http(`/bookings/${id}/payments`, { method: 'POST', body }),
+      refund: (id: string, body: { payment_id: string, amount: string, reason?: string }) => http(`/bookings/${id}/refunds`, { method: 'POST', body }),
+      resend: (id: string, email: 'confirmation' | 'payment_link' | 'balance' | 'precheckin' | 'received') =>
+        http(`/bookings/${id}/resend`, { method: 'POST', body: { email } }),
+      guests: (id: string) => http<{ guests: RegisterGuest[], revealed: boolean }>(`/bookings/${id}/guests`),
+    },
     media: {
       list: (query: { kind?: MediaKind; page?: number; per_page?: number } = {}) =>
         http<Paginated<Media>>('/media', { query }),
