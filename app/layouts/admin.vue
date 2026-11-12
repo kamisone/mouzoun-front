@@ -15,6 +15,7 @@ onMounted(() => applyDefault('system'))
 const navigation = computed<NavigationMenuItem[]>(() => [
   { label: t('admin.dashboard'), icon: 'i-lucide-layout-dashboard', to: '/admin', exact: true },
   { label: t('admin.bookings.title'), icon: 'i-lucide-calendar-check', to: '/admin/bookings' },
+  { label: t('admin.goLive.title'), icon: 'i-lucide-rocket', to: '/admin/go-live' },
   { label: t('admin.products'), icon: 'i-lucide-tent', disabled: true, badge: t('admin.upcoming') },
   { label: t('admin.customers'), icon: 'i-lucide-users', to: '/admin/customers' },
   { label: t('admin.scan.title'), icon: 'i-lucide-scan-qr-code', to: '/admin/scan' },
@@ -66,8 +67,8 @@ useHead({ title, meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
             <MzLocaleSwitcher mode="state" size="sm" />
             <MzThemeToggle size="sm" />
             <UDropdownMenu :items="userMenu" :content="{ align: 'end' }">
-              <UButton color="neutral" variant="ghost" size="sm" :aria-label="t('admin.userMenu')">
-                <UAvatar :alt="user?.full_name" size="xs" />
+              <UButton color="neutral" variant="ghost" size="sm" :aria-label="user?.full_name ? `${user.full_name}, ${t('admin.userMenu')}` : t('admin.userMenu')">
+                <UAvatar icon="i-lucide-user-round" size="xs" aria-hidden="true" />
                 <span class="hidden sm:inline">{{ user?.full_name }}</span>
               </UButton>
             </UDropdownMenu>

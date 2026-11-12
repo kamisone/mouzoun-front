@@ -499,11 +499,86 @@
       "checkIn": "Check in",
       "checkedIn": "Checked in",
       "open": "Open booking"
+    },
+    "goLive": {
+      "title": "Open online booking",
+      "description": "What must be ready before guests can book online.",
+      "recheck": "Check again",
+      "state": "Online booking",
+      "isOpen": "Open to the public",
+      "isClosed": "Closed (“Opening soon”)",
+      "allGood": "Everything is ready.",
+      "toFix": "Nothing to fix | {n} thing to fix | {n} things to fix",
+      "open": "Open booking",
+      "close": "Close booking",
+      "opened": "Booking is open",
+      "closed": "Booking is closed",
+      "blocked": "Cannot open: a required item is not ready.",
+      "confirmTitle": "Open booking to the public?",
+      "confirmText": "Guests can book and pay right away. You can close it at any time.",
+      "required": "Required",
+      "recommended": "Recommended",
+      "ok": "Ready",
+      "notOk": "To fix",
+      "more": "and {n} more",
+      "checkedAt": "Checked {date}",
+      "bannerClosed": "Online booking is closed to the public.",
+      "checks": {
+        "prices": "Prices set",
+        "rate_plans": "Rate plans and cancellation policies",
+        "availability": "Availability open",
+        "content": "Texts in French, English and Arabic",
+        "payments": "Online payment",
+        "payments_verified": "Online payment verified",
+        "emails": "Email delivery"
+      },
+      "help": {
+        "prices": "Every published stay and activity has an active price in euros.",
+        "rate_plans": "At least one public rate plan, each with its cancellation policy.",
+        "availability": "Every stay and scheduled activity has places to sell in the next 60 days.",
+        "content": "Name and short description of each offer, rate plans and cancellation policies, in every language.",
+        "payments": "A payment provider is configured (Stripe).",
+        "payments_verified": "Live keys and a webhook received.",
+        "emails": "Confirmations are really sent (SMTP server)."
+      },
+      "details": {
+        "noPlan": "No active public rate plan",
+        "noPolicy": "Rate plan {plan} has no cancellation policy",
+        "untranslated": "{what} “{name}”: {locale} missing",
+        "provider": "No provider configured: add the Stripe keys on the server.",
+        "real_provider": "Simulated payment is not allowed in production.",
+        "smtp": "Emails are only written to the logs: configure SMTP.",
+        "test_mode": "Stripe is in test mode: no real payments.",
+        "no_webhook_received": "No Stripe webhook received yet: check the webhook URL.",
+        "webhook_errors": "{n} webhook(s) failed"
+      },
+      "what": {
+        "product": "Offer",
+        "rate_plan": "Rate plan",
+        "cancellation_policy": "Cancellation policy"
+      },
+      "kinds": {
+        "accommodation": "stay",
+        "activity": "activity",
+        "package": "package",
+        "extra": "extra"
+      },
+      "payment": {
+        "none": "Online payment not configured",
+        "noneText": "Guests can only choose to pay at the camp. Add the Stripe keys to turn it on.",
+        "simulated": "Simulated payment (development)",
+        "simulatedText": "No real payments: never in production.",
+        "test": "Stripe in test mode",
+        "live": "Stripe live",
+        "lastWebhook": "Last webhook received {date}.",
+        "noWebhookYet": "No webhook received yet."
+      }
     }
   },
   "error": {
     "notFound": "Page not found",
-    "generic": "Something went wrong"
+    "generic": "Something went wrong",
+    "unavailable": "Temporarily unavailable"
   },
   "photos": {
     "hero-dunes": "A tall golden dune in the morning, a few footprints",
@@ -712,7 +787,9 @@
       "seeRates": "See the rate | See the rate | See the {n} rates",
       "hideRates": "Hide rates",
       "nearest": "Available {dates}",
-      "useDates": "Use these dates"
+      "useDates": "Use these dates",
+      "empty": "Stays are coming soon",
+      "emptyText": "We are getting the tents ready for the season. Come back soon or contact us."
     },
     "activities": {
       "eyebrow": "Experiences",
@@ -720,7 +797,9 @@
       "description": "Quads, camels, the village and the farm: book them alone or with your stay.",
       "experiences": "Activities",
       "packagesEyebrow": "All included",
-      "packages": "Packages"
+      "packages": "Packages",
+      "empty": "Activities are coming soon",
+      "emptyText": "We are preparing the season's programme. Come back soon or contact us."
     },
     "summary": {
       "title": "Your trip",
@@ -842,7 +921,10 @@
         "phone": "Please enter a valid phone number.",
         "terms": "Please accept the terms to continue.",
         "summary": "Some details are missing: please check the fields marked in red."
-      }
+      },
+      "showSummary": "Show the summary",
+      "noOptions": "Online payment unavailable for this rate",
+      "noOptionsText": "This rate needs payment when booking, which is not available online yet. Choose another rate in your trip or contact us."
     },
     "pay": {
       "eyebrow": "Booking {reference}",

@@ -499,11 +499,86 @@
       "checkIn": "Enregistrer l'arrivée",
       "checkedIn": "Arrivée enregistrée",
       "open": "Ouvrir la réservation"
+    },
+    "goLive": {
+      "title": "Ouverture des réservations",
+      "description": "Ce qui doit être prêt avant que les voyageurs puissent réserver en ligne.",
+      "recheck": "Vérifier à nouveau",
+      "state": "Réservation en ligne",
+      "isOpen": "Ouverte au public",
+      "isClosed": "Fermée (« Bientôt disponible »)",
+      "allGood": "Tout est prêt.",
+      "toFix": "Aucun point à corriger | {n} point à corriger | {n} points à corriger",
+      "open": "Ouvrir les réservations",
+      "close": "Fermer les réservations",
+      "opened": "Les réservations sont ouvertes",
+      "closed": "Les réservations sont fermées",
+      "blocked": "Impossible d'ouvrir : un point obligatoire n'est pas prêt.",
+      "confirmTitle": "Ouvrir les réservations au public ?",
+      "confirmText": "Les voyageurs pourront réserver et payer immédiatement. Vous pourrez fermer à tout moment.",
+      "required": "Obligatoire",
+      "recommended": "Recommandé",
+      "ok": "Prêt",
+      "notOk": "À corriger",
+      "more": "et {n} de plus",
+      "checkedAt": "Vérifié le {date}",
+      "bannerClosed": "La réservation en ligne est fermée au public.",
+      "checks": {
+        "prices": "Prix renseignés",
+        "rate_plans": "Tarifs et conditions d'annulation",
+        "availability": "Disponibilités ouvertes",
+        "content": "Textes en français, anglais et arabe",
+        "payments": "Paiement en ligne",
+        "payments_verified": "Paiement en ligne vérifié",
+        "emails": "Envoi des e-mails"
+      },
+      "help": {
+        "prices": "Chaque hébergement et activité publié a un prix actif en euros.",
+        "rate_plans": "Au moins un tarif public, chacun avec sa politique d'annulation.",
+        "availability": "Chaque hébergement et activité à horaires a des places à vendre dans les 60 prochains jours.",
+        "content": "Nom et description courte de chaque prestation, tarifs et politiques d'annulation, dans chaque langue.",
+        "payments": "Un prestataire de paiement est configuré (Stripe).",
+        "payments_verified": "Clés de production et webhook reçu.",
+        "emails": "Les confirmations partent vraiment (serveur SMTP)."
+      },
+      "details": {
+        "noPlan": "Aucun tarif public actif",
+        "noPolicy": "Le tarif {plan} n'a pas de politique d'annulation",
+        "untranslated": "{what} « {name} » : {locale} manquant",
+        "provider": "Aucun prestataire configuré : ajoutez les clés Stripe sur le serveur.",
+        "real_provider": "Le paiement simulé n'est pas autorisé en production.",
+        "smtp": "Les e-mails sont seulement écrits dans les journaux : configurez SMTP.",
+        "test_mode": "Stripe est en mode test : aucun vrai paiement.",
+        "no_webhook_received": "Aucun webhook Stripe reçu pour l'instant : vérifiez l'URL du webhook.",
+        "webhook_errors": "{n} webhook(s) en erreur"
+      },
+      "what": {
+        "product": "Prestation",
+        "rate_plan": "Tarif",
+        "cancellation_policy": "Politique d'annulation"
+      },
+      "kinds": {
+        "accommodation": "hébergement",
+        "activity": "activité",
+        "package": "séjour",
+        "extra": "option"
+      },
+      "payment": {
+        "none": "Paiement en ligne non configuré",
+        "noneText": "Les voyageurs ne peuvent choisir que le paiement au camp. Ajoutez les clés Stripe pour l'activer.",
+        "simulated": "Paiement simulé (développement)",
+        "simulatedText": "Aucun vrai paiement : jamais en production.",
+        "test": "Stripe en mode test",
+        "live": "Stripe en production",
+        "lastWebhook": "Dernier webhook reçu le {date}.",
+        "noWebhookYet": "Aucun webhook reçu pour l'instant."
+      }
     }
   },
   "error": {
     "notFound": "Page introuvable",
-    "generic": "Une erreur est survenue"
+    "generic": "Une erreur est survenue",
+    "unavailable": "Service momentanément indisponible"
   },
   "photos": {
     "hero-dunes": "Grande dune de sable doré au matin, quelques traces de pas",
@@ -712,7 +787,9 @@
       "seeRates": "Voir le tarif | Voir le tarif | Voir les {n} tarifs",
       "hideRates": "Masquer les tarifs",
       "nearest": "Disponible {dates}",
-      "useDates": "Choisir ces dates"
+      "useDates": "Choisir ces dates",
+      "empty": "Les hébergements arrivent bientôt",
+      "emptyText": "Nous préparons les tentes pour la saison. Revenez bientôt ou contactez-nous."
     },
     "activities": {
       "eyebrow": "Expériences",
@@ -720,7 +797,9 @@
       "description": "Quad, dromadaire, le village et la ferme : à réserver seuls ou avec votre séjour.",
       "experiences": "Activités",
       "packagesEyebrow": "Tout compris",
-      "packages": "Séjours tout compris"
+      "packages": "Séjours tout compris",
+      "empty": "Les activités arrivent bientôt",
+      "emptyText": "Nous préparons le programme de la saison. Revenez bientôt ou contactez-nous."
     },
     "summary": {
       "title": "Votre voyage",
@@ -842,7 +921,10 @@
         "phone": "Merci de saisir un numéro valide.",
         "terms": "Merci d'accepter les conditions pour continuer.",
         "summary": "Il manque des informations : vérifiez les champs en rouge."
-      }
+      },
+      "showSummary": "Voir le récapitulatif",
+      "noOptions": "Paiement en ligne indisponible pour ce tarif",
+      "noOptionsText": "Ce tarif demande un paiement à la réservation, qui n'est pas encore disponible en ligne. Choisissez un autre tarif dans votre voyage ou contactez-nous."
     },
     "pay": {
       "eyebrow": "Réservation {reference}",

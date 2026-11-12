@@ -1,6 +1,6 @@
 import type { Media, MediaKind, MediaVisibility, Paginated, UploadTicket, User } from '~/utils/types'
 import type { PaymentOption, RegisterGuest, TripItem, TripQuote } from '~/utils/booking-types'
-import type { AccountsReport, AdminBookingRow, AdminBookingView, AdminTask, CrmCustomer, CrmCustomerRow, ScannedTicket, TodayDashboard } from '~/utils/admin-types'
+import type { AccountsReport, AdminBookingRow, GoLiveChecklist, AdminBookingView, AdminTask, CrmCustomer, CrmCustomerRow, ScannedTicket, TodayDashboard } from '~/utils/admin-types'
 
 /**
  * Typed client of the back-office API (`/v1/admin/...`): every admin endpoint is declared here,
@@ -26,6 +26,10 @@ export function useAdminApi() {
     quote: (body: { items: TripItem[], rate_plan_id?: string | null, promo_code?: string | null, locale?: string }) =>
       http<{ quote: TripQuote }>('/quote', { method: 'POST', body }),
     customers: (q: string) => http<{ id: string, first_name: string, last_name: string | null, email: string | null, phone: string | null, country_code: string | null, bookings: number }[]>('/customers', { query: { q } }),
+    goLive: {
+      checklist: () => http<GoLiveChecklist>('/booking/go-live'),
+      setEnabled: (enabled: boolean) => http<GoLiveChecklist>('/booking/enabled', { method: 'PUT', body: { enabled } }),
+    },
     crm: {
       list: (query: { q?: string, account?: string, page?: number }) =>
         http<{ customers: CrmCustomerRow[], total: number, page: number, per_page: number }>('/crm/customers', { query }),

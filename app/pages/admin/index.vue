@@ -15,9 +15,11 @@ const { money } = useMoney()
 const { date, dateTime } = useDate()
 const { data, refresh, pending } = await useAsyncData<TodayDashboard | null>('admin-today', () => admin.dashboard().catch(() => null))
 useIntervalFn(() => refresh(), 60_000)
+// Whether guests can book and pay online right now (go-live page for the details).
+const { data: goLive } = await useAsyncData('admin-today-go-live', () => admin.goLive.checklist().catch(() => null))
 
 const name = (r: { first_name: string | null, last_name: string | null }) => [r.first_name, r.last_name].filter(Boolean).join(' ')
-const time = (iso: string) => new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Casablanca' }).format(new Date(iso))
+const { time } = useDate()
 const lists = computed(() => [
   { key: 'arrivals', title: t('admin.today.arrivals'), icon: 'i-lucide-log-in', rows: data.value?.arrivals ?? [] },
   { key: 'departures', title: t('admin.today.departures'), icon: 'i-lucide-log-out', rows: data.value?.departures ?? [] },
@@ -33,6 +35,27 @@ const lists = computed(() => [
         <UButton icon="i-lucide-refresh-cw" color="neutral" variant="ghost" :loading="pending" :aria-label="t('admin.refresh')" @click="refresh()" />
       </template>
     </MzPageHeader>
+
+    <div v-if="goLive && (!goLive.enabled || !goLive.payments.online)" class="flex flex-wrap gap-3" data-testid="booking-state">
+      <UAlert
+        v-if="!goLive.enabled"
+        color="info"
+        variant="subtle"
+        icon="i-lucide-door-closed"
+        :title="t('admin.goLive.bannerClosed')"
+        :actions="[{ label: t('admin.goLive.title'), to: '/admin/go-live', color: 'neutral', variant: 'outline' }]"
+        class="w-auto"
+      />
+      <UAlert
+        v-if="!goLive.payments.online"
+        color="warning"
+        variant="subtle"
+        icon="i-lucide-credit-card"
+        :title="t('admin.goLive.payment.none')"
+        :description="t('admin.goLive.payment.noneText')"
+        class="w-auto"
+      />
+    </div>
 
     <div v-if="data && (data.alerts.open_tasks || data.alerts.webhook_errors || data.alerts.dead_events)" class="flex flex-wrap gap-3">
       <UAlert v-if="data.alerts.open_tasks" color="warning" variant="subtle" icon="i-lucide-list-todo" :title="t('admin.today.openTasks', { n: data.alerts.open_tasks }, data.alerts.open_tasks)" class="w-auto" />

@@ -152,3 +152,42 @@ export interface ScannedTicket {
   precheckin_done: boolean
   lead: string
 }
+
+export type GoLiveKey = 'prices' | 'rate_plans' | 'availability' | 'content' | 'payments' | 'payments_verified' | 'emails'
+
+/** One item of a check: what is missing, as data (worded by the page). */
+export interface GoLiveDetail {
+  product?: string
+  kind?: string
+  rate_plan?: string
+  what?: 'product' | 'rate_plan' | 'cancellation_policy'
+  name?: string
+  locale?: string
+  missing?: string
+  advice?: string
+  count?: number
+}
+
+export interface GoLiveCheck {
+  key: GoLiveKey
+  ok: boolean
+  required: boolean
+  details: GoLiveDetail[]
+}
+
+export interface PaymentStatusView {
+  online: boolean
+  provider: 'stripe' | 'fake' | null
+  mode: 'test' | 'live' | 'simulated' | null
+  webhook_configured: boolean
+  last_webhook_at: string | null
+  webhook_errors: number
+}
+
+export interface GoLiveChecklist {
+  ready: boolean
+  enabled: boolean
+  checks: GoLiveCheck[]
+  payments: PaymentStatusView
+  checked_at: string
+}
