@@ -1,10 +1,19 @@
 <script setup lang="ts">
-/** Demo home page: the editorial section templates with placeholder copy and photography. */
+/**
+ * Home page. Its "book" buttons follow the booking switch: once online booking is open they lead
+ * to the stays search; while it is closed ("Opening soon") they lead to the booking banner, which
+ * offers to write to the camp. Experiences come from the catalogue (real prices, real pages).
+ */
 definePageMeta({ headerOverlay: true })
 
 const { t } = useI18n()
 const { photo } = usePhoto()
 const { site } = useAppConfig()
+const localePath = useLocalePath()
+const api = useBookingApi()
+const { data: bookingConfig } = await useBookingConfig()
+const bookingOpen = computed(() => bookingConfig.value?.enabled === true)
+const bookTo = computed(() => (bookingOpen.value ? localePath('/stays') : '#book'))
 
 useSeo({ title: () => t('home.seoTitle'), description: () => t('home.seoDescription'), image: () => photo('hero-dunes').src })
 
@@ -13,11 +22,11 @@ const tent = computed(() => photo('nomad-tent'))
 const farm = computed(() => photo('farm-fields'))
 const night = computed(() => photo('night-sky'))
 
-const experiences = computed(() => [
-  { title: t('home.quadTitle'), description: t('home.quadText'), photo: photo('quads'), duration: 60, price: 4500, label: t('home.guided') },
-  { title: t('home.camelTitle'), description: t('home.camelText'), photo: photo('caravan'), duration: 90, price: 2500, label: undefined },
-  { title: t('home.villageTitle'), description: t('home.villageText'), photo: photo('ksar'), duration: 150, price: 1500, label: t('home.guided') },
-])
+// Featured activities first, three at most; the section is hidden when there are none.
+const { data: activities } = await useAsyncData('home-activities', () => api.products({ kind: 'activity' }).catch(() => []), { default: () => [] })
+const experiences = computed(() =>
+  [...activities.value].sort((a, b) => Number(b.is_featured) - Number(a.is_featured)).slice(0, 3),
+)
 
 const facts = computed(() => [
   { value: '6', label: t('home.factTents') },
@@ -54,7 +63,7 @@ const practical = computed(() => [
       next="intro"
     >
       <template #actions>
-        <UButton :label="t('home.cta')" size="lg" to="#book" />
+        <UButton :label="t('home.cta')" size="lg" :to="bookTo" />
       </template>
     </MzHero>
 
@@ -74,7 +83,7 @@ const practical = computed(() => [
       <p>{{ t('home.stayText1') }}</p>
       <p>{{ t('home.stayText2') }}</p>
       <template #actions>
-        <NuxtLink to="#book" class="link-underline text-small font-medium text-highlighted">{{ t('home.stayLink') }}</NuxtLink>
+        <NuxtLink :to="bookTo" class="link-underline text-small font-medium text-highlighted">{{ t('home.stayLink') }}</NuxtLink>
       </template>
     </MzEditorialSplit>
 
@@ -86,21 +95,20 @@ const practical = computed(() => [
       </template>
     </MzEditorialSplit>
 
-    <MzSection id="experiences" :eyebrow="t('home.experiencesEyebrow')" :title="t('home.experiencesTitle')" tone="sand">
+    <MzSection v-if="experiences.length" id="experiences" :eyebrow="t('home.experiencesEyebrow')" :title="t('home.experiencesTitle')" tone="sand">
       <MzGrid :cols="3">
-        <MzReveal v-for="(item, i) in experiences" :key="item.title" :index="i">
+        <MzReveal v-for="(item, i) in experiences" :key="item.id" :index="i">
           <MzOfferCard
-            :title="item.title"
-            :description="item.description"
-            :image="item.photo.src"
-            :image-srcset="item.photo.srcset"
-            :image-alt="item.photo.alt"
-            :lqip="item.photo.lqip"
-            :duration-minutes="item.duration"
-            :price-from-cents="item.price"
+            :title="item.name"
+            :product-id="item.id"
+            :description="item.short_description ?? undefined"
+            :image="item.cover?.url"
+            :image-alt="item.cover?.alt ?? item.name"
+            :duration-minutes="item.facts.duration_minutes ?? null"
+            :price-from-cents="item.from_price_minor"
             price-unit="person"
-            :label="item.label"
-            to="#book"
+            :label="item.facts.is_guided ? t('home.guided') : undefined"
+            :to="localePath(`/activities/${item.slug}`)"
           />
         </MzReveal>
       </MzGrid>
@@ -121,8 +129,9 @@ const practical = computed(() => [
     </MzSection>
 
     <div id="book">
-      <MzCtaBanner :eyebrow="t('home.ctaEyebrow')" :title="t('home.ctaTitle')" :description="t('home.ctaText')">
-        <UButton :label="t('home.cta')" size="lg" :to="site.email ? `mailto:${site.email}` : '#contact'" />
+      <MzCtaBanner :eyebrow="t('home.ctaEyebrow')" :title="t('home.ctaTitle')" :description="bookingOpen ? t('home.ctaTextOpen') : t('home.ctaText')">
+        <UButton v-if="bookingOpen" :label="t('home.cta')" size="lg" :to="localePath('/stays')" data-testid="home-book" />
+        <UButton v-else :label="t('home.ctaWrite')" size="lg" :to="site.email ? `mailto:${site.email}` : '#contact'" data-testid="home-book" />
         <NuxtLink to="#contact" class="link-underline self-center text-small font-medium text-highlighted">{{ t('home.ctaSecondary') }}</NuxtLink>
       </MzCtaBanner>
     </div>

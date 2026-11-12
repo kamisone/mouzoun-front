@@ -75,12 +75,6 @@
     "farmLink": "Découvrir la ferme",
     "experiencesEyebrow": "Expériences",
     "experiencesTitle": "Le désert, à votre rythme",
-    "quadTitle": "Quad dans les dunes",
-    "quadText": "Une heure de pistes jusqu'aux grandes dunes, avec un guide.",
-    "camelTitle": "Dromadaire au coucher du soleil",
-    "camelText": "Les crêtes dorées au pas lent de la caravane.",
-    "villageTitle": "Le village de M’ssici",
-    "villageText": "Ksour, four à pain et thé chez l’habitant.",
     "guided": "Guidé",
     "quote": "Ici, la nuit a encore toutes ses étoiles.",
     "quoteAuthor": "Claire",
@@ -105,7 +99,9 @@
     "ctaTitle": "Une nuit sous les étoiles vous attend",
     "ctaText": "Écrivez-nous pour vos dates : nous répondons sous 24 heures.",
     "ctaSecondary": "Nous écrire",
-    "factFarm": "ferme familiale"
+    "factFarm": "ferme familiale",
+    "ctaTextOpen": "Choisissez vos dates et réservez en ligne : confirmation immédiate.",
+    "ctaWrite": "Écrire pour réserver"
   },
   "footer": {
     "tagline": "Coopérative touristique, M'ssici, près d'Alnif et de Rissani, Maroc",

@@ -75,12 +75,6 @@
     "farmLink": "Discover the farm",
     "experiencesEyebrow": "Experiences",
     "experiencesTitle": "The desert, at your pace",
-    "quadTitle": "Quad in the dunes",
-    "quadText": "One hour of tracks out to the big dunes, with a guide.",
-    "camelTitle": "Camel ride at sunset",
-    "camelText": "The golden ridges at the slow pace of the caravan.",
-    "villageTitle": "M’ssici village",
-    "villageText": "Ksour, the bread oven and tea with a local family.",
     "guided": "Guided",
     "quote": "Here, the night still has all its stars.",
     "quoteAuthor": "Claire",
@@ -105,7 +99,9 @@
     "ctaTitle": "A night under the stars is waiting",
     "ctaText": "Write to us with your dates: we reply within 24 hours.",
     "ctaSecondary": "Write to us",
-    "factFarm": "family farm"
+    "factFarm": "family farm",
+    "ctaTextOpen": "Choose your dates and book online: instant confirmation.",
+    "ctaWrite": "Write to book"
   },
   "footer": {
     "tagline": "Tourism cooperative, M'ssici, near Alnif and Rissani, Morocco",
