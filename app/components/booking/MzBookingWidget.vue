@@ -164,7 +164,6 @@ function issueText() {
         <p class="eyebrow">{{ t('booking.closed.eyebrow') }}</p>
         <p class="text-h3">{{ t('booking.closed.title') }}</p>
         <p class="text-small text-muted">{{ t('booking.closed.text') }}</p>
-        <UButton :to="`${localePath('/')}#book`" :label="t('booking.closed.cta')" color="neutral" variant="outline" block />
       </template>
     </aside>
 

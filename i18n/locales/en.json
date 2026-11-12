@@ -97,11 +97,9 @@
     "practicalBringText": "Warm clothes for the evening, a head torch, shoes for the sand.",
     "ctaEyebrow": "Booking",
     "ctaTitle": "A night under the stars is waiting",
-    "ctaText": "Write to us with your dates: we reply within 24 hours.",
+    "ctaText": "Choose your dates and book online: instant confirmation.",
     "ctaSecondary": "Write to us",
-    "factFarm": "family farm",
-    "ctaTextOpen": "Choose your dates and book online: instant confirmation.",
-    "ctaWrite": "Write to book"
+    "factFarm": "family farm"
   },
   "footer": {
     "tagline": "Tourism cooperative, M'ssici, near Alnif and Rissani, Morocco",
@@ -689,8 +687,7 @@
     "closed": {
       "eyebrow": "Opening soon",
       "title": "Online booking opens soon",
-      "text": "Leave us a message and we will tell you as soon as you can book.",
-      "cta": "Get notified"
+      "text": "Online booking opens very soon. You can already pick your tent and your dates."
     },
     "lists": {
       "accommodation": "Stays",

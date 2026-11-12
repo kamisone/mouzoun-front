@@ -97,11 +97,9 @@
     "practicalBringText": "Vêtements chauds pour le soir, lampe frontale, chaussures pour le sable.",
     "ctaEyebrow": "Réservation",
     "ctaTitle": "Une nuit sous les étoiles vous attend",
-    "ctaText": "Écrivez-nous pour vos dates : nous répondons sous 24 heures.",
+    "ctaText": "Choisissez vos dates et réservez en ligne : confirmation immédiate.",
     "ctaSecondary": "Nous écrire",
-    "factFarm": "ferme familiale",
-    "ctaTextOpen": "Choisissez vos dates et réservez en ligne : confirmation immédiate.",
-    "ctaWrite": "Écrire pour réserver"
+    "factFarm": "ferme familiale"
   },
   "footer": {
     "tagline": "Coopérative touristique, M'ssici, près d'Alnif et de Rissani, Maroc",
@@ -689,8 +687,7 @@
     "closed": {
       "eyebrow": "Bientôt",
       "title": "La réservation en ligne ouvre bientôt",
-      "text": "Laissez-nous un message, nous vous prévenons dès l'ouverture.",
-      "cta": "Être prévenu"
+      "text": "La réservation en ligne ouvre très bientôt. Vous pouvez déjà choisir votre tente et vos dates."
     },
     "lists": {
       "accommodation": "Hébergements",

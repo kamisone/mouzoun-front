@@ -1,8 +1,7 @@
 <script setup lang="ts">
 /**
- * Home page. Its "book" buttons follow the booking switch: once online booking is open they lead
- * to the stays search; while it is closed ("Opening soon") they lead to the booking banner, which
- * offers to write to the camp. Experiences come from the catalogue (real prices, real pages).
+ * Home page. Every "book" button leads into online booking (the stays search); booking is never
+ * done by email. Experiences come from the catalogue (real prices, real pages).
  */
 definePageMeta({ headerOverlay: true })
 
@@ -11,9 +10,7 @@ const { photo } = usePhoto()
 const { site } = useAppConfig()
 const localePath = useLocalePath()
 const api = useBookingApi()
-const { data: bookingConfig } = await useBookingConfig()
-const bookingOpen = computed(() => bookingConfig.value?.enabled === true)
-const bookTo = computed(() => (bookingOpen.value ? localePath('/stays') : '#book'))
+const bookTo = computed(() => localePath('/stays'))
 
 useSeo({ title: () => t('home.seoTitle'), description: () => t('home.seoDescription'), image: () => photo('hero-dunes').src })
 
@@ -129,9 +126,8 @@ const practical = computed(() => [
     </MzSection>
 
     <div id="book">
-      <MzCtaBanner :eyebrow="t('home.ctaEyebrow')" :title="t('home.ctaTitle')" :description="bookingOpen ? t('home.ctaTextOpen') : t('home.ctaText')">
-        <UButton v-if="bookingOpen" :label="t('home.cta')" size="lg" :to="localePath('/stays')" data-testid="home-book" />
-        <UButton v-else :label="t('home.ctaWrite')" size="lg" :to="site.email ? `mailto:${site.email}` : '#contact'" data-testid="home-book" />
+      <MzCtaBanner :eyebrow="t('home.ctaEyebrow')" :title="t('home.ctaTitle')" :description="t('home.ctaText')">
+        <UButton :label="t('home.cta')" size="lg" :to="bookTo" data-testid="home-book" />
         <NuxtLink to="#contact" class="link-underline self-center text-small font-medium text-highlighted">{{ t('home.ctaSecondary') }}</NuxtLink>
       </MzCtaBanner>
     </div>

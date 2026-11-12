@@ -76,11 +76,11 @@ test('a product page answers 503, not 404, when the API is unreachable (search e
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Service momentanément indisponible')
 })
 
-test('while online booking is closed, the home page says how to book instead of pretending', async ({ page }) => {
-  // Server-side, the API is unreachable in this suite: booking counts as closed.
+test('every booking button of the home page leads to online booking, never to an email', async ({ page }) => {
   await page.goto('/')
-  const book = page.getByTestId('home-book')
-  await expect(book).toHaveText('Écrire pour réserver')
-  await expect(book).toHaveAttribute('href', /^mailto:|#contact$/)
-  await expect(page.getByRole('link', { name: 'Réserver un séjour' }).first()).toHaveAttribute('href', '#book')
+  await expect(page.getByTestId('home-book')).toHaveAttribute('href', '/stays')
+  for (const link of await page.getByRole('link', { name: 'Réserver un séjour' }).all()) {
+    await expect(link).toHaveAttribute('href', '/stays')
+  }
+  await expect(page.getByRole('main').locator('a[href^="mailto:"]')).toHaveCount(0)
 })
