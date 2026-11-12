@@ -271,6 +271,7 @@ function proceed() {
                   color="neutral"
                   variant="outline"
                   :loading="busy === `${o.stay.item.id}-${o.extra.product_id}`"
+                  data-testid="upsell-add"
                   @click="addExtra(o)"
                 />
               </div>
@@ -282,7 +283,8 @@ function proceed() {
                 <p class="font-medium text-highlighted">{{ a.name }}</p>
                 <MzPrice v-if="a.from_price_minor" :cents="a.from_price_minor" from unit="person" size="sm" />
               </div>
-              <UButton :label="t('booking.upsell.chooseTime')" size="sm" color="neutral" variant="outline" @click="slotFor = a" />
+              <UButton v-if="a.facts.scheduling_mode === 'fixed_slots'" :label="t('booking.upsell.chooseTime')" size="sm" color="neutral" variant="outline" data-testid="upsell-activity" @click="slotFor = a" />
+              <UButton v-else :to="localePath(`/activities/${a.slug}`)" :label="t('booking.upsell.see')" size="sm" color="neutral" variant="ghost" />
             </li>
           </ul>
         </section>

@@ -677,7 +677,8 @@
       "date": "Date",
       "chooseTime": "Choisir un horaire",
       "continueWithout": "Continuer",
-      "slotsDuringStay": "Départs pendant votre séjour"
+      "slotsDuringStay": "Départs pendant votre séjour",
+      "see": "Voir"
     },
     "units": {
       "per_person": "par personne",

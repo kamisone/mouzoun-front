@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formFieldInjectionKey } from '@nuxt/ui/composables/useFormField'
 import { centsToInput, parseMoneyToCents } from '~/utils/i18n-format'
 
 /**
@@ -17,7 +18,10 @@ const emit = defineEmits<{ invalid: [text: string] }>()
 
 const { t, locale } = useI18n()
 const attrs = useAttrs()
-const ariaLabel = computed(() => (attrs['aria-label'] as string | undefined) ?? t('forms.money'))
+// Inside a UFormField the visible label names the input (an aria-label would replace it):
+// the generic name is only a fallback for a bare input.
+const field = inject(formFieldInjectionKey, undefined)
+const ariaLabel = computed(() => (attrs['aria-label'] as string | undefined) ?? (field?.value?.labelId ? undefined : t('forms.money')))
 const { size } = useDensity()
 const text = ref(centsToInput(model.value, locale.value))
 const invalid = ref(false)

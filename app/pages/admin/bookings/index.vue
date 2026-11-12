@@ -16,24 +16,25 @@ const { date, dateRange } = useDate()
 
 const filters = reactive({
   q: String(route.query.q ?? ''),
-  status: String(route.query.status ?? ''),
+  status: String(route.query.status ?? 'all'),
   arrival_from: String(route.query.arrival_from ?? ''),
   arrival_to: String(route.query.arrival_to ?? ''),
-  source: String(route.query.source ?? ''),
-  payment: String(route.query.payment ?? ''),
+  source: String(route.query.source ?? 'all'),
+  payment: String(route.query.payment ?? 'all'),
   balance_due: route.query.balance_due === 'true',
   sort: String(route.query.sort ?? '-created'),
   page: Number(route.query.page ?? 1),
 })
-const query = computed(() => Object.fromEntries(Object.entries({ ...filters, balance_due: filters.balance_due || undefined, per_page: 25 }).filter(([, v]) => v !== '' && v !== undefined)))
+// Select menus cannot hold an empty value: 'all' means no filter.
+const query = computed(() => Object.fromEntries(Object.entries({ ...filters, balance_due: filters.balance_due || undefined, per_page: 25 }).filter(([, v]) => v !== '' && v !== 'all' && v !== undefined)))
 watchDebounced(() => ({ ...filters }), () => router.replace({ query: Object.fromEntries(Object.entries(query.value).map(([k, v]) => [k, String(v)])) }), { debounce: 300, deep: true })
 const { data, pending } = await useAsyncData('admin-bookings', () => admin.bookings.list(query.value), { watch: [query] })
 
 const statuses = ['pending', 'awaiting_payment', 'confirmed', 'checked_in', 'completed', 'cancelled', 'no_show', 'expired']
 const sources = ['website', 'phone', 'email', 'whatsapp', 'walk_in', 'agency', 'admin', 'ota']
-const statusItems = computed(() => [{ label: t('admin.bookings.allStatuses'), value: '' }, ...statuses.map(s => ({ label: t(`status.${s}`), value: s }))])
-const sourceItems = computed(() => [{ label: t('admin.bookings.allSources'), value: '' }, ...sources.map(s => ({ label: t(`admin.sources.${s}`), value: s }))])
-const paymentItems = computed(() => [{ label: t('admin.bookings.anyPayment'), value: '' }, ...['unpaid', 'partial', 'paid'].map(s => ({ label: t(`admin.bookings.payment.${s}`), value: s }))])
+const statusItems = computed(() => [{ label: t('admin.bookings.allStatuses'), value: 'all' }, ...statuses.map(s => ({ label: t(`status.${s}`), value: s }))])
+const sourceItems = computed(() => [{ label: t('admin.bookings.allSources'), value: 'all' }, ...sources.map(s => ({ label: t(`admin.sources.${s}`), value: s }))])
+const paymentItems = computed(() => [{ label: t('admin.bookings.anyPayment'), value: 'all' }, ...['unpaid', 'partial', 'paid'].map(s => ({ label: t(`admin.bookings.payment.${s}`), value: s }))])
 const sortItems = computed(() => [
   { label: t('admin.bookings.sort.created'), value: '-created' },
   { label: t('admin.bookings.sort.arrival'), value: 'arrival' },
@@ -86,7 +87,7 @@ const exportUrl = computed(() => admin.bookings.exportUrl({ ...query.value, page
     </MzPageHeader>
 
     <div class="flex flex-wrap items-center gap-2">
-      <UButton v-for="p in presets" :key="p.label" :label="p.label" size="sm" color="neutral" variant="soft" @click="Object.assign(filters, { status: '', balance_due: false, sort: '-created', page: 1 }, p.filters)" />
+      <UButton v-for="p in presets" :key="p.label" :label="p.label" size="sm" color="neutral" variant="soft" @click="Object.assign(filters, { status: 'all', balance_due: false, sort: '-created', page: 1 }, p.filters)" />
       <UButton v-for="v in views" :key="v.name" :label="v.name" size="sm" color="neutral" variant="outline" icon="i-lucide-bookmark" @click="applyView(v)" />
       <UButton :label="t('admin.bookings.saveView')" size="sm" color="neutral" variant="ghost" icon="i-lucide-bookmark-plus" @click="saveView" />
     </div>

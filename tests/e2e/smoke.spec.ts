@@ -42,7 +42,8 @@ test('the theme choice persists across reloads, without flash', async ({ page })
 test('the admin layout renders for a signed-in staff member', async ({ page }) => {
   await mockApi(page, true)
   await page.goto('/admin')
-  await expect(page.getByRole('heading', { level: 1, name: 'Tableau de bord' })).toBeVisible()
+  // The back office opens on "Today" (the dashboard API is not mocked: empty state).
+  await expect(page.getByRole('heading', { level: 1, name: "Aujourd'hui" })).toBeVisible()
   await expect(page.getByText('Bienvenue, Hassan Ait Ouarab.')).toBeVisible()
   await expect(page.getByRole('link', { name: 'Tableau de bord' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Menu utilisateur' })).toBeVisible()

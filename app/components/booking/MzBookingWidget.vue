@@ -11,6 +11,7 @@ import type { ProductPage, QuoteResponse, TripItem } from '~/utils/booking-types
 const props = defineProps<{ product: ProductPage }>()
 const { t } = useI18n()
 const localePath = useLocalePath()
+const route = useRoute()
 const api = useBookingApi()
 const trip = useTrip()
 const toast = useToast()
@@ -76,7 +77,7 @@ async function addToTrip(goTo: 'trip' | 'stay') {
   adding.value = true
   try {
     await trip.add(item.value)
-    if (kind.value === 'accommodation') await update({ checkin: dates.value.start, checkout: dates.value.end, party: party.value }, useRoute().path)
+    if (kind.value === 'accommodation') await update({ checkin: dates.value.start, checkout: dates.value.end, party: party.value }, route.path)
     track('add_to_cart', { items: [{ item_id: props.product.id, item_name: props.product.name }], value: (quoted.value?.total_minor ?? 0) / 100, currency: 'EUR' })
     sheet.value = false
     if (goTo === 'trip') await navigateTo(localePath('/trip'))
@@ -127,7 +128,7 @@ function issueText() {
           <MzSlotPicker v-model="slotId" :product-id="props.product.id" :participants="participants" />
         </div>
         <UFormField v-else :label="t('booking.widget.date')">
-          <UInput v-model="activityDate" type="date" class="w-full" />
+          <UInput v-model="activityDate" type="date" class="w-full" data-testid="widget-date" />
         </UFormField>
 
         <div>

@@ -62,9 +62,6 @@ const guests = (i: TripQuote['items'][number]) => i.guests.reduce((n, g) => n + 
         <dt class="text-body font-medium text-highlighted">{{ t('booking.price.total') }}</dt>
         <dd><MzPrice :cents="props.quote.total_minor" :currency="props.quote.currency" size="lg" show-zero /></dd>
       </div>
-      <div class="flex justify-end">
-        <MzPriceBreakdown :quote="props.quote" />
-      </div>
       <template v-if="choice">
         <div class="flex justify-between gap-3 pt-2 font-medium text-highlighted">
           <dt>{{ t('booking.summary.dueToday') }}</dt>
@@ -75,9 +72,12 @@ const guests = (i: TripQuote['items'][number]) => i.guests.reduce((n, g) => n + 
           <dd class="tabular-nums">{{ money(choice.due_later_minor, props.quote.currency) }}</dd>
         </div>
       </template>
-      <p v-if="props.madRate" class="pt-2 text-caption text-muted">
-        {{ t('booking.summary.approx', { currency: props.quote.currency, amount: money(Math.round(props.quote.total_minor * props.madRate), 'MAD') }) }}
-      </p>
     </dl>
+    <div class="flex justify-end">
+      <MzPriceBreakdown :quote="props.quote" />
+    </div>
+    <p v-if="props.madRate" class="text-caption text-muted">
+      {{ t('booking.summary.approx', { currency: props.quote.currency, amount: money(Math.round(props.quote.total_minor * props.madRate), 'MAD') }) }}
+    </p>
   </aside>
 </template>

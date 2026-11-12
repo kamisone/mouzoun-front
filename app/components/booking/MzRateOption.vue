@@ -74,6 +74,7 @@ const scarce = computed(() => left.value != null && left.value > 0 && left.value
       :loading="props.loading"
       block
       size="lg"
+      data-testid="rate-reserve"
       @click="emit('select')"
     />
     <p v-if="props.option.payment_options.some(o => o.due_now_minor === 0)" class="text-center text-caption text-muted">

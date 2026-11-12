@@ -677,7 +677,8 @@
       "date": "التاريخ",
       "chooseTime": "اختر موعدًا",
       "continueWithout": "متابعة",
-      "slotsDuringStay": "المواعيد خلال إقامتك"
+      "slotsDuringStay": "المواعيد خلال إقامتك",
+      "see": "عرض"
     },
     "units": {
       "per_person": "للشخص",

@@ -155,6 +155,7 @@ const issueText = (r: SearchResult) => (r.issue ? t(`booking.issues.${r.issue.co
                     :aria-expanded="expanded === r.product.id"
                     :aria-controls="`rates-${r.product.id}`"
                     trailing-icon="i-lucide-chevron-down"
+                    data-testid="see-rates"
                     @click="expanded = expanded === r.product.id ? null : r.product.id"
                   />
                 </template>

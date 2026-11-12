@@ -11,6 +11,7 @@ const props = defineProps<{ product: ProductPage }>()
 const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const config = useRuntimeConfig()
+const route = useRoute()
 const { track } = useAnalytics()
 onMounted(() => track('view_item', { items: [{ item_id: props.product.id, item_name: props.product.name, item_category: props.product.kind }] }))
 
@@ -74,7 +75,7 @@ useHead(() => ({
         'name': p.value.name,
         'description': p.value.seo_description ?? p.value.short_description ?? undefined,
         'image': gallery.value.map(g => g.url),
-        ...(p.value.from_price_minor ? { offers: { '@type': 'Offer', 'priceCurrency': 'EUR', 'price': (p.value.from_price_minor / 100).toFixed(2), 'availability': 'https://schema.org/InStock', 'url': `${siteUrl.value}${useRoute().path}` } } : {}),
+        ...(p.value.from_price_minor ? { offers: { '@type': 'Offer', 'priceCurrency': 'EUR', 'price': (p.value.from_price_minor / 100).toFixed(2), 'availability': 'https://schema.org/InStock', 'url': `${siteUrl.value}${route.path}` } } : {}),
         ...(p.value.rating ? { aggregateRating: { '@type': 'AggregateRating', 'ratingValue': p.value.rating.average, 'reviewCount': p.value.rating.count } } : {}),
         ...(p.value.kind === 'accommodation' ? { containedInPlace: { '@type': 'Campground', 'name': t('common.siteName'), 'geo': { '@type': 'GeoCoordinates', 'latitude': 31.238933, 'longitude': -4.701349 } } } : {}),
       },
