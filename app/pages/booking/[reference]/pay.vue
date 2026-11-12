@@ -26,12 +26,14 @@ const expired = ref(false)
 const loading = ref(true)
 
 onMounted(async () => {
-  token.value ??= access.get(reference.value)
-  if (!token.value) {
+  token.value ||= access.get(reference.value)
+  // Signed in: the account opens its own bookings without the email token.
+  if (!token.value && await useAccount().load()) token.value = ''
+  if (token.value === null) {
     loading.value = false
     return
   }
-  access.remember(reference.value, token.value)
+  if (token.value) access.remember(reference.value, token.value)
   try {
     booking.value = await api.booking.get(reference.value, token.value)
     if (booking.value.status !== 'awaiting_payment' && !(booking.value.status === 'confirmed' && booking.value.totals.balance_minor > 0)) {
@@ -95,7 +97,7 @@ const isBalance = computed(() => booking.value?.status === 'confirmed')
       <h1 class="text-display-lg">{{ isBalance ? t('booking.pay.balanceTitle') : t('booking.pay.title') }}</h1>
     </header>
     <MzSkeleton v-if="loading" variant="card" />
-    <MzEmptyState v-else-if="!token" icon="i-lucide-link" :title="t('booking.manage.noAccess')" :description="t('booking.manage.noAccessText')">
+    <MzEmptyState v-else-if="token === null" icon="i-lucide-link" :title="t('booking.manage.noAccess')" :description="t('booking.manage.noAccessText')">
       <UButton :to="localePath('/booking/find')" :label="t('booking.find.title')" />
     </MzEmptyState>
     <div v-else-if="expired" class="flex flex-col gap-4" role="alert">

@@ -17,7 +17,6 @@ const { money } = useMoney()
 const { date } = useDate()
 const { track } = useAnalytics()
 const { data: config } = useBookingConfig()
-const runtime = useRuntimeConfig()
 
 useSeo({ title: () => `${t('booking.checkout.title')} · ${t('common.siteName')}`, description: () => t('booking.trip.description') })
 useHead({ meta: [{ name: 'robots', content: 'noindex' }] })
@@ -41,6 +40,7 @@ const form = reactive({
   save_card: false,
   accept_terms: false,
   marketing_consent: false,
+  create_account: false,
 })
 onMounted(() => {
   try {
@@ -55,6 +55,32 @@ watchDebounced(form, () => {
   }
   catch { /* private mode */ }
 }, { debounce: 400, deep: true })
+
+// Signed in: details come from the account (and go back to it), the email is the account's.
+const { account, load: loadAccount } = useAccount()
+const signInOpen = ref(false)
+function prefill() {
+  const a = account.value
+  if (!a) return
+  form.first_name = a.first_name || form.first_name
+  form.last_name = a.last_name ?? form.last_name
+  form.email = a.email
+  if (a.country_code) form.country_code = a.country_code
+  if (a.phone) {
+    const dial = Object.values(DIAL_CODES).filter(d => a.phone!.startsWith(d)).sort((x, y) => y.length - x.length)[0]
+    form.dial = dial ?? form.dial
+    form.phone = dial ? a.phone.slice(dial.length).trim() : a.phone
+  }
+}
+onMounted(async () => {
+  await loadAccount()
+  prefill()
+})
+async function afterSignIn() {
+  signInOpen.value = false
+  prefill()
+  await trip.refresh()
+}
 
 const options = computed(() => quote.value?.payment_options ?? [])
 watchEffect(() => {
@@ -98,23 +124,7 @@ const problem = ref<string | null>(null)
 const errorSummary = ref<HTMLElement | null>(null)
 let attemptKey: string | null = null
 
-async function captchaToken(): Promise<string | null> {
-  const siteKey = runtime.public.turnstileSiteKey as string | undefined
-  if (!config.value?.captcha || !siteKey) return null
-  const w = window as unknown as { turnstile?: { execute: (el: string, o: Record<string, unknown>) => void, render: (el: string, o: Record<string, unknown>) => string } }
-  if (!w.turnstile) {
-    await new Promise<void>((resolve, reject) => {
-      const s = document.createElement('script')
-      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
-      s.onload = () => resolve()
-      s.onerror = () => reject(new Error('captcha'))
-      document.head.appendChild(s)
-    })
-  }
-  return new Promise((resolve) => {
-    w.turnstile!.render('#captcha', { sitekey: siteKey, size: 'invisible', callback: (tk: string) => resolve(tk), 'error-callback': () => resolve(null) })
-  })
-}
+const captcha = useCaptcha()
 
 async function submit() {
   Object.keys(errors.value).forEach((k) => { touched[k] = true })
@@ -150,7 +160,8 @@ async function submit() {
       special_requests: form.special_requests || null,
       accept_terms: form.accept_terms,
       marketing_consent: form.marketing_consent,
-      captcha_token: await captchaToken(),
+      create_account: !account.value && form.create_account,
+      captcha_token: await captcha.token('captcha'),
     }, attemptKey)
     access.remember(res.booking.reference, res.access_token)
     try {
@@ -195,8 +206,17 @@ const optionLabel = (o: PaymentOption) => t(`booking.checkout.options.${o}`)
     <header class="flex flex-col gap-3 pb-8">
       <NuxtLink :to="localePath('/trip')" class="link-underline self-start text-small text-muted">← {{ t('booking.checkout.back') }}</NuxtLink>
       <h1 class="text-display-lg">{{ t('booking.checkout.title') }}</h1>
-      <p class="text-muted">{{ t('booking.checkout.guestCheckout') }}</p>
+      <p v-if="account" class="text-muted">{{ t('account.checkout.signedInAs', { email: account.email }) }}</p>
+      <div v-else class="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <p class="text-muted">{{ t('booking.checkout.guestCheckout') }}</p>
+        <UButton :label="t('account.checkout.signInFaster')" icon="i-lucide-user-round" color="neutral" variant="outline" size="sm" data-testid="checkout-signin" @click="signInOpen = true" />
+      </div>
     </header>
+    <UModal v-model:open="signInOpen" :title="t('account.signin.title')" :ui="{ title: 'sr-only' }">
+      <template #body>
+        <MzSignInPanel :email="form.email" :heading-level="2" return-to="/checkout" @signed-in="afterSignIn" />
+      </template>
+    </UModal>
 
     <div v-if="quote" class="grid gap-12 lg:grid-cols-12">
       <form class="flex flex-col gap-12 lg:col-span-7" novalidate data-testid="checkout-form" @submit.prevent="submit">
@@ -216,7 +236,7 @@ const optionLabel = (o: PaymentOption) => t(`booking.checkout.options.${o}`)
               <UInput v-model="form.last_name" autocomplete="family-name" class="w-full" @blur="touched.last_name = true" />
             </UFormField>
             <UFormField :label="t('booking.checkout.email')" :error="show('email')" :help="t('booking.checkout.emailHelp')" required class="sm:col-span-2">
-              <UInput v-model="form.email" type="email" autocomplete="email" inputmode="email" class="w-full" @blur="touched.email = true" />
+              <UInput v-model="form.email" type="email" autocomplete="email" inputmode="email" class="w-full" :readonly="!!account" @blur="touched.email = true" />
               <template v-if="emailSuggestion" #hint>
                 <button type="button" class="link-underline text-small text-highlighted" @click="form.email = emailSuggestion!">
                   {{ t('booking.checkout.didYouMean', { email: emailSuggestion }) }}
@@ -295,6 +315,7 @@ const optionLabel = (o: PaymentOption) => t(`booking.checkout.options.${o}`)
           </UCheckbox>
           <p v-if="show('accept_terms')" class="text-small text-error">{{ show('accept_terms') }}</p>
           <UCheckbox v-model="form.marketing_consent" :label="t('booking.checkout.marketing')" />
+          <UCheckbox v-if="!account" v-model="form.create_account" :label="t('account.checkout.createAccount')" :description="t('account.checkout.createAccountHint')" data-testid="checkout-create-account" />
           <p class="text-caption text-muted">{{ t('booking.checkout.privacyNote') }}</p>
           <div id="captcha" />
           <UButton type="submit" :label="cta" :loading="submitting" size="xl" block data-testid="checkout-submit" />

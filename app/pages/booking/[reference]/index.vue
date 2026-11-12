@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SavedTraveller } from '~/utils/account-types'
 import type { BookingView, CancellationPreview, RegisterGuest } from '~/utils/booking-types'
 import { countries } from '~/utils/contact'
 
@@ -19,6 +20,25 @@ const appConfig = useAppConfig()
 const { money } = useMoney()
 const { date, dateRange, dateTime } = useDate()
 const { purchaseOnce } = useAnalytics()
+const accountState = useAccount()
+const createAccountOpen = ref(false)
+
+// Pre-check-in from saved travellers (signed in).
+const savedTravellers = ref<SavedTraveller[]>([])
+watch(() => accountState.account.value, async (a) => {
+  if (a) savedTravellers.value = (await useAccountApi().travellers.list().catch(() => ({ travellers: [] }))).travellers
+}, { immediate: true })
+function fillFromSaved(g: RegisterGuest, id: string) {
+  const s = savedTravellers.value.find(x => x.id === id)
+  if (!s) return
+  Object.assign(g, {
+    first_name: s.first_name,
+    last_name: s.last_name,
+    date_of_birth: s.date_of_birth,
+    nationality: s.nationality,
+    id_document_type: (s.id_document_type ?? g.id_document_type) as RegisterGuest['id_document_type'],
+  })
+}
 useHead({ title: () => `${t('booking.manage.title')} ${String(route.params.reference)}`, meta: [{ name: 'robots', content: 'noindex' }] })
 
 const reference = computed(() => String(route.params.reference).toUpperCase())
@@ -29,7 +49,7 @@ const linkError = ref<string | null>(null)
 const confirming = ref(false)
 
 async function load() {
-  if (!token.value) return
+  if (token.value === null) return
   booking.value = await api.booking.get(reference.value, token.value)
 }
 
@@ -43,8 +63,11 @@ onMounted(async () => {
       if (res) token.value = res.access_token
     }
     token.value ??= typeof route.query.t === 'string' ? route.query.t : access.get(reference.value)
-    if (token.value) {
-      access.remember(reference.value, token.value)
+    // Signed in: the account opens its own bookings without the email token.
+    const signedIn = await accountState.load()
+    if (!token.value && signedIn) token.value = ''
+    if (token.value !== null) {
+      if (token.value) access.remember(reference.value, token.value)
       // Keep the token out of the address bar (shared screenshots, history).
       await router.replace({ query: { ...route.query, t: undefined, m: undefined } })
       await load()
@@ -231,6 +254,22 @@ function printReceipt() {
         </div>
       </header>
 
+      <!-- One tap: an account to find this trip again (a code goes to the booking address). -->
+      <section
+        v-if="isNew && accountState.ready.value && !accountState.account.value && b.customer.email"
+        class="flex flex-col gap-3 rounded-sm bg-elevated p-6 ring ring-default print:hidden"
+        aria-labelledby="create-account-title"
+      >
+        <h2 id="create-account-title" class="font-display text-h3 text-highlighted">{{ t('account.confirmation.title') }}</h2>
+        <p class="text-muted">{{ t('account.confirmation.text') }}</p>
+        <UButton :label="t('account.confirmation.cta')" icon="i-lucide-user-round-plus" class="self-start" data-testid="create-account" @click="createAccountOpen = true" />
+        <UModal v-model:open="createAccountOpen" :title="t('account.signin.title')" :ui="{ title: 'sr-only' }">
+          <template #body>
+            <MzSignInPanel :email="b.customer.email" auto-send :heading-level="2" :return-to="`/booking/${b.reference}`" @signed-in="createAccountOpen = false" />
+          </template>
+        </UModal>
+      </section>
+
       <div class="grid gap-12 lg:grid-cols-12">
         <div class="flex flex-col gap-16 lg:col-span-7">
           <!-- Items -->
@@ -299,6 +338,14 @@ function printReceipt() {
             <form v-else class="flex flex-col gap-6" @submit.prevent="saveRegister">
               <fieldset v-for="(g, i) in register" :key="i" class="grid gap-3 rounded-sm border border-default p-4 sm:grid-cols-2">
                 <legend class="px-2 text-small font-medium text-highlighted">{{ t('booking.precheckin.guest', { n: i + 1 }) }}</legend>
+                <UFormField v-if="savedTravellers.length" :label="t('account.travellers.fillFrom')" class="sm:col-span-2">
+                  <USelect
+                    :items="savedTravellers.map(s => ({ value: s.id, label: `${s.first_name} ${s.last_name}` }))"
+                    :placeholder="t('account.travellers.choose')"
+                    class="w-full"
+                    @update:model-value="(v: string) => fillFromSaved(g, v)"
+                  />
+                </UFormField>
                 <UFormField :label="t('booking.checkout.firstName')" required><UInput v-model="g.first_name" autocomplete="off" class="w-full" /></UFormField>
                 <UFormField :label="t('booking.checkout.lastName')" required><UInput v-model="g.last_name" autocomplete="off" class="w-full" /></UFormField>
                 <UFormField :label="t('booking.precheckin.nationality')"><USelectMenu :model-value="g.nationality ?? undefined" :items="countryItems" value-key="value" class="w-full" @update:model-value="(v: string) => (g.nationality = v)" /></UFormField>
