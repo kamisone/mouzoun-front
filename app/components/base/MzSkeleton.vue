@@ -17,7 +17,7 @@ const { t } = useI18n()
     <USkeleton v-else-if="props.variant === 'image'" class="aspect-[4/3] w-full rounded-lg" />
     <div v-else class="overflow-hidden rounded-lg border border-default">
       <USkeleton class="aspect-[4/3] w-full rounded-none" />
-      <div class="space-y-2 p-5">
+      <div class="space-y-2 p-6">
         <USkeleton class="h-5 w-3/4" />
         <USkeleton class="h-4 w-full" />
         <USkeleton class="h-4 w-1/2" />

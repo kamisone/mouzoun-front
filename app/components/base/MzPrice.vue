@@ -19,7 +19,7 @@ const { money } = useMoney()
 const formatted = computed(() => money(props.cents, props.currency, { trimZeroCents: props.trimZeroCents }))
 const isFree = computed(() => props.cents === 0 && !props.showZero)
 const unitLabel = computed(() => (props.unit === 'night' ? t('common.perNight') : props.unit === 'person' ? t('common.perPerson') : ''))
-const sizes = { sm: 'text-small', md: 'text-body', lg: 'font-display text-h2' }
+const sizes = { sm: 'text-small', md: 'text-body', lg: 'font-display text-h2 lining-nums' }
 </script>
 
 <template>

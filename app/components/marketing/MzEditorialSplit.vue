@@ -17,7 +17,8 @@ const props = withDefaults(defineProps<{
 </script>
 
 <template>
-  <section :id="props.id" class="py-16 md:py-24 lg:py-32">
+  <!-- 64–96 px: consecutive splits read as one sequence (their paddings add up). -->
+  <section :id="props.id" class="py-16 lg:py-24">
     <MzContainer class="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
       <MzReveal class="lg:col-span-6" :class="props.reverse ? 'lg:order-2 lg:col-start-7' : 'lg:col-start-1'">
         <MzImage :src="props.image" :srcset="props.imageSrcset" :alt="props.imageAlt" :lqip="props.lqip" :ratio="props.ratio" sizes="xs:100vw lg:50vw" />

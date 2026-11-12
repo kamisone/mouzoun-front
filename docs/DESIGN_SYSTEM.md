@@ -1,134 +1,149 @@
 # Mouzoun design system
 
-Nuxt UI v4 (Tailwind CSS v4, Reka UI) themed with Mouzoun tokens, plus a thin layer of `Mz`
-components that add domain meaning. Live reference: **`/_styleguide`** (dev, or staff in
-production) — colour scales, semantic tokens in light/dark, Latin and Arabic type, every
-component, with an LTR/RTL switch.
+Quiet, editorial, photography-led. Nuxt UI v4 (Tailwind CSS v4, Reka UI) themed with Mouzoun
+tokens, plus `Mz` components that add domain meaning and the editorial section templates.
+Live reference: **`/_styleguide`** (dev, or staff in production) — colours, type scale in Latin
+and Arabic, space and shape, actions, every section template and component, LTR/RTL switch.
+Before/after screenshots of the redesign: `docs/screenshots/{before,after}/`.
 
 ```
-app/assets/css/main.css   tokens: brand scales, semantic colours, type, radius, shadows, rhythm, layers, motion
-app/theme/palette.ts      brand colours (source of the scales)  →  npm run tokens
-app/theme/colors.ts       Nuxt UI aliases → palettes (primary = terracotta, ...)
-app/app.config.ts         global look of Nuxt UI components (once, never per usage)
+app/assets/css/main.css    tokens: palette scales, semantic colours, type scale, radius, shadow, motion
+app/theme/palette.ts       brand colours (source of the scales)  →  npm run tokens
+app/theme/colors.ts        Nuxt UI aliases → palettes
+app/app.config.ts          global look of Nuxt UI components (once, never per usage)
 app/components/{base,layout,marketing,forms,admin}/Mz*.vue
-app/composables/          useMoney, useDate, useNumber, useLocalized, useSeo, useValidation,
-                          useThemePreference, useDensity, useTableQuery
+app/data/photos.json       site photos: variants, blur-up preview, credits (scripts/grade-photos.mjs)
 ```
 
-## Tokens
+## Principles
 
-### Colours
+1. **Restraint.** 80 % of every screen is neutral + photography. One accent, used rarely.
+2. **Space.** Sections breathe: 64–96 px on mobile, 96–160 px on desktop.
+3. **Typography brands.** Large serif headlines, calm sans body, small uppercase tracked labels.
+4. **Photography is the hero.** Full-bleed, warm and consistent. Text on photos only over a scrim.
+5. **Precision.** 4/8 px spacing, 12-column grid, consistent radii, no random values.
 
-| Alias | Palette | Meaning |
+## Colour
+
+| Token (class) | Light | Dark | Use |
+|---|---|---|---|
+| `bg-default` | ivory #F7F3EC | #12100D | page |
+| `bg-elevated` | #FFFDF9 | #1B1814 | inputs, cards, dialogs |
+| `bg-muted` | sand #EDE6DA | #1B1814 | subtle sections, closing band |
+| `border-default` | #E2D9CA | #2C2721 | hairlines |
+| `text-highlighted` | ink #1C1915 | #F2ECE2 | headings |
+| `text-muted` | #6B6258 | #A39886 | secondary text, labels |
+| `text-primary`, `bg-primary` | terracotta #A4502F (hover #8C4227) | lighter terracotta | **only** primary CTA, links, focus ring, small highlights |
+| `secondary` | deep olive #3E4A33 | | sparingly: tags, details |
+| `success` `info` `warning` `error` | desaturated sage, dusk, ochre, clay | | forms and admin only |
+
+Never: raw hex in components, saturated colours, pure #000/#FFF, gradients (except photo scrims),
+the accent on large backgrounds. `tests/unit/contrast.spec.ts` checks every pair against WCAG AA
+(4.5:1 text including placeholders, 3:1 UI), with the real values of `main.css`; axe checks the
+rendered pages.
+
+## Typography
+
+| Class | Size (fluid 390 → 1440 px) | Face |
 |---|---|---|
-| `primary` | terracotta (#C65D35) | earth, kasbah walls — actions, links |
-| `secondary`, `success` | palm (#5B7A3A) | oasis, olive and date trees |
-| `warning` | saffron (#D9A13B) | dates, sunset |
-| `info` | indigo (#2F4A8A) | Tuareg blue, night sky |
-| `error` | clay (#B3362B) | |
-| `neutral` | dune (#FBF7F0 → #A88B68 → #1E1812) | warm sand, never grey or black |
+| `text-display-xl` | 56 → 104 | display serif, leading 1.05, tracking −0.02em |
+| `text-display-lg` | 44 → 72 | display serif |
+| `text-h1` / `text-h2` / `text-h3` | 36→56 / 28→40 / 22→28 | display serif |
+| `text-body-lg` / `text-body` | 18→20 / 16→17 | sans, leading 1.6 |
+| `text-small` / `text-caption` | 14 / 12 | sans |
+| `eyebrow` | 12, uppercase, 0.14em, muted | sans 500 |
 
-Scales 50–950 are generated in OKLCH (perceptually even steps, the brand colour exact at 500).
+Latin: **Cormorant Garamond** (400/500) + **Inter** (400/500). Arabic: **Noto Naskh Arabic** +
+**IBM Plex Sans Arabic**, swapped automatically for `lang="ar"` (page or fragment), with looser
+leading and **no tracking or uppercase**. Headings 400–500, never bold 800/900, never all caps.
+Large numbers use lining figures (`lining-nums`). Text columns max 680 px (`max-w-editorial`).
 
-**Components use semantic classes only**:
+## Space, grid, shape
 
-| Purpose | Classes |
+- Spacing: **4, 8, 12, 16, 24, 32, 48, 64, 96, 128, 160 px** (`1 2 3 4 6 8 12 16 24 32 40`).
+  `npm run lint` rejects any other padding / margin / gap.
+- Container 1280 px, gutters 24 px mobile / 48 px desktop (`MzContainer`), 12-column grid.
+- Radius: 2 px inputs and buttons (`rounded-xs`), 4 px cards and images (`rounded-sm`), `rounded-full`
+  only for pills and avatars.
+- Shadows: none, except `shadow-overlay` for menus and dialogs. Depth comes from surfaces and
+  hairlines.
+
+## Actions
+
+- **Primary**: `<UButton>` — solid accent, 48 px, Inter 500, slight tracking. **One per view.**
+- **Secondary**: `<UButton color="neutral" variant="outline">` — 1 px ink outline.
+- **Tertiary**: `<a class="link-underline text-small font-medium text-highlighted">` — underline
+  that draws on hover.
+
+## Section templates (`components/marketing`)
+
+| Component | Use |
 |---|---|
-| backgrounds | `bg-default` `bg-muted` `bg-elevated` `bg-accented` `bg-inverted` |
-| text | `text-highlighted` (headings) `text-default` `text-toned` `text-muted` `text-dimmed` (placeholders) `text-inverted` |
-| borders | `border-default` `border-muted` `border-accented`, `ring-default`, `divide-default` |
-| brand | `text-primary` `bg-primary` `bg-primary/10` … same for secondary, success, info, warning, error |
+| `MzHero` | full-viewport photo/video, scrim, headline bottom-start, one CTA, scroll cue |
+| `MzEditorialSplit` | image 6 cols + text 5 cols, alternate with `reverse` |
+| `MzSection` + `MzGrid` + `MzOfferCard` | 3-up offers: image first (4:5 or 3:2), serif title, one meta line |
+| `MzQuoteImage` | full-bleed photo with a serif quote |
+| `MzFacts` | numbers row, serif, hairlines |
+| `MzGallery` | horizontal scroll on mobile, editorial row on desktop, lightbox |
+| `MzPracticalInfo` | map (loaded on demand, photo preview) + practical list |
+| `MzCtaBanner` | closing band on the sand surface |
 
-Light theme = warm sand, dark theme = "desert night" (warm brown-black). Brand shade 500 is too
-light for text on sand, so in light mode `--ui-primary` is shade 600 (and soft/subtle variants use
-700). Every pair is checked for WCAG AA by `tests/unit/contrast.spec.ts` (4.5:1 for text including
-placeholders, 3:1 for large text and UI), with the real values of `main.css`, tints included;
-axe checks the rendered pages in Playwright.
+Header: transparent with ivory text over a hero (`definePageMeta({ headerOverlay: true })`),
+solid ivory with a hairline after scrolling; centred wordmark; full-screen serif menu on mobile.
+Footer: always dark.
 
-### Type
+## Imagery
 
-`font-display` (Fraunces) for headings — `h1–h3` get it automatically — and `font-sans` (Inter)
-for everything else. Any Arabic content (`lang="ar"` on `<html>` or on a fragment) switches to
-Noto Kufi Arabic / IBM Plex Sans Arabic through the same variables. Fonts are self-hosted by
-`@nuxt/fonts`, subset by `unicode-range`, `font-display: swap`, with metric-matched fallbacks.
+- Always `MzImage`: fixed ratio (`16/9`, `3/2`, `4/5`, `1/1`) or `fill`, object-cover, blur-up,
+  never stretched, `alt` required (translated: `photos.<slug>` in i18n).
+- Site photos are prepared once by `node scripts/grade-photos.mjs <manifest.json>`: warm grade,
+  WebP variants 480–2000 px served as static files (no image processing at request time), blur-up
+  preview, credits. **The current photos are CC-licensed placeholders from Wikimedia Commons**
+  (credits in the footer and `app/data/photos.json`); replace them with real photos of M'ssici.
+- `sizes` always with breakpoints: `xs:100vw sm:50vw lg:33vw` (enforced by lint).
+- No illustrations, emojis or clip-art. Icons: lucide, thin, small, never in every heading.
 
-### Other tokens
+## Motion
 
-| Token | Use |
-|---|---|
-| `rounded-sm/md/lg/xl/full` | radius scale (`--ui-radius` drives Nuxt UI components) |
-| `shadow-soft`, `shadow-warm`, `shadow-lifted` | warm-tinted shadows: cards, hover, overlays |
-| `py-(--section-y)`, `--section-gap` | fluid vertical rhythm of page sections (MzSection) |
-| `max-w-page`, `max-w-narrow`, `max-w-prose-wide` | containers (MzContainer) |
-| `z-(--z-sticky)` … `--z-toast` | layers: base, raised, sticky, overlay, modal, toast |
-| `--duration-fast/base/slow`, `ease-out-soft` | motion; everything stops with `prefers-reduced-motion` |
+`MzReveal`: fade + 16 px rise, 600 ms, `ease-editorial` (0.22, 1, 0.36, 1), 60 ms stagger; image
+hover zoom 1.03 over 600 ms; header background 300 ms; full-screen menu fades. No bounce, spin
+or parallax. Everything is off with `prefers-reduced-motion`.
 
-## Adding a colour
+## Adding a colour or a component
 
-1. Add it to `BRAND_COLORS` in `app/theme/palette.ts` (base at 500, optional exact ends).
-2. `npm run tokens` — rewrites the generated block of `main.css` (a test fails if they drift).
-3. To use it as a Nuxt UI alias, map it in `app/theme/colors.ts` and add the semantic overrides
-   (`--ui-<alias>`) for light and dark in `main.css`; add its pairs to the contrast test.
-
-## Adding a component
-
-- Use a Nuxt UI component as is when it fits; style it **globally** in `app.config.ts` (slots,
-  variants, defaultVariants), never with one-off classes.
-- Create an `Mz` component only to add domain meaning (a price, an offer, a translatable field).
-  Put it in `components/<base|layout|marketing|forms|admin>/MzName.vue`; it is auto-imported as
-  `<MzName>`.
-- Rules: `defineProps<T>()` / `defineEmits<T>()` / `defineModel`, slots for flexibility, **no
-  data fetching** (the page fetches, the component displays), semantic tokens only, logical
-  utilities only, keyboard and screen-reader friendly, read density with `useDensity()`.
-- Show it with its variants in `pages/_styleguide.vue`; test it in `tests/components/` when it
-  has logic.
-
-## Naming
-
-- Components `MzPascalCase`, composables `useCamelCase`, i18n keys namespaced
-  `common.*`, `nav.*`, `a11y.*`, `admin.*`, `auth.*`, `validation.*`, `status.*`…
-- Money is **integer cents** everywhere (`cents`, `priceFromCents`, `*_minor` from the API).
-- Dates from the API: `YYYY-MM-DD` is a calendar date; anything else is an instant shown in camp
-  time (Africa/Casablanca).
+- **Colour**: add it to `BRAND_COLORS` in `app/theme/palette.ts` (base at 500, optional exact
+  shades), run `npm run tokens`, map it in `app/theme/colors.ts` if it is a Nuxt UI alias, add the
+  semantic overrides in `main.css` and its pairs to the contrast test.
+- **Component**: style Nuxt UI globally in `app.config.ts`; create an `Mz` component only for
+  domain meaning. Typed props/emits, slots, no data fetching, semantic tokens, logical utilities,
+  spacing scale, keyboard accessible, density via `useDensity()`. Show it in `_styleguide.vue`.
 
 ## RTL rules
 
-- Logical utilities only: `ms-/me-/ps-/pe-/start-/end-/text-start/text-end/border-s/rounded-s`.
-  `ml-/mr-/pl-/pr-/left-/right-/text-left/text-right` are rejected by `npm run lint`.
-- Directional icons (arrows, chevrons) flip: `:ui="{ leadingIcon: 'rtl:rotate-180' }"` or
-  `class="rtl:rotate-180"`. Non-directional icons (search, tent) never flip.
-- Side panels: `side` of USlideover is physical — compute it from `useTextDirection()` (see
-  MzSiteHeader, MzFormDrawer).
-- Numbers, phone numbers, references and money inputs: wrap in `dir="ltr"` / `<span dir="ltr">`.
-- Arabic content inside another language: give it `lang="ar" dir="rtl"` (MzTranslatableInput does).
+- Logical utilities only (`ms- me- ps- pe- start- end- text-start border-s`); physical ones fail lint.
+- Directional icons flip (`rtl:rotate-180`); side panels compute their side from `useTextDirection()`.
+- Numbers, phones, references, money inputs: `dir="ltr"`.
+- Never letter-spacing or uppercase on Arabic (handled by the tokens and `eyebrow`).
 
 ## Do / Don't
 
 | Do | Don't |
 |---|---|
-| `class="bg-elevated text-muted"` | `class="bg-white text-gray-500"`, `style="color:#666"` |
-| `class="text-primary"`, `<UButton color="primary">` | `class="text-terracotta-600"`, `bg-orange-500` |
-| `class="ms-2 ps-4 text-start"` | `class="ml-2 pl-4 text-left"` |
-| Global look in `app.config.ts` | `<UButton class="rounded-xl font-bold px-7">` on every page |
-| `<MzPrice :cents="4500" from unit="person" />` | `{{ (price / 100).toFixed(2) }} €` |
-| `const { localized } = useLocalized(); localized(p.translations, 'name')` | `p.translations[locale].name` (no fallback) |
-| `<MzImage :src :alt ratio="4/3" />` | `<img src>` without size or alt |
-| `<MzDate value="2027-01-15" />` | `new Date(d).toLocaleDateString()` (wrong time zone, SSR mismatch) |
-
-## Themes and density
-
-`MzThemeToggle` sets light / dark / system; an explicit choice is remembered and applies
-everywhere, applied before the first paint (no flash). Without a choice, the public site is light
-and the admin follows the system. The admin layout provides `compact` density: Mz components and
-`useDensity().size` default to `sm` there.
+| `bg-muted text-muted border-default` | `bg-[#EDE6DA]`, `bg-orange-500`, `text-gray-500` |
+| one primary `UButton` per view, others outline or `link-underline` | two solid accent buttons side by side |
+| `<MzOfferCard>` image-first, no border | bordered card with shadow, icon tile and badges |
+| `MzSection` with `eyebrow` + serif `title` | centred everything, icons in every heading |
+| `<MzImage :srcset ratio="4/5" :alt>` | `<img>` without ratio or alt, stretched images |
+| `py-24 lg:py-40`, `gap-6` | `py-[100px]`, `gap-5`, `p-7` |
+| `ms-4`, `text-start` | `ml-4`, `text-left` |
 
 ## Checks
 
 ```bash
-npm run lint         # ESLint + design-token guard
+npm run lint         # ESLint + design-token guard (colours, palette classes, RTL, spacing, image sizes)
 npm test             # unit (format, localisation, contrast) + component tests
 npm run build && npm run test:e2e   # Playwright: fr/en/ar, theme, admin, axe, 360/768/1280 px
+SCREENSHOTS=docs/screenshots/after npm run test:e2e -- screenshots   # review screenshots
 ```
 
-Node ≥ 24.11 is required: older Node versions ship time-zone data from before Morocco moved to
-UTC+0 (20 September 2026) and show camp times one hour off (a unit test checks this).
+Node ≥ 24.11 is required (older versions show Morocco's time one hour off).

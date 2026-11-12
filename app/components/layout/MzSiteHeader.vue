@@ -71,7 +71,17 @@ const items = computed(() => [
       </div>
     </MzContainer>
 
-    <UModal v-model:open="open" fullscreen :title="t('nav.menu')" :ui="{ content: 'bg-default', header: 'h-(--ui-header-height) px-6', body: 'flex flex-col justify-between px-6 pb-12' }">
+    <!-- Full-screen menu: no radius or ring, a slow fade instead of the default scale-in. -->
+    <UModal
+      v-model:open="open"
+      fullscreen
+      :title="t('nav.menu')"
+      :ui="{
+        content: 'bg-default rounded-none ring-0 shadow-none data-[state=open]:animate-[fade-in_300ms_var(--ease-editorial)] data-[state=closed]:animate-[fade-out_200ms_var(--ease-editorial)]',
+        header: 'h-(--ui-header-height) px-6',
+        body: 'flex flex-col justify-between px-6 pb-12',
+      }"
+    >
       <template #body>
         <nav id="mobile-menu" :aria-label="t('nav.mainNavigation')">
           <ul class="flex flex-col gap-4 pt-8">

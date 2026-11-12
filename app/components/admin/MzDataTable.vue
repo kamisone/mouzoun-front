@@ -44,7 +44,7 @@ const columns = computed<TableColumn<T>[]>(() =>
         color: 'neutral',
         variant: 'ghost',
         size: 'sm',
-        class: '-ms-2.5 font-semibold',
+        class: '-ms-2 font-medium',
         'aria-label': `${typeof column.header === 'string' ? column.header : id}`,
         'aria-sort': props.query.sort === id ? (props.query.dir === 'asc' ? 'ascending' : 'descending') : undefined,
         onClick: () => toggleSort(id),

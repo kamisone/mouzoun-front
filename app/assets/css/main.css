@@ -245,7 +245,17 @@
   --font-display: var(--font-display-ar);
   --tracking-label: 0;
   --tracking-button: 0;
-  font-family: var(--font-sans);
+  /* Arabic dots and descenders need more leading than Latin display type; no negative tracking. */
+  --text-display-xl--line-height: 1.35;
+  --text-display-xl--letter-spacing: 0;
+  --text-display-lg--line-height: 1.35;
+  --text-display-lg--letter-spacing: 0;
+  --text-h1--line-height: 1.4;
+  --text-h1--letter-spacing: 0;
+  --text-h2--line-height: 1.45;
+  --text-h3--line-height: 1.5;
+  --text-body--line-height: 1.8;
+  --text-body-lg--line-height: 1.8;
 }
 
 /* Small uppercase tracked label above titles. */
@@ -257,11 +267,6 @@
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--ui-text-muted);
-  &:lang(ar) {
-    text-transform: none;
-    letter-spacing: 0;
-    font-size: var(--text-small);
-  }
 }
 
 /* Tertiary action: text link with an underline that draws in on hover. */
@@ -276,8 +281,17 @@
     background-size: 0% 1px;
     background-position: 100% 100%;
   }
-  &:lang(ar):hover,
-  [dir="rtl"] &:hover {
+}
+
+/* Arabic and RTL variants of the two utilities above. Written as explicit selectors: nested
+   `&` rules inside @utility lose the class (they would apply to every Arabic element). */
+@layer utilities {
+  .eyebrow:lang(ar) {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: var(--text-small);
+  }
+  [dir="rtl"] .link-underline:hover {
     background-position: 0 100%;
   }
 }
@@ -290,6 +304,12 @@
 
   body {
     @apply bg-default text-default font-sans text-body antialiased;
+  }
+
+  /* Arabic fragments inside another language pick up the Arabic sans. Zero specificity
+     (:where) so headings below keep the display face. */
+  :where(:lang(ar)) {
+    font-family: var(--font-sans);
   }
 
   h1, h2, h3, .font-display {

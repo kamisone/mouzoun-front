@@ -10,14 +10,16 @@ for (const path of ['/', '/ar', '/_styleguide']) {
   })
 }
 
-test('the mobile menu opens from the start side and closes with Escape', async ({ page }) => {
+test('the mobile menu is full screen, with large links, and closes with Escape', async ({ page }) => {
   await page.goto('/')
-  await page.getByRole('button', { name: 'Ouvrir le menu' }).click()
+  await page.getByRole('button', { name: 'Menu' }).click()
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
-  await expect(dialog.getByRole('link', { name: 'Réserver' })).toBeVisible()
-  const box = await dialog.boundingBox()
-  expect(box!.x).toBeLessThanOrEqual(1) // LTR: anchored left
+  const viewport = page.viewportSize()!
+  await expect.poll(async () => Math.round((await dialog.boundingBox())!.width)).toBe(viewport.width)
+  const link = dialog.getByRole('link', { name: 'Séjourner' })
+  await expect(link).toBeVisible()
+  expect(Number.parseFloat(await link.evaluate(el => getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(32)
   await page.keyboard.press('Escape')
   await expect(dialog).toBeHidden()
 })

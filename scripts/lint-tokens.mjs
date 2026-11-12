@@ -3,6 +3,7 @@
 //  - no raw palette classes (bg-terracotta-500, text-orange-600...) — use bg-primary, text-error...
 //  - no physical direction utilities (ml-, pr-, left-, text-right...) — use ms-, pe-, start-, text-end
 //  - no @nuxt/image `sizes` without breakpoint prefix
+//  - spacing (padding, margin, gap) only on the 4/8 scale
 // app/assets/css/main.css and app/theme/ are the only places allowed to hold raw colours.
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
@@ -10,7 +11,13 @@ import { join, relative } from 'node:path'
 const root = new URL('..', import.meta.url).pathname
 const ALLOWED = [/^app\/assets\/css\//, /^app\/theme\//]
 const PALETTES = 'terracotta|palm|dune|saffron|indigo|clay|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|violet|purple|fuchsia|pink|rose|slate|gray|zinc|neutral|stone|black|white'
+// The spacing scale: 4, 8, 12, 16, 24, 32, 48, 64, 96, 128, 160 px (Tailwind units ×4). Nothing else.
+const SPACING = '0|px|1|2|3|4|6|8|12|16|24|32|40'
 const RULES = [
+  {
+    name: 'spacing outside the 4/8 scale (4·8·12·16·24·32·48·64·96·128·160 px)',
+    re: new RegExp(String.raw`(?<![\w-])(?:[a-z0-9-]+:)*-?(?:p|px|py|pt|pb|ps|pe|m|mx|my|mt|mb|ms|me|gap|gap-x|gap-y|space-x|space-y)-(?!(?:${SPACING})(?![\w.\/-]))(?:\d[\w.]*|\[[^\]]*\])(?![\w-])`, 'g'),
+  },
   // @nuxt/image: an unprefixed size ("100vw") becomes a 1 px srcset candidate. Use "xs:100vw ...".
   { name: 'image sizes without breakpoint (use xs:100vw ...)', re: /\bsizes(?:="|:\s*')\s*\d+(?:vw|px)/g },
   { name: 'colour literal', re: /(?<![\w&/-])#[0-9a-fA-F]{3,8}\b(?![\w-])|\b(?:rgba?|hsla?|oklch|oklab)\(/g },

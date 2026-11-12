@@ -48,6 +48,8 @@ const practical = computed(() => [
       :title="t('home.title')"
       :description="t('home.subtitle')"
       :image="hero.src"
+      :image-srcset="hero.srcset"
+      :image-alt="hero.alt"
       :lqip="hero.lqip"
       next="intro"
     >
@@ -56,7 +58,7 @@ const practical = computed(() => [
       </template>
     </MzHero>
 
-    <section id="intro" class="py-24 lg:py-40">
+    <section id="intro" class="pt-24 pb-12 lg:pt-40 lg:pb-16">
       <MzContainer class="grid gap-8 lg:grid-cols-12">
         <MzReveal class="lg:col-span-3">
           <p class="eyebrow">{{ t('home.introEyebrow') }}</p>
