@@ -1,6 +1,6 @@
 import type { Media, MediaKind, MediaVisibility, Paginated, UploadTicket, User } from '~/utils/types'
 import type { PaymentOption, RegisterGuest, TripItem, TripQuote } from '~/utils/booking-types'
-import type { AdminBookingRow, AdminBookingView, AdminTask, TodayDashboard } from '~/utils/admin-types'
+import type { AccountsReport, AdminBookingRow, AdminBookingView, AdminTask, CrmCustomer, CrmCustomerRow, ScannedTicket, TodayDashboard } from '~/utils/admin-types'
 
 /**
  * Typed client of the back-office API (`/v1/admin/...`): every admin endpoint is declared here,
@@ -26,6 +26,22 @@ export function useAdminApi() {
     quote: (body: { items: TripItem[], rate_plan_id?: string | null, promo_code?: string | null, locale?: string }) =>
       http<{ quote: TripQuote }>('/quote', { method: 'POST', body }),
     customers: (q: string) => http<{ id: string, first_name: string, last_name: string | null, email: string | null, phone: string | null, country_code: string | null, bookings: number }[]>('/customers', { query: { q } }),
+    crm: {
+      list: (query: { q?: string, account?: string, page?: number }) =>
+        http<{ customers: CrmCustomerRow[], total: number, page: number, per_page: number }>('/crm/customers', { query }),
+      get: (id: string) => http<CrmCustomer>(`/crm/customers/${id}`),
+      signInLink: (id: string) => http(`/crm/customers/${id}/sign-in-link`, { method: 'POST' }),
+      suspend: (id: string) => http(`/crm/customers/${id}/suspend`, { method: 'POST' }),
+      reactivate: (id: string) => http(`/crm/customers/${id}/reactivate`, { method: 'POST' }),
+      signOutAll: (id: string) => http<{ revoked: number }>(`/crm/customers/${id}/sign-out-all`, { method: 'POST' }),
+      merge: (id: string, into: string) => http<{ into: string, bookings: string[] }>(`/crm/customers/${id}/merge`, { method: 'POST', body: { into } }),
+      viewAs: (id: string) => http<{ read_only: true, account: Record<string, unknown>, trips: { reference: string, status: string, arrival_date: string | null, departure_date: string | null }[] }>(`/crm/customers/${id}/view-as`),
+      export: (id: string) => http<Record<string, unknown>>(`/crm/customers/${id}/export`),
+      deletion: (id: string) => http<{ scheduled_for: string }>(`/crm/customers/${id}/deletion`, { method: 'POST' }),
+      attachBooking: (bookingId: string, customerId: string) => http(`/crm/bookings/${bookingId}/attach`, { method: 'POST', body: { customer_id: customerId } }),
+      report: () => http<AccountsReport>('/crm/reports/accounts'),
+    },
+    scanTicket: (token: string) => http<ScannedTicket>('/tickets/scan', { method: 'POST', body: { token } }),
     tasks: {
       list: (status = 'open') => http<AdminTask[]>('/tasks', { query: { status } }),
       update: (id: string, status: 'open' | 'done' | 'dismissed') => http(`/tasks/${id}`, { method: 'PATCH', body: { status } }),
