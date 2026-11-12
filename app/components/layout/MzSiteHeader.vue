@@ -25,9 +25,13 @@ const items = computed(() => [
 
 // "Your trip" badge: loaded once per visit, kept in sync by the funnel pages.
 const trip = useTrip()
+const { account, ready, load: loadAccount } = useAccount()
 onMounted(() => {
   if (!trip.cart.value) trip.refresh()
+  if (!ready.value) loadAccount()
 })
+const accountTo = computed(() => localePath(account.value ? '/account' : '/account/signin'))
+const accountLabel = computed(() => (account.value ? t('account.nav.myAccount') : t('account.signin.cta')))
 </script>
 
 <template>
@@ -66,6 +70,14 @@ onMounted(() => {
       <div class="flex items-center justify-end gap-1">
         <MzLocaleSwitcher variant="text" class="hidden sm:inline-flex" />
         <MzThemeToggle class="hidden sm:inline-flex" />
+        <UButton
+          :to="accountTo"
+          :icon="account ? 'i-lucide-circle-user-round' : 'i-lucide-user-round'"
+          color="neutral"
+          variant="ghost"
+          :aria-label="accountLabel"
+          data-testid="account-entry"
+        />
         <UChip :show="trip.count.value > 0" :text="trip.count.value" size="3xl" color="primary" inset>
           <UButton
             :to="localePath('/trip')"
@@ -110,6 +122,7 @@ onMounted(() => {
             <MzLocaleSwitcher variant="text" />
             <MzThemeToggle />
           </div>
+          <UButton :to="accountTo" :label="accountLabel" icon="i-lucide-user-round" color="neutral" variant="outline" size="lg" block @click="open = false" />
           <UButton :to="localePath('/stays')" :label="t('common.book')" size="lg" block @click="open = false" />
         </div>
       </template>

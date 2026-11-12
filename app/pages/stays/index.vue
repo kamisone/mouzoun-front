@@ -190,6 +190,7 @@ const issueText = (r: SearchResult) => (r.issue ? t(`booking.issues.${r.issue.co
           v-for="c in cards"
           :key="c.id"
           :title="c.name"
+          :product-id="c.id"
           :description="c.short_description ?? undefined"
           :image="c.cover?.url"
           :image-alt="c.cover?.alt ?? c.name"

@@ -19,9 +19,11 @@ const props = withDefaults(defineProps<{
   durationMinutes?: number | null
   /** One short label shown first in the meta line (e.g. "Guidé"): titles stay aligned. */
   label?: string
+  /** Shows the wishlist heart over the image. */
+  productId?: string
 }>(), {
   description: undefined, image: undefined, imageSrcset: undefined, imageAlt: '', lqip: undefined, ratio: '4/5', to: undefined, priceFromCents: null,
-  currency: 'EUR', priceUnit: undefined, durationMinutes: null, label: undefined,
+  currency: 'EUR', priceUnit: undefined, durationMinutes: null, label: undefined, productId: undefined,
 })
 
 const { t } = useI18n()
@@ -35,6 +37,9 @@ const duration = computed(() => {
 <template>
   <article class="group relative flex h-full flex-col">
     <MzImage v-if="props.image" :src="props.image" :srcset="props.imageSrcset" :alt="props.imageAlt" :lqip="props.lqip" :ratio="props.ratio" zoom sizes="xs:100vw md:50vw lg:33vw" />
+    <ClientOnly v-if="props.productId">
+      <MzWishlistButton :product-id="props.productId" :name="props.title" overlay class="absolute end-3 top-3 z-10" />
+    </ClientOnly>
     <div class="flex flex-1 flex-col pt-6">
       <h3 class="text-h3">
         <NuxtLink v-if="props.to" :to="props.to" class="after:absolute after:inset-0 after:content-['']">{{ props.title }}</NuxtLink>

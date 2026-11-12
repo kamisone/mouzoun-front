@@ -105,7 +105,10 @@ useHead(() => ({
         </ol>
       </nav>
       <header class="flex flex-col gap-3 pb-8">
-        <h1 class="text-display-lg">{{ p.name }}</h1>
+        <div class="flex items-start justify-between gap-4">
+          <h1 class="text-display-lg">{{ p.name }}</h1>
+          <ClientOnly><MzWishlistButton :product-id="p.id" :name="p.name" size="lg" class="mt-2 shrink-0" /></ClientOnly>
+        </div>
         <p v-if="p.subtitle" class="text-body-lg text-muted">{{ p.subtitle }}</p>
         <p v-if="p.rating" class="flex items-center gap-2 text-small text-highlighted">
           <UIcon name="i-lucide-star" class="size-4" aria-hidden="true" />
