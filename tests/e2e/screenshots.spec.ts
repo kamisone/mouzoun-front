@@ -6,8 +6,8 @@ import { mockApi } from './fixtures'
  * Review screenshots (not a test): SCREENSHOTS=docs/screenshots/after npm run test:e2e -- screenshots
  * Home and style guide × desktop 1440 / mobile 390 × light / dark × fr / ar.
  */
-const out = process.env.SCREENSHOTS
-test.skip(!out, 'set SCREENSHOTS=<dir> to capture review screenshots')
+// playwright.config.ts collects this file only when SCREENSHOTS is set.
+const out = process.env.SCREENSHOTS ?? ''
 
 const viewports = { desktop: { width: 1440, height: 900 }, mobile: { width: 390, height: 844 } }
 const pages = { home: { fr: '/', ar: '/ar' }, styleguide: { fr: '/_styleguide', ar: '/ar/_styleguide' } }
@@ -18,7 +18,7 @@ for (const [pageName, paths] of Object.entries(pages)) {
       for (const locale of ['fr', 'ar'] as const) {
         test(`${pageName}-${vpName}-${theme}-${locale}`, async ({ page }) => {
           test.setTimeout(120_000)
-          mkdirSync(out!, { recursive: true })
+          mkdirSync(out, { recursive: true })
           await mockApi(page, true)
           await page.setViewportSize(viewport)
           await page.addInitScript((mode) => {

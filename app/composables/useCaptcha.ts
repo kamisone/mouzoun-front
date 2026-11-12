@@ -1,13 +1,13 @@
 /**
- * Invisible Cloudflare Turnstile, only when the API asks for it (`booking.config.captcha`) and a
- * site key is configured. Resolves to a token, or null (the API then decides).
+ * Invisible Cloudflare Turnstile, only when the API asks for it. The API serves the site key with
+ * its booking config, so the check is on for both sides or for neither. Resolves to a token, or
+ * null (the API then decides).
  */
 export function useCaptcha() {
-  const runtime = useRuntimeConfig()
   const { data: config } = useBookingConfig()
 
   async function token(containerId: string): Promise<string | null> {
-    const siteKey = runtime.public.turnstileSiteKey as string | undefined
+    const siteKey = config.value?.captcha_site_key
     if (!config.value?.captcha || !siteKey) return null
     const w = window as unknown as { turnstile?: { render: (el: string, o: Record<string, unknown>) => string } }
     if (!w.turnstile) {

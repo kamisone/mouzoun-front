@@ -6,6 +6,9 @@ import { defineConfig, devices } from '@playwright/test'
  */
 const PORT = 3200
 export const API_BASE = 'http://127.0.0.1:3299'
+// Review screenshots are a capture tool, not tests: only collected when SCREENSHOTS=<dir> is set.
+const SCREENSHOTS = /screenshots\.spec\.ts/
+const desktopIgnore = process.env.SCREENSHOTS ? [/responsive\.spec\.ts/] : [/responsive\.spec\.ts/, SCREENSHOTS]
 
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -17,7 +20,7 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   projects: [
-    { name: 'desktop', use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 900 } }, testIgnore: /responsive\.spec\.ts/ },
+    { name: 'desktop', use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 900 } }, testIgnore: desktopIgnore },
     { name: 'mobile', use: { ...devices['Pixel 7'], viewport: { width: 360, height: 780 } }, testMatch: /responsive\.spec\.ts/ },
     { name: 'tablet', use: { ...devices['Desktop Chrome'], viewport: { width: 768, height: 1024 } }, testMatch: /responsive\.spec\.ts/ },
   ],

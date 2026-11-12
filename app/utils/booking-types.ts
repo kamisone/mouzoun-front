@@ -126,6 +126,8 @@ export interface BookingConfig {
   payments: Record<string, { publishable_key?: string, fake?: boolean }>
   providers: string[]
   captcha: boolean
+  /** Cloudflare Turnstile site key, set together with the API's secret (null = no bot check). */
+  captcha_site_key: string | null
 }
 
 export interface CalendarDay {

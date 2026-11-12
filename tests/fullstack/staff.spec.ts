@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { base, day, fillCheckout, ready } from './helpers'
+import { base, day, fillCheckout, mailMatching, ready } from './helpers'
 
 /** Back office against the real API, with the staff session of the setup project. */
 
@@ -13,7 +13,8 @@ test('booking request accepted by staff', async ({ browser, page }) => {
   await expect(guest).toHaveURL(/\/trip/)
   await ready(guest)
   await guest.getByTestId('trip-continue').click()
-  await fillCheckout(guest, `request-${Date.now()}@example.com`)
+  const email = `request-${Date.now()}@example.com`
+  await fillCheckout(guest, email)
   await guest.getByTestId('checkout-submit').click()
   await expect(guest.getByTestId('booking-page')).toBeVisible()
   const reference = (await guest.getByTestId('booking-reference').textContent())!.trim()
@@ -23,6 +24,12 @@ test('booking request accepted by staff', async ({ browser, page }) => {
   await page.getByRole('link', { name: reference }).click()
   await page.getByRole('button', { name: 'Accepter' }).click()
   await expect(page.getByText('Attente de paiement').first()).toBeVisible()
+
+  // The guest is told twice: request received, then accepted with the link to pay.
+  await mailMatching(email, new RegExp(reference))
+  const accepted = await mailMatching(email, /Payer et confirmer[^\n]*?(https?:\/\/\S+\/booking\/[^\s)\]>]+)/)
+  await guest.goto(accepted[1]!)
+  await expect(guest.getByTestId('booking-reference')).toHaveText(reference)
 })
 
 test('staff phone booking with a cash payment', async ({ page }) => {

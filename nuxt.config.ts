@@ -52,8 +52,6 @@ export default defineNuxtConfig({
       ogImage: '',
       // Serve /_styleguide outside dev without staff login (CI accessibility checks only)
       styleguide: false,
-      // Cloudflare Turnstile site key (bot check on checkout and "find my booking"); empty = off
-      turnstileSiteKey: '',
     },
   },
 
