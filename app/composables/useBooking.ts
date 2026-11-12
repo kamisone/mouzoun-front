@@ -213,7 +213,14 @@ export async function useProductPage(slug: MaybeRefOrGetter<string>) {
   const { t } = useI18n()
   const setI18nParams = useSetI18nParams()
   const key = computed(() => `product-${toValue(slug)}`)
-  const { data: product, error } = await useAsyncData(key.value, () => api.product(toValue(slug)), { watch: [() => toValue(slug)] })
+  const request = useAsyncData(key.value, () => api.product(toValue(slug)), { watch: [() => toValue(slug)] })
+  // Every composable runs before the first await: after it, server rendering has no Nuxt context.
+  useSeo({
+    title: () => request.data.value?.seo_title ?? `${request.data.value?.name ?? ''} · ${t('common.siteName')}`,
+    description: () => request.data.value?.seo_description ?? request.data.value?.short_description ?? '',
+    image: () => request.data.value?.cover?.url,
+  })
+  const { data: product, error } = await request
   if (error.value || !product.value) {
     const status = (error.value as { statusCode?: number } | null)?.statusCode
     throw status === 404 || !error.value
@@ -221,10 +228,5 @@ export async function useProductPage(slug: MaybeRefOrGetter<string>) {
       : createError({ statusCode: 503, statusMessage: t('error.unavailable'), fatal: true })
   }
   setI18nParams(Object.fromEntries(product.value.alternates.map(a => [a.locale, { slug: a.slug }])))
-  useSeo({
-    title: () => product.value?.seo_title ?? `${product.value?.name} · ${t('common.siteName')}`,
-    description: () => product.value?.seo_description ?? product.value?.short_description ?? '',
-    image: () => product.value?.cover?.url,
-  })
   return product
 }

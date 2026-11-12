@@ -144,6 +144,8 @@ for (const viewport of [{ name: 'desktop', width: 1280, height: 900 }, { name: '
       await mock(page, { signedIn: true })
       await page.goto('/account/trips')
       await expect(page.getByRole('heading', { level: 2, name: 'Tente berbère' })).toBeVisible()
+      // The account menu scrolls on its own: the page never gets wider than the screen.
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width)
       await expect(page.getByText('Solde à régler')).toBeVisible()
       expect(await seriousViolations(page)).toEqual([])
       await page.goto('/account/security')

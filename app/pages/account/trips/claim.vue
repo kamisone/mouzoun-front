@@ -62,20 +62,21 @@ async function submit() {
       variant="subtle"
       icon="i-lucide-circle-check"
       role="status"
+      data-testid="claim-done"
     >
       <template #actions>
         <UButton :to="localePath(`/booking/${claimed}`)" :label="t('account.trips.manage')" size="sm" />
       </template>
     </UAlert>
-    <UAlert v-else-if="sent" :title="t('account.claim.sent')" :description="t('account.claim.sentText')" color="info" variant="subtle" icon="i-lucide-mail" role="status" />
+    <UAlert v-else-if="sent" :title="t('account.claim.sent')" :description="t('account.claim.sentText')" color="info" variant="subtle" icon="i-lucide-mail" role="status" data-testid="claim-sent" />
     <form v-else class="flex max-w-md flex-col gap-4" novalidate @submit.prevent="submit">
       <UFormField :label="t('account.claim.reference')" :help="t('account.claim.referenceHelp')" required>
-        <UInput v-model="form.reference" autocomplete="off" autocapitalize="characters" class="w-full" placeholder="MZ-26-000123" />
+        <UInput v-model="form.reference" autocomplete="off" autocapitalize="characters" class="w-full" placeholder="MZ-26-000123" data-testid="claim-reference" />
       </UFormField>
       <UFormField :label="t('account.claim.email')" required>
-        <UInput v-model="form.email" type="email" autocomplete="email" class="w-full" />
+        <UInput v-model="form.email" type="email" autocomplete="email" class="w-full" data-testid="claim-email" />
       </UFormField>
-      <UButton type="submit" :label="t('account.claim.submit')" :loading="busy" class="self-start" />
+      <UButton type="submit" :label="t('account.claim.submit')" :loading="busy" class="self-start" data-testid="claim-submit" />
     </form>
   </MzAccountShell>
 </template>

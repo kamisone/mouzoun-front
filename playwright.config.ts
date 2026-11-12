@@ -29,6 +29,8 @@ export default defineConfig({
       PORT: String(PORT),
       HOST: '127.0.0.1',
       NUXT_PUBLIC_API_BASE: API_BASE,
+      // Server-side rendering too: never a real API that happens to run on this machine.
+      NUXT_API_INTERNAL_BASE: API_BASE,
       NUXT_PUBLIC_STYLEGUIDE: 'true',
     },
   },

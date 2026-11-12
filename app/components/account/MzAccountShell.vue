@@ -31,8 +31,8 @@ async function leave() {
 
 <template>
   <MzContainer class="py-12 lg:py-16">
-    <div class="grid gap-12 lg:grid-cols-[16rem_1fr]">
-      <nav :aria-label="t('account.nav.label')" class="lg:sticky lg:top-24 lg:self-start">
+    <div class="grid grid-cols-[minmax(0,1fr)] gap-12 lg:grid-cols-[16rem_minmax(0,1fr)]">
+      <nav :aria-label="t('account.nav.label')" class="min-w-0 lg:sticky lg:top-24 lg:self-start">
         <p v-if="account" class="mb-4 hidden truncate text-small text-muted lg:block">{{ account.email }}</p>
         <ul class="-mx-4 flex gap-1 overflow-x-auto px-4 pb-2 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0">
           <li v-for="s in sections" :key="s.key" class="shrink-0">
