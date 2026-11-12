@@ -43,7 +43,7 @@ watchEffect(() => {
   }
 })
 const slots = computed(() => byDay.value.find(([d]) => d === day.value)?.[1] ?? [])
-const time = (iso: string) => new Intl.DateTimeFormat(locale.value === 'ar' ? 'ar-MA' : locale.value, { hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Casablanca' }).format(new Date(iso))
+const { time } = useDate()
 const languageName = (code: string | null) => (code ? new Intl.DisplayNames([locale.value], { type: 'language' }).of(code) ?? code : null)
 
 function choose(s: Slot) {

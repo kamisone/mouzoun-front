@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type DateValue, parseDate, today as todayIn } from '@internationalized/date'
 import type { AvailabilityCalendar, CalendarDay } from '~/utils/booking-types'
-import { CAMP_TIME_ZONE, intlLocale } from '~/utils/i18n-format'
+import { campTimeZone, intlLocale } from '~/utils/i18n-format'
 
 /**
  * Arrival → departure range calendar fed by the availability API: unavailable nights are struck
@@ -23,7 +23,7 @@ const { money } = useMoney()
 const api = useBookingApi()
 const desktop = useMediaQuery('(min-width: 1024px)')
 
-const today = todayIn(CAMP_TIME_ZONE) as DateValue
+const today = todayIn(campTimeZone(new Date())) as DateValue
 const maxDate = today.add({ days: props.maxDaysAhead }) as DateValue
 const days = ref(new Map<string, CalendarDay>())
 const terms = ref<Pick<AvailabilityCalendar, 'min_nights' | 'max_nights' | 'check_in_from' | 'check_out_until'>>({

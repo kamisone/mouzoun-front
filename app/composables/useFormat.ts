@@ -5,6 +5,7 @@ import {
   formatDate,
   formatDateRange,
   formatDateTime,
+  formatTime,
   formatMoney,
   formatNumber,
   intlLocale,
@@ -27,6 +28,7 @@ export function useDate() {
     date: (value: DateInput, style?: DateStyle) => formatDate(value, locale.value, style),
     dateTime: (value: DateInput) => formatDateTime(value, locale.value),
     dateRange: (start: DateInput, end: DateInput) => formatDateRange(start, end, locale.value),
+    time: (value: DateInput) => formatTime(value, locale.value),
   }
 }
 

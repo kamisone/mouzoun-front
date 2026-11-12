@@ -70,13 +70,26 @@ const isCalendarDate = (value: DateInput) => typeof value === 'string' && /^\d{4
 /** Dates and times are shown in the camp's time zone. */
 export const CAMP_TIME_ZONE = 'Africa/Casablanca'
 
+/**
+ * Morocco has been on UTC+0 all year since 2026-09-20 01:00 UTC (tzdata 2026c). Phones, browsers
+ * and Node versions with older tz data still apply UTC+1 then: instants from that moment are
+ * formatted at UTC+0 directly, so camp times never depend on the visitor's tz data. Earlier
+ * instants keep the runtime's rules (old and new tz data agree on the past).
+ */
+const PERMANENT_UTC_SINCE = Date.UTC(2026, 8, 20, 1)
+
+/** The IANA zone that gives camp wall-clock time for `date` on any runtime. */
+export function campTimeZone(date: Date): string {
+  return date.getTime() >= PERMANENT_UTC_SINCE ? 'UTC' : CAMP_TIME_ZONE
+}
+
 export type DateStyle = 'long' | 'medium' | 'short' | 'weekday'
 
 export function formatDate(value: DateInput, locale = 'fr', style: DateStyle = 'long'): string {
   const date = toDate(value)
   if (Number.isNaN(date.getTime())) return ''
   const options: Intl.DateTimeFormatOptions = {
-    timeZone: isCalendarDate(value) ? 'UTC' : CAMP_TIME_ZONE,
+    timeZone: isCalendarDate(value) ? 'UTC' : campTimeZone(date),
     ...(style === 'weekday'
       ? { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
       : { dateStyle: style }),
@@ -88,9 +101,21 @@ export function formatDateTime(value: DateInput, locale = 'fr'): string {
   const date = toDate(value)
   if (Number.isNaN(date.getTime())) return ''
   return new Intl.DateTimeFormat(intlLocale(locale), {
-    timeZone: CAMP_TIME_ZONE,
+    timeZone: campTimeZone(date),
     dateStyle: 'long',
     timeStyle: 'short',
+    hourCycle: 'h23',
+  }).format(date)
+}
+
+/** Camp wall-clock time, `08:00`. */
+export function formatTime(value: DateInput, locale = 'fr'): string {
+  const date = toDate(value)
+  if (Number.isNaN(date.getTime())) return ''
+  return new Intl.DateTimeFormat(intlLocale(locale), {
+    timeZone: campTimeZone(date),
+    hour: '2-digit',
+    minute: '2-digit',
     hourCycle: 'h23',
   }).format(date)
 }
@@ -98,7 +123,7 @@ export function formatDateTime(value: DateInput, locale = 'fr'): string {
 export function formatDateRange(start: DateInput, end: DateInput, locale = 'fr'): string {
   const [a, b] = [toDate(start), toDate(end)]
   const fmt = new Intl.DateTimeFormat(intlLocale(locale), {
-    timeZone: isCalendarDate(start) ? 'UTC' : CAMP_TIME_ZONE,
+    timeZone: isCalendarDate(start) ? 'UTC' : campTimeZone(a),
     day: 'numeric',
     month: 'long',
     year: 'numeric',

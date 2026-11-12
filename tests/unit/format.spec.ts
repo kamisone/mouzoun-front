@@ -4,6 +4,7 @@ import {
   formatDate,
   formatDateRange,
   formatDateTime,
+  formatTime,
   formatMoney,
   parseMoneyToCents,
   pickLocalized,
@@ -76,14 +77,17 @@ describe('dates', () => {
     expect(formatDate('not a date')).toBe('')
   })
 
-  // Morocco is UTC+0 since 20 September 2026 (tzdata 2026c). Older Node/ICU tz data says UTC+1.
-  const tz = (process.versions as Record<string, string | undefined>).tz ?? '0000a'
-  it.runIf(tz >= '2026c')('shows instants in camp time (Africa/Casablanca)', () => {
+  // Morocco is on UTC+0 since 2026-09-20 01:00 UTC (tzdata 2026c); runtimes with older tz data
+  // still say UTC+1. Camp times must be right on every runtime, whatever its tz data.
+  it('shows instants in camp time, on any tz data (permanent UTC+0)', () => {
     expect(plain(formatDateTime('2027-01-15T08:00:00Z', 'fr'))).toBe('15 janvier 2027 à 08:00')
     expect(plain(formatDateTime('2027-01-15T08:00:00Z', 'en'))).toBe('15 January 2027 at 08:00')
+    expect(formatTime('2027-07-15T17:30:00Z', 'fr')).toBe('17:30')
+    expect(formatTime('2026-09-20T01:00:00Z', 'fr')).toBe('01:00')
   })
-  it('runs on tz data that knows Morocco is on UTC+0 (Node ≥ 24.11)', () => {
-    expect(tz >= '2026c', `Node's tz data is ${tz}: upgrade Node (needs 2026c or later)`).toBe(true)
+  it('keeps the past offsets (summer 2025 was UTC+1 in Morocco)', () => {
+    expect(formatTime('2025-07-15T08:00:00Z', 'fr')).toBe('09:00')
+    expect(formatTime('2026-09-20T00:30:00Z', 'fr')).toBe('01:30')
   })
 })
 
