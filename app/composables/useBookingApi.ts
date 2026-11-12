@@ -28,6 +28,8 @@ export interface CheckoutBody {
   special_requests?: string | null
   accept_terms: boolean
   marketing_consent?: boolean
+  /** Emails a sign-in link to the booking address (guests only). */
+  create_account?: boolean
   captcha_token?: string | null
 }
 
@@ -36,10 +38,19 @@ export interface CheckoutBody {
  * follows the page (`Accept-Language`); the basket travels in an HttpOnly cookie.
  */
 export function useBookingApi() {
-  const { locale } = useI18n()
+  // Not useI18n(): this client is also used from route middleware and after awaits.
+  const nuxtApp = useNuxtApp()
+  const locale = computed(() => (nuxtApp.$i18n as unknown as { locale: Ref<string> }).locale.value)
   const base = useApiBase()
-  // During SSR, forward the visitor's cookies (the basket) to the API.
-  const forwarded = import.meta.server ? useRequestHeaders(['cookie']) : {}
+  // During SSR, forward the visitor's cookies (basket, access token) to the API, but never the
+  // refresh token: the API would rotate it and the new one could not reach the browser.
+  const raw = import.meta.server ? useRequestHeaders(['cookie']) : {}
+  const forwarded = {
+    cookie: raw.cookie
+      ?.split(';')
+      .filter(c => !/^\s*(__Host-)?mz_rt=/.test(c))
+      .join(';'),
+  }
   const http = $fetch.create({
     baseURL: `${base}/v1`,
     credentials: 'include',

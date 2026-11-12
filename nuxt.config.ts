@@ -85,6 +85,13 @@ export default defineNuxtConfig({
     '/*/checkout': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
     '/booking/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
     '/*/booking/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    // Guest account: private, client-rendered (its API session must never rotate during SSR).
+    '/account/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    '/*/account/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    '/account': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/account': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/wishlists/**': { swr: false, headers: { 'X-Robots-Tag': 'noindex' } },
+    '/*/wishlists/**': { swr: false, headers: { 'X-Robots-Tag': 'noindex' } },
     // Availability-dependent search results: short cache only.
     '/stays': { swr: 30 },
     '/*/stays': { swr: 30 },
