@@ -7,8 +7,9 @@ const localePath = useLocalePath()
 const api = useBookingApi()
 useSeo({ title: () => `${t('booking.activities.title')} · ${t('common.siteName')}`, description: () => t('booking.activities.description') })
 
-const { data: activities } = await useAsyncData('activities-list', () => api.products({ kind: 'activity' }).catch(() => [] as ProductCard[]), { default: () => [] })
-const { data: packages } = await useAsyncData('packages-list', () => api.products({ kind: 'package' }).catch(() => [] as ProductCard[]), { default: () => [] })
+const { data: activities, error: activitiesError, refresh: refreshActivities } = await useAsyncData('activities-list', () => api.products({ kind: 'activity' }), { default: () => [] as ProductCard[] })
+const { data: packages, refresh: refreshPackages } = await useAsyncData('packages-list', () => api.products({ kind: 'package' }), { default: () => [] as ProductCard[] })
+const retry = () => Promise.all([refreshActivities(), refreshPackages()])
 </script>
 
 <template>
@@ -19,7 +20,11 @@ const { data: packages } = await useAsyncData('packages-list', () => api.product
       <p class="max-w-editorial text-body-lg text-muted">{{ t('booking.activities.description') }}</p>
     </MzContainer>
     <MzSection :title="t('booking.activities.experiences')" space="md">
-      <MzGrid :cols="3">
+      <MzEmptyState v-if="activitiesError" icon="i-lucide-cloud-off" :title="t('booking.errors.generic')" :description="t('booking.errors.retry')">
+        <UButton :label="t('account.retry')" @click="retry" />
+      </MzEmptyState>
+      <MzEmptyState v-else-if="!activities.length" icon="i-lucide-compass" :title="t('booking.activities.empty')" :description="t('booking.activities.emptyText')" />
+      <MzGrid v-else :cols="3">
         <MzOfferCard
           v-for="a in activities"
           :key="a.id"

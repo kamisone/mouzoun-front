@@ -219,6 +219,23 @@ const optionLabel = (o: PaymentOption) => t(`booking.checkout.options.${o}`)
     </UModal>
 
     <div v-if="quote" class="grid gap-12 lg:grid-cols-12">
+      <!-- Small screens: the summary comes first (folded), never after the pay button only. -->
+      <UCollapsible class="rounded-sm border border-default lg:hidden" :ui="{ content: 'px-4 pb-4' }">
+        <UButton
+          color="neutral"
+          variant="ghost"
+          block
+          trailing-icon="i-lucide-chevron-down"
+          class="justify-between px-4 py-3 data-[state=open]:[&_svg]:rotate-180"
+          data-testid="summary-toggle"
+        >
+          <span>{{ t('booking.checkout.showSummary') }}</span>
+          <span class="font-medium tabular-nums text-highlighted">{{ money(quote.total_minor, quote.currency) }}</span>
+        </UButton>
+        <template #content>
+          <MzTripSummary :quote="quote" :payment-option="form.payment_option" />
+        </template>
+      </UCollapsible>
       <form class="flex flex-col gap-12 lg:col-span-7" novalidate data-testid="checkout-form" @submit.prevent="submit">
         <div v-if="problem" ref="errorSummary" tabindex="-1" role="alert" class="rounded-sm border border-error p-4 text-small text-error" data-testid="checkout-problem">
           {{ problem }}
@@ -266,7 +283,16 @@ const optionLabel = (o: PaymentOption) => t(`booking.checkout.options.${o}`)
         <section class="flex flex-col gap-6" aria-labelledby="step-payment">
           <h2 id="step-payment" class="text-h2"><span class="text-muted">2.</span> {{ t('booking.checkout.payment') }}</h2>
           <p v-if="quote.is_request" class="text-muted">{{ t('booking.checkout.requestNote', { hours: config?.request_answer_hours ?? 24 }) }}</p>
-          <fieldset class="flex flex-col gap-3">
+          <UAlert
+            v-if="!options.length"
+            :title="t('booking.checkout.noOptions')"
+            :description="t('booking.checkout.noOptionsText')"
+            color="warning"
+            variant="subtle"
+            icon="i-lucide-credit-card"
+            data-testid="no-payment-options"
+          />
+          <fieldset v-else class="flex flex-col gap-3">
             <legend class="sr-only">{{ t('booking.checkout.payment') }}</legend>
             <label
               v-for="o in options"
@@ -318,7 +344,7 @@ const optionLabel = (o: PaymentOption) => t(`booking.checkout.options.${o}`)
           <UCheckbox v-if="!account" v-model="form.create_account" :label="t('account.checkout.createAccount')" :description="t('account.checkout.createAccountHint')" data-testid="checkout-create-account" />
           <p class="text-caption text-muted">{{ t('booking.checkout.privacyNote') }}</p>
           <div id="captcha" />
-          <UButton type="submit" :label="cta" :loading="submitting" size="xl" block data-testid="checkout-submit" />
+          <UButton type="submit" :label="cta" :loading="submitting" :disabled="!options.length" size="xl" block data-testid="checkout-submit" />
           <p v-if="choice && choice.due_now_minor === 0 && !quote.is_request" class="text-center text-small text-muted">{{ t('booking.rate.notChargedYet') }}</p>
           <p class="flex items-center justify-center gap-2 text-caption text-muted">
             <UIcon name="i-lucide-lock" class="size-4" aria-hidden="true" />{{ t('booking.pay.secure') }}
@@ -326,7 +352,7 @@ const optionLabel = (o: PaymentOption) => t(`booking.checkout.options.${o}`)
         </section>
       </form>
 
-      <div class="lg:col-span-5">
+      <div class="hidden lg:col-span-5 lg:block">
         <div class="sticky top-24">
           <MzTripSummary :quote="quote" :payment-option="form.payment_option" />
         </div>

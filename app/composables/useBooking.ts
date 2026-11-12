@@ -203,3 +203,28 @@ export function useAnalytics() {
   }
   return { track, purchaseOnce }
 }
+
+/**
+ * Product page data by slug. A missing product is a 404; anything else (API down, timeout) is a
+ * 503, so search engines retry later instead of dropping the page.
+ */
+export async function useProductPage(slug: MaybeRefOrGetter<string>) {
+  const api = useBookingApi()
+  const { t } = useI18n()
+  const setI18nParams = useSetI18nParams()
+  const key = computed(() => `product-${toValue(slug)}`)
+  const { data: product, error } = await useAsyncData(key.value, () => api.product(toValue(slug)), { watch: [() => toValue(slug)] })
+  if (error.value || !product.value) {
+    const status = (error.value as { statusCode?: number } | null)?.statusCode
+    throw status === 404 || !error.value
+      ? createError({ statusCode: 404, statusMessage: t('error.notFound'), fatal: true })
+      : createError({ statusCode: 503, statusMessage: t('error.unavailable'), fatal: true })
+  }
+  setI18nParams(Object.fromEntries(product.value.alternates.map(a => [a.locale, { slug: a.slug }])))
+  useSeo({
+    title: () => product.value?.seo_title ?? `${product.value?.name} · ${t('common.siteName')}`,
+    description: () => product.value?.seo_description ?? product.value?.short_description ?? '',
+    image: () => product.value?.cover?.url,
+  })
+  return product
+}

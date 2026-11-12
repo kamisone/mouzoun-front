@@ -23,7 +23,7 @@ useSeo({ title: () => `${t('booking.stays.title')} · ${t('common.siteName')}`, 
 
 const hasDates = computed(() => !!(params.value.checkin && params.value.checkout))
 const guests = computed(() => partyToGuests(params.value.party, categories.value ?? []))
-const { data: cards } = await useAsyncData('stays-cards', () => api.products({ kind: 'accommodation' }).catch(() => [] as ProductCard[]), { default: () => [] })
+const { data: cards, error: cardsError, refresh: refreshCards } = await useAsyncData('stays-cards', () => api.products({ kind: 'accommodation' }), { default: () => [] as ProductCard[] })
 const { data: search, pending, error } = await useAsyncData(
   () => `stays-search-${params.value.checkin}-${params.value.checkout}-${JSON.stringify(guests.value)}`,
   () => (hasDates.value && guests.value.length
@@ -185,6 +185,10 @@ const issueText = (r: SearchResult) => (r.issue ? t(`booking.issues.${r.issue.co
         </ul>
       </template>
 
+      <MzEmptyState v-else-if="cardsError" icon="i-lucide-cloud-off" :title="t('booking.errors.generic')" :description="t('booking.errors.retry')" class="mt-4">
+        <UButton :label="t('account.retry')" @click="refreshCards()" />
+      </MzEmptyState>
+      <MzEmptyState v-else-if="!cards.length" icon="i-lucide-tent" :title="t('booking.stays.empty')" :description="t('booking.stays.emptyText')" class="mt-4" />
       <MzGrid v-else :cols="3" class="pt-4">
         <MzOfferCard
           v-for="c in cards"

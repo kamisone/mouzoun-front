@@ -6,7 +6,7 @@ const props = defineProps<{ error: NuxtError }>()
 const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const uiLocale = computed(() => uiLocales[locale.value as keyof typeof uiLocales] ?? uiLocales.fr)
-const title = computed(() => (props.error.statusCode === 404 ? t('error.notFound') : t('error.generic')))
+const title = computed(() => (props.error.statusCode === 404 ? t('error.notFound') : props.error.statusCode === 503 ? t('error.unavailable') : t('error.generic')))
 useHead({ title })
 </script>
 
