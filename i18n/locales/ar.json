@@ -143,6 +143,9 @@
     "removeImage": "إزالة الصورة",
     "uploading": "جارٍ الرفع…",
     "uploadFailed": "فشل رفع الملف",
+    "uploadType": "صيغة غير مقبولة: JPEG أو PNG أو WebP أو AVIF.",
+    "uploadBlocked": "منع التخزين رفع الملف. تحقق من إعدادات CORS للحاوية لهذا الموقع.",
+    "uploadRefused": "رفض التخزين الملف (خطأ {status}).",
     "dateRange": "التواريخ",
     "selectDates": "اختيار التواريخ"
   },

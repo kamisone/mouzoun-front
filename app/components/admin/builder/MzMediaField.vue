@@ -9,7 +9,7 @@ const props = withDefaults(defineProps<{ multiple?: boolean, kinds?: string[], l
 const model = defineModel<string | string[] | undefined>()
 const { t } = useI18n()
 const api = useAdminApi()
-const { upload, uploading } = useMediaUpload()
+const { upload, uploading, error: uploadError } = useMediaUpload()
 const open = ref(false)
 const library = ref<Media[]>([])
 const page = ref(1)
@@ -66,8 +66,9 @@ function remove(id: string) {
     <div class="flex gap-2">
       <UButton :label="ids.length && !props.multiple ? t('admin.builder.media.replace') : t('admin.builder.media.choose')" icon="i-lucide-images" size="sm" color="neutral" variant="outline" @click="open = true" />
       <UButton :label="t('admin.builder.media.upload')" icon="i-lucide-upload" size="sm" color="neutral" variant="ghost" :loading="uploading" @click="input?.click()" />
-      <input ref="file" type="file" class="sr-only" :accept="props.kinds.includes('video') ? 'image/*,video/*' : 'image/*'" @change="onFile">
+      <input ref="file" type="file" class="sr-only" :accept="ACCEPTED_IMAGE_TYPES.join(',')" @change="onFile">
     </div>
+    <UAlert v-if="uploadError" :title="uploadError" color="error" variant="subtle" icon="i-lucide-circle-alert" role="alert" />
     <UModal v-model:open="open" :title="props.label" :ui="{ content: 'max-w-4xl' }">
       <template #body>
         <ul class="grid grid-cols-3 gap-3 sm:grid-cols-4">

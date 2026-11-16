@@ -15,6 +15,10 @@ export function useMediaUpload() {
 
   async function upload(file: File, visibility: MediaVisibility = 'public'): Promise<Media | null> {
     error.value = ''
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      error.value = t('forms.uploadType')
+      return null
+    }
     uploading.value = true
     try {
       const ticket = await media.createUpload({
@@ -24,12 +28,25 @@ export function useMediaUpload() {
         visibility,
       })
       // Plain fetch (default credentials): the session cookie is never sent to the storage bucket.
-      const res = await fetch(ticket.upload.url, {
-        method: ticket.upload.method,
-        headers: ticket.upload.headers,
-        body: file,
-      })
-      if (!res.ok) throw new Error(`storage upload failed (${res.status})`)
+      let res: Response
+      try {
+        res = await fetch(ticket.upload.url, {
+          method: ticket.upload.method,
+          headers: ticket.upload.headers,
+          body: file,
+        })
+      } catch (e) {
+        // The browser blocked the request before any answer: usually the bucket's CORS rules
+        // do not list this site's origin (see back/deploy/gcs-cors.json).
+        console.error('storage upload blocked', e)
+        error.value = t('forms.uploadBlocked')
+        return null
+      }
+      if (!res.ok) {
+        console.error('storage upload refused', res.status, await res.text().catch(() => ''))
+        error.value = t('forms.uploadRefused', { status: res.status })
+        return null
+      }
       return await media.complete(ticket.media_id)
     } catch (e: unknown) {
       const details = (e as { data?: { error?: { details?: unknown } } }).data?.error?.details

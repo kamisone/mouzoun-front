@@ -143,6 +143,9 @@
     "removeImage": "Remove image",
     "uploading": "Uploading…",
     "uploadFailed": "The upload failed",
+    "uploadType": "Unsupported format: JPEG, PNG, WebP or AVIF.",
+    "uploadBlocked": "The storage blocked the upload. Check the bucket's CORS settings for this site.",
+    "uploadRefused": "The storage refused the file (error {status}).",
     "dateRange": "Dates",
     "selectDates": "Select dates"
   },
