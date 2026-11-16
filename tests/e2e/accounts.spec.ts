@@ -44,9 +44,12 @@ const TRIP = {
 
 interface Options { signedIn?: boolean, staffMfa?: boolean }
 
+const MFA_SECRET = 'JBSWY3DPEHPK3PXP'
+
 async function mock(page: Page, opts: Options = {}) {
   let signedIn = opts.signedIn ?? false
   let attempts = 5
+  let mfa: { enabled: boolean, enabled_at: string | null } = { enabled: false, enabled_at: null }
   if (signedIn) await page.addInitScript(() => localStorage.setItem('mz-signed-in', '1'))
   await page.route(`${API_BASE}/**`, async (route: Route) => {
     const req = route.request()
@@ -89,6 +92,17 @@ async function mock(page: Page, opts: Options = {}) {
         if (body.code !== '135790') return json({ error: { code: 'invalid_code', message: 'invalid' } }, 422)
         signedIn = true
         return json({ user: STAFF, expires_in: 3600 })
+      }
+      case 'GET /v1/admin/account/2fa':
+        return json(mfa)
+      case 'POST /v1/admin/account/2fa/setup':
+        return json({ secret: MFA_SECRET, otpauth_uri: `otpauth://totp/Mouzoun:${STAFF.email}?secret=${MFA_SECRET}&issuer=Mouzoun` })
+      case 'POST /v1/admin/account/2fa/enable':
+      case 'POST /v1/admin/account/2fa/disable': {
+        const body = req.postDataJSON() as { code: string }
+        if (body.code !== '135790') return json({ error: { code: 'invalid_code', message: 'invalid' } }, 422)
+        mfa = path.endsWith('enable') ? { enabled: true, enabled_at: '2026-11-16T10:00:00Z' } : { enabled: false, enabled_at: null }
+        return json(mfa)
       }
       case 'GET /v1/admin/dashboard/today':
         return json({ arrivals: [], departures: [], in_house: 0, occupancy: [], pending_requests: [], tasks: [], activities: [] })
@@ -188,4 +202,20 @@ test('staff sign in with a password and then a code from their authenticator app
   await expect(page.getByRole('alert')).toContainText('Code incorrect')
   await typeCode(page, '135790')
   await expect(page).toHaveURL(/\/admin$/)
+})
+
+test('staff turn two-step verification on and off in the back-office settings', async ({ page }) => {
+  await mock(page, { staffMfa: true, signedIn: true })
+  await page.goto('/admin/settings')
+  await expect(page.getByTestId('mfa-status')).toHaveText('Désactivée')
+  await page.getByRole('button', { name: 'Activer la vérification en deux étapes' }).click()
+  await expect(page.getByRole('img', { name: 'Code QR de configuration' })).toBeVisible()
+  await expect(page.getByTestId('mfa-secret')).toHaveText(MFA_SECRET)
+  await typeCode(page, '000000')
+  await expect(page.getByRole('alert')).toContainText('Code incorrect')
+  await typeCode(page, '135790')
+  await expect(page.getByTestId('mfa-status')).toHaveText('Activée')
+  await page.getByRole('button', { name: 'Désactiver' }).click()
+  await typeCode(page, '135790')
+  await expect(page.getByTestId('mfa-status')).toHaveText('Désactivée')
 })

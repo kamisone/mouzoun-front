@@ -10,7 +10,18 @@ test('the home page leads to online booking', async ({ page }, info) => {
   const p = prefix(info.project.name)
   await page.goto(`${p}/`)
   await ready(page)
-  await page.getByTestId('home-book').click()
+  // Static home (no page published yet): its "book" button. Page-builder home: the hero search.
+  const legacy = page.getByTestId('home-book')
+  if (await legacy.count()) {
+    await legacy.click()
+  }
+  else if (await page.getByTestId('search-submit').first().isVisible()) {
+    await page.getByTestId('search-submit').first().click()
+  }
+  else {
+    await page.getByTestId('search-open').first().click()
+    await page.getByTestId('search-sheet-submit').click()
+  }
   await expect(page).toHaveURL(new RegExp(`${p}/stays`))
   await expect(page.getByRole('main').locator('a[href^="mailto:"]')).toHaveCount(0)
 })

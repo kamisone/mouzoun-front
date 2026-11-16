@@ -1,11 +1,11 @@
 import { createHmac } from 'node:crypto'
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { expect, type Page } from '@playwright/test'
 
 /**
- * Staff sign-in for full-stack tests: password, then the TOTP step. On the first run the API
- * enrols the account (the secret is on screen); it is kept in playwright/.auth/ (git-ignored) for
- * the next runs, or given with E2E_STAFF_TOTP_SECRET.
+ * Staff sign-in for full-stack tests: password, then the TOTP step when the account turned
+ * two-step verification on (its secret in E2E_STAFF_TOTP_SECRET, or in playwright/.auth/,
+ * git-ignored, kept from earlier runs).
  */
 const STORE = 'playwright/.auth/staff-totp'
 /** Signed-in staff session saved by the setup project, reused by the staff tests. */
@@ -39,14 +39,8 @@ export async function staffSignIn(page: Page, ready: (p: Page) => Promise<void>)
   // Either the second step (code boxes) or, without 2FA, the dashboard.
   await expect.poll(async () => (await code.isVisible()) || /\/admin$/.test(page.url()), { timeout: 15_000 }).toBe(true)
   if (!(await code.isVisible())) return page.waitForURL(/\/admin$/)
-  let secret = process.env.E2E_STAFF_TOTP_SECRET ?? (existsSync(STORE) ? readFileSync(STORE, 'utf8').trim() : '')
-  const shown = page.locator('code')
-  if (await shown.isVisible()) {
-    secret = (await shown.textContent())!.trim()
-    mkdirSync('playwright/.auth', { recursive: true })
-    writeFileSync(STORE, secret, { mode: 0o600 })
-  }
-  expect(secret, 'needs E2E_STAFF_TOTP_SECRET (the staff account is already enrolled)').not.toBe('')
+  const secret = process.env.E2E_STAFF_TOTP_SECRET ?? (existsSync(STORE) ? readFileSync(STORE, 'utf8').trim() : '')
+  expect(secret, 'needs E2E_STAFF_TOTP_SECRET (the staff account has two-step verification on)').not.toBe('')
   await code.click()
   await page.keyboard.type(totp(secret))
   await page.waitForURL(/\/admin$/)

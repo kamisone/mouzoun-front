@@ -344,3 +344,17 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Rich text written in the page builder (sanitised HTML subset). Logical properties only. */
+@layer components {
+  .mz-prose > * + * { margin-block-start: 1em; }
+  .mz-prose p, .mz-prose li { font-size: var(--text-body-lg); line-height: var(--text-body-lg--line-height); }
+  .mz-prose h3 { font-family: var(--font-display); font-size: var(--text-h3); line-height: var(--text-h3--line-height); margin-block-start: 1.5em; }
+  .mz-prose h4 { font-weight: 500; margin-block-start: 1.25em; }
+  .mz-prose ul { list-style: disc; padding-inline-start: 1.25em; }
+  .mz-prose ol { list-style: decimal; padding-inline-start: 1.25em; }
+  .mz-prose li + li { margin-block-start: 0.25em; }
+  .mz-prose a { color: var(--ui-primary); text-decoration: underline; text-underline-offset: 0.2em; }
+  .mz-prose blockquote { border-inline-start: 2px solid var(--ui-border-accented); padding-inline-start: 1em; font-style: italic; color: var(--ui-text-muted); }
+  .mz-prose strong, .mz-prose b { font-weight: 600; }
+}

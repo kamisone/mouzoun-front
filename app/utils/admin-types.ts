@@ -191,3 +191,9 @@ export interface GoLiveChecklist {
   payments: PaymentStatusView
   checked_at: string
 }
+
+/** Two-factor sign-in of the signed-in staff member. */
+export interface MfaStatus {
+  enabled: boolean
+  enabled_at: string | null
+}

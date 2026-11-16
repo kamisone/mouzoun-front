@@ -12,7 +12,12 @@ export default defineNuxtConfig({
   modules: ['@nuxt/ui', '@nuxtjs/i18n', '@nuxt/image', '@vueuse/nuxt', '@nuxt/eslint'],
   css: ['~/assets/css/main.css'],
   // Components are organised in folders (base/, layout/...) but named by their file: <MzPrice>.
-  components: [{ path: '~/components', pathPrefix: false }],
+  // Page builder sections are loaded by <PageSections> (lazy imports); registered as <SectionHero>…
+  // so their short names never clash. Nested directories must be listed first.
+  components: [
+    { path: '~/components/sections', prefix: 'Section', pathPrefix: false },
+    { path: '~/components', pathPrefix: false },
+  ],
 
   // Public site: light by default (an explicit choice is remembered; admin defaults to
   // "system", see app/composables/useThemePreference.ts). The inline script avoids any flash.

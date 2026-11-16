@@ -1,0 +1,86 @@
+<script setup lang="ts">
+import type { Media } from '~/utils/types'
+
+/**
+ * Picks one image (or several, in order) from the media library, or uploads a new one through
+ * the direct-to-bucket pipeline. Stores media ids only.
+ */
+const props = withDefaults(defineProps<{ multiple?: boolean, kinds?: string[], label: string }>(), { multiple: false, kinds: () => ['image'] })
+const model = defineModel<string | string[] | undefined>()
+const { t } = useI18n()
+const api = useAdminApi()
+const { upload, uploading } = useMediaUpload()
+const open = ref(false)
+const library = ref<Media[]>([])
+const page = ref(1)
+const total = ref(0)
+const cache = ref<Record<string, Media>>({})
+const input = useTemplateRef<HTMLInputElement>('file')
+
+const ids = computed(() => (Array.isArray(model.value) ? model.value : model.value ? [model.value] : []))
+async function loadLibrary() {
+  const kind = props.kinds.length === 1 ? (props.kinds[0] as Media['kind']) : undefined
+  const res = await api.media.list({ kind, page: page.value, per_page: 24 })
+  library.value = res.data
+  total.value = res.total
+  for (const m of res.data) cache.value[m.id] = m
+}
+onMounted(async () => {
+  for (const id of ids.value) {
+    if (!cache.value[id]) cache.value[id] = await api.media.get(id).catch(() => ({ id, url: '' } as Media))
+  }
+})
+watch(open, o => o && loadLibrary())
+watch(page, loadLibrary)
+
+function choose(m: Media) {
+  cache.value[m.id] = m
+  if (props.multiple) {
+    model.value = ids.value.includes(m.id) ? ids.value.filter(x => x !== m.id) : [...ids.value, m.id]
+  }
+  else {
+    model.value = m.id
+    open.value = false
+  }
+}
+async function onFile(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  const media = await upload(file)
+  if (media) choose(media)
+  if (input.value) input.value.value = ''
+}
+function remove(id: string) {
+  model.value = props.multiple ? ids.value.filter(x => x !== id) : undefined
+}
+</script>
+
+<template>
+  <div class="flex flex-col gap-2">
+    <ul v-if="ids.length" class="grid grid-cols-3 gap-2">
+      <li v-for="id in ids" :key="id" class="group relative aspect-square overflow-hidden rounded-xs bg-muted">
+        <img v-if="cache[id]?.url" :src="cache[id]!.url" alt="" class="size-full object-cover">
+        <UButton icon="i-lucide-x" size="xs" color="neutral" class="absolute end-1 top-1" :aria-label="t('common.delete')" @click="remove(id)" />
+      </li>
+    </ul>
+    <div class="flex gap-2">
+      <UButton :label="ids.length && !props.multiple ? t('admin.builder.media.replace') : t('admin.builder.media.choose')" icon="i-lucide-images" size="sm" color="neutral" variant="outline" @click="open = true" />
+      <UButton :label="t('admin.builder.media.upload')" icon="i-lucide-upload" size="sm" color="neutral" variant="ghost" :loading="uploading" @click="input?.click()" />
+      <input ref="file" type="file" class="sr-only" :accept="props.kinds.includes('video') ? 'image/*,video/*' : 'image/*'" @change="onFile">
+    </div>
+    <UModal v-model:open="open" :title="props.label" :ui="{ content: 'max-w-4xl' }">
+      <template #body>
+        <ul class="grid grid-cols-3 gap-3 sm:grid-cols-4">
+          <li v-for="m in library" :key="m.id">
+            <button type="button" class="relative block aspect-square w-full overflow-hidden rounded-xs bg-muted" :class="ids.includes(m.id) && 'ring-2 ring-primary'" :aria-pressed="ids.includes(m.id)" :aria-label="m.original_filename" @click="choose(m)">
+              <img v-if="m.kind === 'image'" :src="m.url" alt="" loading="lazy" class="size-full object-cover">
+              <span v-else class="flex size-full items-center justify-center text-caption">{{ m.original_filename }}</span>
+            </button>
+          </li>
+        </ul>
+        <MzEmptyState v-if="!library.length" icon="i-lucide-image-off" :title="t('admin.builder.media.empty')" />
+        <UPagination v-if="total > 24" v-model:page="page" :total="total" :items-per-page="24" class="mt-4" />
+      </template>
+    </UModal>
+  </div>
+</template>

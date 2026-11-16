@@ -2,10 +2,7 @@ import type { SessionResponse, User } from '~/utils/types'
 
 export interface MfaChallenge {
   mfa_token: string
-  mfa_required?: boolean
-  mfa_enrollment_required?: boolean
-  secret?: string
-  otpauth_uri?: string
+  mfa_required: true
 }
 
 /**
@@ -18,8 +15,8 @@ export function useAuth() {
   const api = $fetch.create({ baseURL: config.public.apiBase, credentials: 'include' })
 
   /**
-   * Password step. Staff then need a second factor: the answer is a challenge (code from the
-   * authenticator app) or, the first time, an enrolment (secret + otpauth URI for the QR code).
+   * Password step. Staff who turned two-factor sign-in on (back-office settings) then get a
+   * challenge: a code from their authenticator app, sent with `verifyMfa`.
    */
   async function login(email: string, password: string): Promise<MfaChallenge | null> {
     const res = await api<SessionResponse | MfaChallenge>('/v1/auth/login', { method: 'POST', body: { email, password } })

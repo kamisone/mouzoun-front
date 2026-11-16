@@ -19,9 +19,9 @@ const navigation = computed<NavigationMenuItem[]>(() => [
   { label: t('admin.products'), icon: 'i-lucide-tent', disabled: true, badge: t('admin.upcoming') },
   { label: t('admin.customers'), icon: 'i-lucide-users', to: '/admin/customers' },
   { label: t('admin.scan.title'), icon: 'i-lucide-scan-qr-code', to: '/admin/scan' },
-  { label: t('admin.content'), icon: 'i-lucide-file-text', disabled: true, badge: t('admin.upcoming') },
+  { label: t('admin.content'), icon: 'i-lucide-file-text', to: '/admin/pages' },
   { label: t('admin.media'), icon: 'i-lucide-images', disabled: true, badge: t('admin.upcoming') },
-  { label: t('admin.settings'), icon: 'i-lucide-settings', disabled: true, badge: t('admin.upcoming') },
+  { label: t('admin.settings'), icon: 'i-lucide-settings', to: '/admin/settings' },
 ])
 const footerNavigation = computed<NavigationMenuItem[]>(() => [
   { label: t('admin.styleguide'), icon: 'i-lucide-palette', to: '/_styleguide' },
@@ -29,7 +29,10 @@ const footerNavigation = computed<NavigationMenuItem[]>(() => [
 
 const userMenu = computed<DropdownMenuItem[][]>(() => [
   [{ label: user.value?.email ?? '', type: 'label' }],
-  [{ label: t('auth.backToSite'), icon: 'i-lucide-globe', to: '/' }],
+  [
+    { label: t('admin.account.menu'), icon: 'i-lucide-shield-check', to: '/admin/settings' },
+    { label: t('auth.backToSite'), icon: 'i-lucide-globe', to: '/' },
+  ],
   [{ label: t('auth.logout'), icon: 'i-lucide-log-out', color: 'error', onSelect: onLogout }],
 ])
 

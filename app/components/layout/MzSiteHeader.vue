@@ -42,6 +42,7 @@ const accountLabel = computed(() => (account.value ? t('account.nav.myAccount') 
       transparent ? 'dark border-b border-transparent bg-transparent' : 'border-b border-default bg-default',
     ]"
   >
+    <MzTopBar />
     <MzContainer class="grid h-(--ui-header-height) grid-cols-[1fr_auto_1fr] items-center gap-4">
       <!-- Start: navigation (desktop) or menu button (mobile) -->
       <div class="flex items-center">

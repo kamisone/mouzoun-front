@@ -75,7 +75,7 @@ async function verify(value = code.value) {
     <div>
       <h1 class="font-display text-2xl font-semibold">{{ challenge ? t('auth.mfa.title') : t('auth.title') }}</h1>
       <p class="mt-1 text-sm text-muted">
-        {{ challenge?.mfa_enrollment_required ? t('auth.mfa.enrol') : challenge ? t('auth.mfa.subtitle') : t('auth.subtitle') }}
+        {{ challenge ? t('auth.mfa.subtitle') : t('auth.subtitle') }}
       </p>
     </div>
     <UAlert v-if="error" :title="error" color="error" variant="subtle" icon="i-lucide-circle-alert" role="alert" />
@@ -91,13 +91,6 @@ async function verify(value = code.value) {
     </UForm>
 
     <form v-else class="flex flex-col gap-4" @submit.prevent="verify()">
-      <template v-if="challenge.mfa_enrollment_required && challenge.otpauth_uri">
-        <MzQrCode :value="challenge.otpauth_uri" :label="t('auth.mfa.qr')" class="mx-auto max-w-48" />
-        <p class="text-center text-xs text-muted">
-          {{ t('auth.mfa.manual') }}
-          <code class="block pt-1 font-mono text-sm break-all text-highlighted" dir="ltr">{{ challenge.secret }}</code>
-        </p>
-      </template>
       <MzCodeInput ref="codeInput" v-model="code" :label="t('auth.mfa.code')" :invalid="!!error" :disabled="loading" @complete="verify" />
       <UButton type="submit" :label="t('auth.mfa.verify')" :loading="loading" :disabled="code.length !== 6" block size="lg" />
       <UButton :label="t('auth.mfa.back')" color="neutral" variant="link" class="self-center" @click="challenge = null; code = ''; error = ''" />

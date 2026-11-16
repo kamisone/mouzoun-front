@@ -82,7 +82,7 @@ async function submit() {
           </div>
         </template>
       </UPopover>
-      <UButton type="submit" icon="i-lucide-search" :label="t('common.search')" size="lg" class="justify-center" />
+      <UButton type="submit" icon="i-lucide-search" :label="t('common.search')" size="lg" class="justify-center" data-testid="search-submit" />
     </div>
 
     <!-- Mobile: a single field opening a full-screen sheet -->
@@ -90,6 +90,7 @@ async function submit() {
       type="button"
       class="flex w-full items-center gap-3 rounded-full border border-default bg-elevated px-6 py-3 text-start md:hidden"
       :aria-label="t('booking.search.open')"
+      data-testid="search-open"
       @click="sheet = true"
     >
       <UIcon name="i-lucide-search" class="size-5 text-muted" aria-hidden="true" />
@@ -114,7 +115,7 @@ async function submit() {
           <MzGuestPicker v-model="party" :categories="categories ?? []" />
         </section>
         <div class="fixed inset-x-0 bottom-0 border-t border-default bg-default p-4">
-          <UButton :label="t('common.search')" icon="i-lucide-search" size="lg" block @click="submit" />
+          <UButton :label="t('common.search')" icon="i-lucide-search" size="lg" block data-testid="search-sheet-submit" @click="submit" />
         </div>
       </template>
     </UModal>

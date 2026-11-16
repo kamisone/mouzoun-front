@@ -567,6 +567,234 @@
         "lastWebhook": "Last webhook received {date}.",
         "noWebhookYet": "No webhook received yet."
       }
+    },
+    "builder": {
+      "title": "Page builder",
+      "pagesTitle": "Site pages",
+      "pagesIntro": "Compose the home page and other pages from sections, preview, then publish.",
+      "newPage": "New page",
+      "pageType": "Page type",
+      "pageTitle": "Title",
+      "slug": "Address (slug)",
+      "open": "Open the builder",
+      "createFailed": "The page could not be created (address already used?).",
+      "pageTypes": {
+        "home": "Home",
+        "page": "Page",
+        "post": "Post",
+        "legal": "Legal page",
+        "landing": "Landing page"
+      },
+      "status": {
+        "draft": "Draft",
+        "published": "Published",
+        "changes": "Unpublished changes",
+        "scheduled": "Scheduled"
+      },
+      "backToPages": "Back to pages",
+      "sections": "Sections",
+      "settings": "Section settings",
+      "preview": "Page preview",
+      "previewLanguage": "Preview language",
+      "history": "History",
+      "selectHint": "Pick a section on the left or in the preview to edit it.",
+      "saving": "Saving…",
+      "saved": "Draft saved",
+      "unsaved": "Editing…",
+      "upToDate": "Up to date",
+      "invalid": "{n} error(s) to fix",
+      "saveConflict": "Conflict: reload the page",
+      "saveFailed": "The draft could not be saved: it will retry on your next change.",
+      "leaveConfirm": "Some changes are not saved yet. Leave anyway?",
+      "add": "Add a section",
+      "addBelow": "Add below",
+      "duplicate": "Duplicate",
+      "rename": "Rename",
+      "convertShared": "Convert to a shared section",
+      "actions": "Section actions",
+      "hide": "Hide",
+      "show": "Show",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "deleted": "Section deleted",
+      "undo": "Undo",
+      "nowShared": "Shared section: it can now be placed on other pages.",
+      "namePlaceholder": "Internal name (e.g. Summer quad promo)",
+      "reorderHint": "Drag and drop, or Alt + ↑ / ↓ on the keyboard.",
+      "movedTo": "Section moved to position {n} of {total}",
+      "missing": "Missing translation",
+      "badges": {
+        "shared": "Shared",
+        "scheduled": "Scheduled",
+        "desktop": "Desktop only",
+        "mobile": "Mobile only",
+        "hiddenIn": "Hidden in {locales}",
+        "errors": "{n} error(s)"
+      },
+      "devices": {
+        "all": "All screens",
+        "desktop": "Desktop",
+        "tablet": "Tablet",
+        "mobile": "Mobile"
+      },
+      "groups": {
+        "content": "Content",
+        "layout": "Layout",
+        "source": "Source",
+        "advanced": "Advanced",
+        "display": "Display"
+      },
+      "display": {
+        "devices": "Show on",
+        "hiddenLocales": "Hide in these languages",
+        "anchor": "Anchor",
+        "anchorHint": "For menu links to this section (e.g. farm)",
+        "appearance": "Appearance",
+        "analytics": "Analytics label"
+      },
+      "schedule": {
+        "title": "Display period",
+        "timezone": "camp time",
+        "from": "From",
+        "until": "Until"
+      },
+      "items": {
+        "title": "Items",
+        "add": "Add",
+        "item": "Item {n}"
+      },
+      "source": {
+        "rule": "Automatic (rule)",
+        "manual": "Picked by hand"
+      },
+      "link": {
+        "type": "Link type",
+        "style": "Button style",
+        "none": "None",
+        "newTab": "Open in a new tab",
+        "types": {
+          "page": "Page",
+          "product": "Product",
+          "category": "Category",
+          "place": "Place",
+          "route": "Site page",
+          "url": "External address",
+          "anchor": "Section of this page"
+        }
+      },
+      "media": {
+        "choose": "Choose from the library",
+        "replace": "Replace",
+        "upload": "Upload",
+        "empty": "No file in the library."
+      },
+      "richtext": {
+        "toolbar": "Formatting",
+        "bold": "Bold",
+        "italic": "Italic",
+        "list": "List",
+        "orderedList": "Numbered list",
+        "link": "Link",
+        "clear": "Clear formatting",
+        "linkPrompt": "Link address (https://, mailto:, tel:)"
+      },
+      "shared": {
+        "placementTitle": "Shared section",
+        "placementText": "Its content is edited in the library and changes on every page that shows it. Here: visibility, period, languages and anchor.",
+        "edit": "Edit the shared section",
+        "editTitle": "Shared section",
+        "usedOn": "Shown on {n} page(s)",
+        "saved": "Saved: {n} page(s) have changes to publish."
+      },
+      "addDialog": {
+        "title": "Add a section",
+        "types": "Sections",
+        "shared": "Shared sections",
+        "inactive": "Deactivated",
+        "permission": "Super admins only",
+        "pageType": "Not on this page type",
+        "max": "Already {n} on the page (maximum)",
+        "h1": "The page already has a main title",
+        "usedOn": "{n} page(s)",
+        "noShared": "No shared section",
+        "noSharedText": "In a section menu, “Convert to a shared section”."
+      },
+      "categories": {
+        "hero": "Headers",
+        "listing": "Listings",
+        "content": "Content",
+        "media": "Media",
+        "social_proof": "Reviews and trust",
+        "conversion": "Conversion",
+        "layout": "Layout",
+        "utility": "Practical"
+      },
+      "publish": {
+        "open": "Publish",
+        "title": "Publish the page",
+        "first": "First publication",
+        "changes": "Changes since revision {n}",
+        "added": "Added",
+        "changed": "Changed",
+        "removed": "Removed",
+        "moved": "Section order changed",
+        "noChange": "No change",
+        "blocked": "{n} error(s) prevent publishing",
+        "now": "Publish now",
+        "schedule": "Schedule",
+        "when": "Publication date and time",
+        "note": "Note (optional)",
+        "notePlaceholder": "E.g. Spring opening",
+        "nowAction": "Publish",
+        "scheduleAction": "Schedule",
+        "done": "Revision {n} published",
+        "scheduled": "Revision {n} scheduled",
+        "failed": "Publishing failed."
+      },
+      "revisions": {
+        "title": "Revision history",
+        "none": "No revision published yet.",
+        "number": "Revision {n}",
+        "preview": "Preview",
+        "restore": "Restore",
+        "cancel": "Cancel the schedule",
+        "confirmRestore": "Replace the draft with revision {n}? Nothing is published until you publish.",
+        "restored": "Revision {n} restored into the draft",
+        "previewing": "Previewing an older revision",
+        "backToDraft": "Back to the draft",
+        "status": {
+          "published": "Live",
+          "scheduled": "Scheduled",
+          "superseded": "Superseded",
+          "cancelled": "Cancelled"
+        }
+      },
+      "conflict": {
+        "title": "The page was changed elsewhere",
+        "by": "{name} saved another version while you were working.",
+        "someone": "Someone saved another version while you were working.",
+        "text": "Reload to start from the latest version (your unsaved changes will be lost).",
+        "reload": "Reload"
+      }
+    },
+    "account": {
+      "menu": "Account security",
+      "description": "Your personal back-office settings.",
+      "mfa": {
+        "help": "Once it is on, every sign-in asks for a code from your authenticator app after the password.",
+        "on": "On",
+        "off": "Off",
+        "since": "On since {date}",
+        "turnOn": "Turn on two-step verification",
+        "turnOff": "Turn off",
+        "confirmOn": "Turn on",
+        "confirmOff": "Turn off",
+        "cancel": "Cancel",
+        "disableHelp": "Enter a code from your authenticator app to turn two-step verification off.",
+        "enabled": "Two-step verification is on.",
+        "disabled": "Two-step verification is off.",
+        "setupExpired": "The setup expired. Start again."
+      }
     }
   },
   "error": {
@@ -1435,6 +1663,72 @@
       "title": "Find this trip any time",
       "text": "Create your account in one tap: a code arrives at your email address. Offline ticket, pre-check-in and faster bookings next time.",
       "cta": "Create my account"
+    }
+  },
+  "sections": {
+    "products": "Products",
+    "reviews": "Reviews",
+    "logos": "Logos",
+    "rating": "{average}/5 · {count} reviews",
+    "previewExpired": "This preview has expired: open the page editor again.",
+    "carousel": {
+      "previous": "Previous",
+      "next": "Next",
+      "play": "Resume scrolling",
+      "pause": "Pause scrolling",
+      "slideOf": "{n} of {total}",
+      "goTo": "Go to slide {n}"
+    },
+    "calendar": {
+      "caption": "Harvest calendar",
+      "crop": "Crop",
+      "harvest": "Harvest in {month}"
+    },
+    "gallery": {
+      "open": "Enlarge photo: {alt}",
+      "position": "Photo {n} of {total}",
+      "title": "Gallery"
+    },
+    "video": {
+      "title": "Video",
+      "play": "Play the video ({provider})"
+    },
+    "offers": {
+      "percent": "-{n}%",
+      "freeNights": "{n} free night(s)",
+      "amount": "-{amount}",
+      "endsIn": "Ends in {days} d {hours} h"
+    },
+    "map": {
+      "distances": "Distances from the camp",
+      "directions": "Directions"
+    },
+    "newsletter": {
+      "submit": "Sign up",
+      "done": "Thank you, you're on the list!",
+      "consent": "I agree to receive news from the camp.",
+      "consentRequired": "Tick the box to agree to receive our emails.",
+      "error": "Sign-up failed. Please try again."
+    },
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "emailPlaceholder": "you{'@'}email.com",
+      "phone": "Phone",
+      "groupSize": "Number of people",
+      "arrival": "Arrival",
+      "departure": "Departure",
+      "subject": "Subject",
+      "message": "Message"
+    },
+    "contact": {
+      "whatsapp": "Message us on WhatsApp",
+      "send": "Send",
+      "done": "Thank you! We will answer shortly.",
+      "error": "Sending failed. Try again or email us."
+    },
+    "posts": {
+      "read": "Read"
     }
   }
 }

@@ -1,6 +1,7 @@
 import type { Media, MediaKind, MediaVisibility, Paginated, UploadTicket, User } from '~/utils/types'
 import type { PaymentOption, RegisterGuest, TripItem, TripQuote } from '~/utils/booking-types'
-import type { AccountsReport, AdminBookingRow, GoLiveChecklist, AdminBookingView, AdminTask, CrmCustomer, CrmCustomerRow, ScannedTicket, TodayDashboard } from '~/utils/admin-types'
+import type { BlockDraft, BuilderTree, FieldError, LookupOption, PageSummary, PageText, PublishCheck, RevisionSummary, SectionType, SharedSummary } from '~/utils/page-types'
+import type { AccountsReport, AdminBookingRow, GoLiveChecklist, MfaStatus, AdminBookingView, AdminTask, CrmCustomer, CrmCustomerRow, ScannedTicket, TodayDashboard } from '~/utils/admin-types'
 
 /**
  * Typed client of the back-office API (`/v1/admin/...`): every admin endpoint is declared here,
@@ -26,6 +27,13 @@ export function useAdminApi() {
     quote: (body: { items: TripItem[], rate_plan_id?: string | null, promo_code?: string | null, locale?: string }) =>
       http<{ quote: TripQuote }>('/quote', { method: 'POST', body }),
     customers: (q: string) => http<{ id: string, first_name: string, last_name: string | null, email: string | null, phone: string | null, country_code: string | null, bookings: number }[]>('/customers', { query: { q } }),
+    /** The signed-in staff member's own two-factor sign-in (TOTP). */
+    mfa: {
+      status: () => http<MfaStatus>('/account/2fa'),
+      setup: () => http<{ secret: string, otpauth_uri: string }>('/account/2fa/setup', { method: 'POST' }),
+      enable: (code: string) => http<MfaStatus>('/account/2fa/enable', { method: 'POST', body: { code } }),
+      disable: (code: string) => http<MfaStatus>('/account/2fa/disable', { method: 'POST', body: { code } }),
+    },
     goLive: {
       checklist: () => http<GoLiveChecklist>('/booking/go-live'),
       setEnabled: (enabled: boolean) => http<GoLiveChecklist>('/booking/enabled', { method: 'PUT', body: { enabled } }),
@@ -90,6 +98,38 @@ export function useAdminApi() {
         http(`/bookings/${id}/resend`, { method: 'POST', body: { email } }),
       guests: (id: string) => http<{ guests: RegisterGuest[], revealed: boolean }>(`/bookings/${id}/guests`),
     },
+    pages: {
+      list: () => http<{ pages: PageSummary[] }>('/pages'),
+      create: (body: { page_type: string, translations: Record<string, PageText> }) => http<{ id: string }>('/pages', { method: 'POST', body }),
+      builder: (id: string) => http<BuilderTree>(`/pages/${id}/builder`),
+      /** Whole draft; `version` is the draft_version the client edited (409 when stale). */
+      save: (id: string, version: number, body: { blocks: BlockDraft[], translations?: Record<string, PageText> }) =>
+        http<BuilderTree>(`/pages/${id}/builder`, { method: 'PUT', body, headers: { 'If-Match': `"${version}"` } }),
+      addBlock: (id: string, version: number, body: { type?: string, shared_block_id?: string, position?: number }) =>
+        http<BuilderTree>(`/pages/${id}/blocks`, { method: 'POST', body, headers: { 'If-Match': `"${version}"` } }),
+      duplicateBlock: (blockId: string, version: number) => http<BuilderTree>(`/blocks/${blockId}/duplicate`, { method: 'POST', headers: { 'If-Match': `"${version}"` } }),
+      patchBlock: (blockId: string, version: number, body: Partial<Pick<BlockDraft, 'is_visible' | 'active_period' | 'visible_on' | 'hidden_locales'>>) =>
+        http<BuilderTree>(`/blocks/${blockId}`, { method: 'PATCH', body, headers: { 'If-Match': `"${version}"` } }),
+      deleteBlock: (blockId: string, version: number) => http<BuilderTree>(`/blocks/${blockId}`, { method: 'DELETE', headers: { 'If-Match': `"${version}"` } }),
+      publishCheck: (id: string) => http<PublishCheck>(`/pages/${id}/publish-check`),
+      publish: (id: string, body: { publish_at?: string | null, note?: string | null }) => http<{ revision: RevisionSummary }>(`/pages/${id}/publish`, { method: 'POST', body }),
+      revisions: (id: string) => http<{ revisions: RevisionSummary[] }>(`/pages/${id}/revisions`),
+      restore: (revisionId: string) => http<{ tree: BuilderTree, errors: FieldError[] }>(`/revisions/${revisionId}/restore`, { method: 'POST' }),
+      cancel: (revisionId: string) => http<{ revision: RevisionSummary }>(`/revisions/${revisionId}/cancel`, { method: 'POST' }),
+      previewToken: (id: string) => http<{ token: string, expires_in: number }>(`/pages/${id}/preview-token`, { method: 'POST' }),
+    },
+    sectionTypes: () => http<{ types: SectionType[], appearance_schema: SectionType['settings_schema'], can_use_html: boolean, can_publish: boolean }>('/section-types'),
+    shared: {
+      list: () => http<{ sections: SharedSummary[] }>('/shared-sections'),
+      get: (id: string) => http<BlockDraft>(`/shared-sections/${id}`),
+      create: (block: BlockDraft) => http<BlockDraft>('/shared-sections', { method: 'POST', body: block }),
+      update: (id: string, block: BlockDraft) => http<BlockDraft>(`/shared-sections/${id}`, { method: 'PUT', body: block }),
+      remove: (id: string) => http<null>(`/shared-sections/${id}`, { method: 'DELETE' }),
+      usages: (id: string) => http<{ usages: { page_id: string, page_title: string | null, block_id: string }[] }>(`/shared-sections/${id}/usages`),
+    },
+    lookup: (kind: string, query: { q?: string, ids?: string[] }) =>
+      http<{ options: LookupOption[] }>(`/lookup/${kind}`, { query: { q: query.q || undefined, ids: query.ids?.length ? query.ids.join(',') : undefined } }),
+    usages: (refType: string, id: string) => http<{ usages: { page_id: string | null, page_title: string | null, block_id: string, block_type: string, shared: boolean, live: boolean }[] }>(`/usages/${refType}/${id}`),
     media: {
       list: (query: { kind?: MediaKind; page?: number; per_page?: number } = {}) =>
         http<Paginated<Media>>('/media', { query }),
