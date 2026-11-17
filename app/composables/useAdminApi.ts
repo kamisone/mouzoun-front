@@ -1,4 +1,4 @@
-import type { Media, MediaKind, MediaVisibility, Paginated, UploadTicket, User } from '~/utils/types'
+import type { Media, MediaKind, MediaVisibility, Paginated, User } from '~/utils/types'
 import type { PaymentOption, RegisterGuest, TripItem, TripQuote } from '~/utils/booking-types'
 import type { BlockDraft, BuilderTree, FieldError, LookupOption, PageSummary, PageText, PublishCheck, RevisionSummary, SectionType, SharedSummary } from '~/utils/page-types'
 import type { AccountsReport, AdminBookingRow, GoLiveChecklist, MfaStatus, AdminBookingView, AdminTask, CrmCustomer, CrmCustomerRow, ScannedTicket, TodayDashboard } from '~/utils/admin-types'
@@ -135,9 +135,13 @@ export function useAdminApi() {
         http<Paginated<Media>>('/media', { query }),
       get: (id: string) => http<Media>(`/media/${id}`),
       remove: (id: string) => http<null>(`/media/${id}`, { method: 'DELETE' }),
-      createUpload: (body: { filename: string; content_type: string; size_bytes: number; visibility: MediaVisibility }) =>
-        http<UploadTicket>('/media/uploads', { method: 'POST', body }),
-      complete: (id: string) => http<Media>(`/media/${id}/complete`, { method: 'POST' }),
+      /** Multipart: the API checks the file and writes it to the bucket with its ACL. */
+      upload: (file: File, visibility: MediaVisibility) => {
+        const body = new FormData()
+        body.append('visibility', visibility)
+        body.append('file', file, file.name)
+        return http<Media>('/media', { method: 'POST', body })
+      },
     },
   }
 }

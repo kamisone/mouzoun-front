@@ -42,15 +42,3 @@ export interface Media {
   height: number | null
   created_at: string
 }
-
-export interface UploadTicket {
-  media_id: string
-  expires_at: string
-  upload: {
-    url: string
-    method: 'PUT'
-    /** Must be sent verbatim: they are part of the URL signature. */
-    headers: Record<string, string>
-    expires_at: string
-  }
-}

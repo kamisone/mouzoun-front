@@ -144,8 +144,7 @@
     "uploading": "Envoi en cours…",
     "uploadFailed": "Échec de l'envoi du fichier",
     "uploadType": "Format non accepté : JPEG, PNG, WebP ou AVIF.",
-    "uploadBlocked": "Le stockage a bloqué l'envoi. Vérifiez la configuration CORS du bucket pour ce site.",
-    "uploadRefused": "Le stockage a refusé le fichier (erreur {status}).",
+    "uploadTooLarge": "Le fichier est trop volumineux.",
     "dateRange": "Dates",
     "selectDates": "Choisir les dates"
   },

@@ -144,8 +144,7 @@
     "uploading": "Uploading…",
     "uploadFailed": "The upload failed",
     "uploadType": "Unsupported format: JPEG, PNG, WebP or AVIF.",
-    "uploadBlocked": "The storage blocked the upload. Check the bucket's CORS settings for this site.",
-    "uploadRefused": "The storage refused the file (error {status}).",
+    "uploadTooLarge": "The file is too large.",
     "dateRange": "Dates",
     "selectDates": "Select dates"
   },

@@ -3,9 +3,9 @@ import type { Media, MediaVisibility } from '~/utils/types'
 export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif']
 
 /**
- * Direct-to-storage upload:
- * 1. ask the API for a signed URL, 2. PUT the file straight to Google Cloud Storage,
- * 3. ask the API to verify and publish it.
+ * Sends the file to the API (multipart). The API checks it and writes it to Google Cloud Storage
+ * with its ACL (public photo or private file): the browser never talks to the bucket, so the
+ * bucket needs no CORS rule.
  */
 export function useMediaUpload() {
   const { media } = useAdminApi()
@@ -21,36 +21,13 @@ export function useMediaUpload() {
     }
     uploading.value = true
     try {
-      const ticket = await media.createUpload({
-        filename: file.name,
-        content_type: file.type,
-        size_bytes: file.size,
-        visibility,
-      })
-      // Plain fetch (default credentials): the session cookie is never sent to the storage bucket.
-      let res: Response
-      try {
-        res = await fetch(ticket.upload.url, {
-          method: ticket.upload.method,
-          headers: ticket.upload.headers,
-          body: file,
-        })
-      } catch (e) {
-        // The browser blocked the request before any answer: usually the bucket's CORS rules
-        // do not list this site's origin (see back/deploy/gcs-cors.json).
-        console.error('storage upload blocked', e)
-        error.value = t('forms.uploadBlocked')
-        return null
-      }
-      if (!res.ok) {
-        console.error('storage upload refused', res.status, await res.text().catch(() => ''))
-        error.value = t('forms.uploadRefused', { status: res.status })
-        return null
-      }
-      return await media.complete(ticket.media_id)
+      return await media.upload(file, visibility)
     } catch (e: unknown) {
-      const details = (e as { data?: { error?: { details?: unknown } } }).data?.error?.details
-      error.value = typeof details === 'string' ? details : t('forms.uploadFailed')
+      const err = e as { statusCode?: number, data?: { error?: { details?: unknown } } }
+      const details = err.data?.error?.details
+      error.value = err.statusCode === 413
+        ? t('forms.uploadTooLarge')
+        : typeof details === 'string' ? details : t('forms.uploadFailed')
       return null
     } finally {
       uploading.value = false
