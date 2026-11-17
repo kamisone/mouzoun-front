@@ -1,8 +1,10 @@
 <script setup lang="ts">
 /**
- * Public header. Over a hero (page meta `headerOverlay: true`) it starts transparent with ivory
- * text and becomes solid ivory with a hairline once the page scrolls (300 ms). Centred wordmark,
- * few navigation items, language, theme, "Book". Mobile: full-screen menu with large serif links.
+ * Public header. Sticky and solid ivory with a hairline; on a page that opens on a hero photo
+ * (`useHeaderOverlay`) it floats over the photo, transparent with ivory text, until the page
+ * scrolls (300 ms). That look is pure CSS (main.css, `.mz-site-header`), so the server HTML is
+ * right before any script runs. Centred wordmark, few navigation items, language, theme, "Book".
+ * Mobile: full-screen menu with large serif links.
  */
 const { t } = useI18n()
 const localePath = useLocalePath()
@@ -11,9 +13,8 @@ const { y } = useWindowScroll()
 const open = ref(false)
 watch(() => route.fullPath, () => { open.value = false })
 
-const overlay = computed(() => route.meta.headerOverlay === true)
-const scrolled = computed(() => y.value > 16)
-const transparent = computed(() => overlay.value && !scrolled.value && !open.value)
+/** At the very top of the page: an overlay header is transparent there (see main.css). */
+const atTop = computed(() => y.value <= 16 && !open.value)
 
 const home = computed(() => localePath('/'))
 const items = computed(() => [
@@ -36,11 +37,8 @@ const accountLabel = computed(() => (account.value ? t('account.nav.myAccount') 
 
 <template>
   <header
-    class="inset-x-0 top-0 z-(--z-sticky) transition-[background-color,border-color] duration-(--duration-header) ease-(--ease-editorial)"
-    :class="[
-      overlay ? 'fixed' : 'sticky',
-      transparent ? 'dark border-b border-transparent bg-transparent' : 'border-b border-default bg-default',
-    ]"
+    class="mz-site-header inset-x-0 top-0 z-(--z-sticky) border-b border-default bg-default transition-[background-color,border-color] duration-(--duration-header) ease-(--ease-editorial)"
+    :data-at-top="atTop ? '' : undefined"
   >
     <MzTopBar />
     <MzContainer class="grid h-(--ui-header-height) grid-cols-[1fr_auto_1fr] items-center gap-4">
@@ -89,13 +87,13 @@ const accountLabel = computed(() => (account.value ? t('account.nav.myAccount') 
             data-testid="trip-badge"
           />
         </UChip>
-        <UButton
-          :to="localePath('/stays')"
-          :label="t('common.book')"
-          :color="transparent ? 'neutral' : 'primary'"
-          :variant="transparent ? 'outline' : 'solid'"
-          class="ms-4 hidden md:inline-flex"
-        />
+        <!-- Outline over the photo, solid once the header is: CSS picks one (main.css). -->
+        <span class="mz-when-floating">
+          <UButton :to="localePath('/stays')" :label="t('common.book')" color="neutral" variant="outline" class="ms-4 hidden md:inline-flex" />
+        </span>
+        <span class="mz-when-solid">
+          <UButton :to="localePath('/stays')" :label="t('common.book')" class="ms-4 hidden md:inline-flex" />
+        </span>
       </div>
     </MzContainer>
 

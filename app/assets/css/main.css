@@ -209,7 +209,10 @@
   --ui-error: var(--ui-color-error-500);
 }
 
-.dark {
+/* `.mz-site-header[...]`: the public header floating over a hero photo takes the dark tokens
+   (ivory text), see the block after this one. */
+.dark,
+html[data-header-overlay] .mz-site-header[data-at-top] {
   --ui-bg: #12100D;
   --ui-bg-elevated: #1B1814;
   --ui-bg-muted: #1B1814;
@@ -236,6 +239,32 @@
   --ui-error: var(--ui-color-error-300);
 
   color-scheme: dark;
+}
+
+/*
+ * Public header (MzSiteHeader). Sticky and solid by default. When the page opens on a hero photo
+ * (<html data-header-overlay>, see useHeaderOverlay) it is fixed over the photo and, while the page
+ * is at the top ([data-at-top]), transparent with the dark tokens above. Unlayered: these rules
+ * win over the header's utilities. Only one "Book" button shows: outline over the photo, solid
+ * otherwise.
+ */
+.mz-site-header {
+  position: sticky;
+}
+html[data-header-overlay] .mz-site-header {
+  position: fixed;
+}
+html[data-header-overlay] .mz-site-header[data-at-top] {
+  background-color: transparent;
+  border-color: transparent;
+}
+.mz-when-floating,
+html[data-header-overlay] .mz-site-header[data-at-top] .mz-when-solid {
+  display: none;
+}
+.mz-when-solid,
+html[data-header-overlay] .mz-site-header[data-at-top] .mz-when-floating {
+  display: contents;
 }
 
 /* Arabic: the same type roles with Arabic faces; no tracking, no uppercase (they do not apply

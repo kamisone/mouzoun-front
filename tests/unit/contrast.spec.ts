@@ -18,7 +18,7 @@ function block(selector: RegExp): Map<string, string> {
   return new Map([...body.matchAll(/--(ui-[\w-]+):\s*([^;]+);/g)].map(m => [m[1]!, m[2]!.trim()]))
 }
 const light = block(/:root,\s*\.light\s*\{([\s\S]*?)\n\}/)
-const dark = block(/\n\.dark\s*\{([\s\S]*?)\n\}/)
+const dark = block(/\n\.dark[^{]*\{([\s\S]*?)\n\}/)
 
 /** Resolves `var(--ui-color-primary-600)` → the brand scale value, or a literal colour. */
 function resolve(theme: Map<string, string>, token: string): string {

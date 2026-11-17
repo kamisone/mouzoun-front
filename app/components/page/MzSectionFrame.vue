@@ -24,6 +24,9 @@ const bottom = { none: 'pb-0', sm: 'pb-12', md: 'pb-16 lg:pb-24', lg: 'pb-24 lg:
 const devices = { all: '', desktop: 'hidden md:block', mobile: 'md:hidden' } as const
 
 const scheme = computed(() => a.value.color_scheme ?? 'light')
+/** Heroes are full-bleed: no frame padding, so the photo starts at the very top (behind the header). */
+const fullBleed = computed(() => HERO_SECTION_TYPES.includes(props.section.type))
+const padding = computed(() => (fullBleed.value ? '' : `${top[a.value.padding_top ?? 'lg']} ${bottom[a.value.padding_bottom ?? 'lg']}`))
 const background = computed(() => media(a.value.background_media_id))
 const shapes = {
   wave: 'M0 40 C 240 0 480 0 720 20 C 960 40 1200 40 1440 10 L1440 40 Z',
@@ -46,7 +49,7 @@ function select(event: MouseEvent) {
     :data-section-type="props.section.type"
     :data-analytics="props.section.analytics_label ?? undefined"
     class="relative isolate scroll-mt-24 text-default"
-    :class="[schemes[scheme], top[a.padding_top ?? 'lg'], bottom[a.padding_bottom ?? 'lg'], devices[props.section.visible_on], preview && 'cursor-pointer outline-primary/40 hover:outline-2 hover:-outline-offset-2']"
+    :class="[schemes[scheme], padding, devices[props.section.visible_on], preview && 'cursor-pointer outline-primary/40 hover:outline-2 hover:-outline-offset-2']"
     @click.capture="preview ? select($event) : undefined"
   >
     <svg v-if="a.divider_top && a.divider_top !== 'none'" class="pointer-events-none absolute start-0 bottom-full h-6 w-full lg:h-10" :class="fills[scheme]" viewBox="0 0 1440 40" preserveAspectRatio="none" aria-hidden="true">

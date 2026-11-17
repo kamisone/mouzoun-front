@@ -14,7 +14,9 @@ if (!data.value) {
     ? createError({ statusCode: 404, statusMessage: t('error.notFound'), fatal: true })
     : createError({ statusCode: 503, statusMessage: t('error.unavailable'), fatal: true })
 }
-const startsWithHero = computed(() => ['hero', 'hero_slider'].includes(data.value?.sections[0]?.type ?? ''))
+const startsWithHero = computed(() => HERO_SECTION_TYPES.includes(data.value?.sections[0]?.type ?? ''))
+// A page opening on a hero runs its photo behind the (transparent) header.
+useHeaderOverlay(startsWithHero)
 </script>
 
 <template>
