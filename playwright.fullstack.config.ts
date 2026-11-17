@@ -37,6 +37,10 @@ export default defineConfig({
     { name: 'fr-desktop', testMatch: /guest\.spec\.ts/, dependencies: ['setup'], use: desktop },
     { name: 'ar-mobile', testMatch: /guest\.spec\.ts/, dependencies: ['setup'], use: { ...devices['Pixel 7'], viewport: { width: 390, height: 844 } } },
     { name: 'staff', testMatch: /staff\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
+    // Farm shop (needs the seed_dev demo shop; the staff account needs shop.* permissions).
+    { name: 'shop', testMatch: /shop\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
+    // Farm shop (needs the seed_dev demo shop; the staff account needs shop.* permissions).
+    { name: 'shop', testMatch: /shop\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
     // Page builder: the staff account needs content.publish (manager or super_admin).
     { name: 'builder', testMatch: /builder\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, viewport: { width: 1600, height: 1000 }, storageState: staffState } },
     ...(process.env.STRIPE_E2E === '1'

@@ -10,6 +10,15 @@ const appConfig = useAppConfig()
 const site = computed(() => appConfig.site)
 const { all } = usePhoto()
 const year = new Date().getFullYear()
+const { reopen } = useConsent()
+// Seller identity and legal pages (French law: mentions légales, CGV...), from the shop config.
+const { data: shop } = useShopConfig()
+const legalLinks = computed(() => {
+  const pages = shop.value?.legal_pages ?? {}
+  return (['notice', 'cgv', 'privacy', 'cookies', 'withdrawal', 'shipping'] as const)
+    .filter(k => pages[k])
+    .map(k => ({ key: k, label: t(`footer.legalPages.${k}`), to: localePath(`/${pages[k]}`) }))
+})
 const email = ref('')
 const mapsUrl = computed(() => `https://www.google.com/maps?q=${site.value.location.lat},${site.value.location.lng}`)
 
@@ -67,10 +76,21 @@ function subscribe() {
     </MzContainer>
     <div class="border-t border-default">
       <MzContainer class="flex flex-col gap-4 py-8 text-caption text-muted md:flex-row md:items-center md:justify-between">
-        <p>© {{ year }} Mouzoun · {{ site.address }}</p>
+        <p>
+          © {{ year }} Mouzoun · {{ site.address }}
+          <template v-if="shop?.seller">
+            <br><span data-testid="footer-seller">{{ t('footer.seller', { name: shop.seller.legal_name, form: shop.seller.legal_form }) }}<template v-if="shop.seller.siren"> · SIREN {{ shop.seller.siren }}</template></span>
+          </template>
+        </p>
         <div class="flex flex-wrap items-center gap-6">
-          <span>{{ t('footer.legal') }}</span>
-          <span>{{ t('footer.privacy') }}</span>
+          <nav v-if="legalLinks.length" :aria-label="t('footer.legal')" class="flex flex-wrap gap-x-6 gap-y-2">
+            <NuxtLink v-for="l in legalLinks" :key="l.key" :to="l.to" class="hover:text-default">{{ l.label }}</NuxtLink>
+          </nav>
+          <template v-else>
+            <span>{{ t('footer.legal') }}</span>
+            <span>{{ t('footer.privacy') }}</span>
+          </template>
+          <button type="button" class="hover:text-default" data-testid="footer-cookies" @click="reopen">{{ t('footer.cookies') }}</button>
           <details class="group">
             <summary class="cursor-pointer list-none hover:text-default">{{ t('footer.photoCredits') }}</summary>
             <ul class="mt-4 flex flex-col gap-1">

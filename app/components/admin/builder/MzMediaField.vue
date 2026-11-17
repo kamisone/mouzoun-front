@@ -3,7 +3,7 @@ import type { Media } from '~/utils/types'
 
 /**
  * Picks one image (or several, in order) from the media library, or uploads a new one through
- * the direct-to-bucket pipeline. Stores media ids only.
+ * the API (multipart upload). Stores media ids only.
  */
 const props = withDefaults(defineProps<{ multiple?: boolean, kinds?: string[], label: string }>(), { multiple: false, kinds: () => ['image'] })
 const model = defineModel<string | string[] | undefined>()

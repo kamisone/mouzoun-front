@@ -13,7 +13,8 @@ for (const path of ['/', '/ar', '/_styleguide']) {
 test('the mobile menu is full screen, with large links, and closes with Escape', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Menu' }).click()
-  const dialog = page.getByRole('dialog')
+  // By name: the cookie banner is a dialog too, and becomes reachable again once the menu closes.
+  const dialog = page.getByRole('dialog', { name: 'Menu', exact: true })
   await expect(dialog).toBeVisible()
   const viewport = page.viewportSize()!
   await expect.poll(async () => Math.round((await dialog.boundingBox())!.width)).toBe(viewport.width)

@@ -17,9 +17,17 @@ watch(() => route.fullPath, () => { open.value = false })
 const atTop = computed(() => y.value <= 16 && !open.value)
 
 const home = computed(() => localePath('/'))
+// Farm shop: linked unless closed; its basket only while it is open.
+const shopApi = useShopApi()
+const shopPath = useShopPath()
+const shopCart = useShopCart()
+const { data: shopConfig } = useLazyAsyncData('shop-config-header', () => shopApi.config().catch(() => null), { server: false })
+const shopOpen = computed(() => shopConfig.value?.status === 'open')
+watch(shopOpen, (o) => { if (o && !shopCart.cart.value) shopCart.load() }, { immediate: true })
 const items = computed(() => [
   { label: t('nav.stay'), to: localePath('/stays') },
   { label: t('nav.activities'), to: localePath('/activities') },
+  ...(shopConfig.value && shopConfig.value.status !== 'closed' ? [{ label: t('shop.nav'), to: shopPath() }] : []),
   { label: t('nav.farm'), to: `${home.value}#farm` },
   { label: t('nav.practical'), to: `${home.value}#practical` },
 ])
@@ -87,6 +95,16 @@ const accountLabel = computed(() => (account.value ? t('account.nav.myAccount') 
             data-testid="trip-badge"
           />
         </UChip>
+        <UChip v-if="shopOpen" :show="shopCart.count.value > 0" :text="shopCart.count.value" size="3xl" color="primary" inset>
+          <UButton
+            icon="i-lucide-shopping-basket"
+            color="neutral"
+            variant="ghost"
+            :aria-label="`${t('shop.cart.title')} · ${t('shop.cart.items', { n: shopCart.count.value }, shopCart.count.value)}`"
+            data-testid="shop-cart-badge"
+            @click="shopCart.open.value = true"
+          />
+        </UChip>
         <!-- Outline over the photo, solid once the header is: CSS picks one (main.css). -->
         <span class="mz-when-floating">
           <UButton :to="localePath('/stays')" :label="t('common.book')" color="neutral" variant="outline" class="ms-4 hidden md:inline-flex" />
@@ -96,6 +114,8 @@ const accountLabel = computed(() => (account.value ? t('account.nav.myAccount') 
         </span>
       </div>
     </MzContainer>
+
+    <MzCartDrawer v-if="shopOpen" />
 
     <!-- Full-screen menu: no radius or ring, a slow fade instead of the default scale-in. -->
     <UModal

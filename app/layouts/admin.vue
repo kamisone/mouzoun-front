@@ -17,6 +17,27 @@ const navigation = computed<NavigationMenuItem[]>(() => [
   { label: t('admin.bookings.title'), icon: 'i-lucide-calendar-check', to: '/admin/bookings' },
   { label: t('admin.goLive.title'), icon: 'i-lucide-rocket', to: '/admin/go-live' },
   { label: t('admin.products'), icon: 'i-lucide-tent', disabled: true, badge: t('admin.upcoming') },
+  ...(user.value?.permissions.includes('shop.read')
+    ? [{
+        label: t('admin.shop.title'),
+        icon: 'i-lucide-shopping-basket',
+        to: '/admin/shop',
+        defaultOpen: route.path.startsWith('/admin/shop'),
+        children: [
+          { label: t('admin.shop.nav.dashboard'), to: '/admin/shop', exact: true },
+          { label: t('admin.shop.nav.orders'), to: '/admin/shop/orders' },
+          { label: t('admin.shop.nav.products'), to: '/admin/shop/products' },
+          { label: t('admin.shop.nav.variations'), to: '/admin/shop/variations' },
+          { label: t('admin.shop.nav.inventory'), to: '/admin/shop/inventory' },
+          { label: t('admin.shop.nav.returns'), to: '/admin/shop/returns' },
+          { label: t('admin.shop.nav.promotions'), to: '/admin/shop/promotions' },
+          { label: t('admin.shop.nav.shipping'), to: '/admin/shop/shipping' },
+          { label: t('admin.shop.nav.reports'), to: '/admin/shop/reports' },
+          { label: t('admin.shop.nav.settings'), to: '/admin/shop/settings' },
+          { label: t('admin.shop.nav.france'), to: '/admin/shop/france' },
+        ],
+      } as NavigationMenuItem]
+    : []),
   { label: t('admin.customers'), icon: 'i-lucide-users', to: '/admin/customers' },
   { label: t('admin.scan.title'), icon: 'i-lucide-scan-qr-code', to: '/admin/scan' },
   { label: t('admin.content'), icon: 'i-lucide-file-text', to: '/admin/pages' },

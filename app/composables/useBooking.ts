@@ -1,3 +1,4 @@
+import { readConsent } from '~/utils/consent'
 import type { BookingConfig, CartView, GuestCategory, GuestCount, TripItem } from '~/utils/booking-types'
 
 /** Booking settings (open or not, payment providers...), fetched once per visit. */
@@ -178,12 +179,8 @@ export function useBookingAccess() {
  */
 export function useAnalytics() {
   function consented() {
-    try {
-      return localStorage.getItem('mz-consent') === 'granted'
-    }
-    catch {
-      return false
-    }
+    // Valid for 6 months (utils/consent.ts), then asked again by the banner.
+    return readConsent() === 'granted'
   }
   function track(event: string, params: Record<string, unknown> = {}) {
     if (import.meta.server || !consented()) return

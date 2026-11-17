@@ -88,6 +88,16 @@ export default defineNuxtConfig({
     '/*/checkout': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
     '/booking/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
     '/*/booking/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    // Shop: cart, checkout and order pages are personal (never cached nor indexed).
+    '/boutique/cart': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/boutique/cart': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/shop/cart': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/boutique/checkout': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/boutique/checkout': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/shop/checkout': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/boutique/orders/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    '/*/boutique/orders/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    '/*/shop/orders/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
     // Guest account: private, client-rendered (its API session must never rotate during SSR).
     '/account/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
     '/*/account/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },

@@ -1,3 +1,4 @@
+import { shopAdminApi } from '~/utils/shop-admin-api'
 import type { Media, MediaKind, MediaVisibility, Paginated, User } from '~/utils/types'
 import type { PaymentOption, RegisterGuest, TripItem, TripQuote } from '~/utils/booking-types'
 import type { BlockDraft, BuilderTree, FieldError, LookupOption, PageSummary, PageText, PublishCheck, RevisionSummary, SectionType, SharedSummary } from '~/utils/page-types'
@@ -23,6 +24,15 @@ export function useAdminApi() {
   })
 
   return {
+    /** Farm shop back office (`/v1/admin/shop/...`). */
+    shop: shopAdminApi(http),
+    /** Machine translation of admin content: the source locale's fields → every other locale. */
+    translations: {
+      generate: (body: { fields: Record<string, string>, html?: string[], source_locale?: string, targets?: string[] }) =>
+        http<import('~/utils/translate-generate').TranslationOutcome>('/translations/generate', { method: 'POST', body }),
+    },
+    /** Absolute URL of a printable / CSV admin endpoint (opened in a new tab with the session cookie). */
+    url: (path: string) => `${useRuntimeConfig().public.apiBase}/v1/admin${path}`,
     dashboard: () => http<TodayDashboard>('/dashboard/today'),
     quote: (body: { items: TripItem[], rate_plan_id?: string | null, promo_code?: string | null, locale?: string }) =>
       http<{ quote: TripQuote }>('/quote', { method: 'POST', body }),

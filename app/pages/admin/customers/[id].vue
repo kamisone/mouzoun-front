@@ -13,6 +13,10 @@ const { money } = useMoney()
 const { date, dateTime, dateRange } = useDate()
 const id = computed(() => String(route.params.id))
 const { data: c, refresh } = await useAsyncData(`crm-${id.value}`, () => admin.crm.get(id.value))
+// Shop orders next to the bookings (needs shop.orders or shop.refunds; empty otherwise).
+const { user: staffUser } = useAuth()
+const canSeeOrders = computed(() => ['shop.orders', 'shop.refunds'].some(p => staffUser.value?.permissions.includes(p)))
+const { data: shopOrders } = await useLazyAsyncData(`crm-shop-${id.value}`, () => (canSeeOrders.value ? admin.shop.customerOrders(id.value) : Promise.resolve(null)), { server: false })
 
 async function act(fn: () => Promise<unknown>, done: string) {
   try {
@@ -127,6 +131,19 @@ const deleteOpen = ref(false)
           <span class="text-muted">{{ b.arrival_date && b.departure_date ? dateRange(b.arrival_date, b.departure_date) : b.arrival_date ? date(b.arrival_date) : '' }}</span>
           <UBadge :label="t(`status.${b.status}`)" color="neutral" variant="subtle" />
           <span class="tabular-nums">{{ money(b.paid_minor, b.currency) }} / {{ money(b.total_minor, b.currency) }}</span>
+        </li>
+      </ul>
+    </UCard>
+
+    <UCard v-if="shopOrders" variant="outline">
+      <template #header><h2 class="font-medium">{{ t('admin.shop.nav.orders') }} ({{ shopOrders.orders.length }})</h2></template>
+      <p v-if="!shopOrders.orders.length" class="text-sm text-muted">—</p>
+      <ul v-else class="divide-y divide-default">
+        <li v-for="o in shopOrders.orders" :key="o.id" class="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
+          <NuxtLink :to="`/admin/shop/orders/${o.id}`" class="font-mono font-medium text-highlighted hover:underline">{{ o.number }}</NuxtLink>
+          <span class="text-muted">{{ o.placed_at ? date(o.placed_at) : '' }}</span>
+          <UBadge :label="t(`shop.order.statuses.${o.status}`)" color="neutral" variant="subtle" />
+          <span class="tabular-nums">{{ money(o.total_minor, o.currency) }}</span>
         </li>
       </ul>
     </UCard>

@@ -16,5 +16,6 @@ onMounted(() => applyDefault('light'))
       <slot />
     </main>
     <MzSiteFooter />
+    <ClientOnly><MzCookieBanner /></ClientOnly>
   </div>
 </template>

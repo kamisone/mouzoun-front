@@ -13,6 +13,7 @@ const sections = computed(() => [
   { key: 'overview', icon: 'i-lucide-house', to: localePath('/account') },
   { key: 'trips', icon: 'i-lucide-tent', to: localePath('/account/trips') },
   { key: 'wishlists', icon: 'i-lucide-heart', to: localePath('/account/wishlists') },
+  { key: 'shop', icon: 'i-lucide-shopping-basket', to: localePath('/account/shop') },
   { key: 'profile', icon: 'i-lucide-user-round', to: localePath('/account/profile') },
   { key: 'travellers', icon: 'i-lucide-users-round', to: localePath('/account/travellers') },
   { key: 'payments', icon: 'i-lucide-credit-card', to: localePath('/account/payments') },
