@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { socialLinks } from '~/utils/social'
+
 /**
- * Footer: always dark (night), generous, small link columns, newsletter, language switch, legal
+ * Footer: always dark (night), generous, small link columns, social profiles, newsletter, language switch, legal
  * links and the credits of the placeholder photos (CC licences require them).
  */
 const { t } = useI18n()
@@ -20,6 +22,27 @@ const legalLinks = computed(() => {
     .map(k => ({ key: k, label: t(`footer.legalPages.${k}`), to: localePath(`/${pages[k]}`) }))
 })
 const email = ref('')
+
+// The official profiles, also declared to search engines (schema.org sameAs) so they show
+// with the site in results and knowledge panels.
+const social = computed(() => socialLinks(site.value.social))
+const siteUrl = useRuntimeConfig().public.i18n?.baseUrl as string | undefined
+useHead(() => ({
+  script: social.value.length
+    ? [{
+        key: 'ld-organization',
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          'name': 'Mouzoun',
+          ...(siteUrl ? { url: siteUrl, logo: `${siteUrl}/favicon.svg` } : {}),
+          ...(site.value.email ? { email: site.value.email } : {}),
+          'sameAs': social.value.map(l => l.url),
+        }),
+      }]
+    : [],
+}))
 const mapsUrl = computed(() => `https://www.google.com/maps?q=${site.value.location.lat},${site.value.location.lng}`)
 
 const columns = computed(() => [
@@ -54,6 +77,10 @@ function subscribe() {
       <div class="lg:col-span-4">
         <MzLogo size="lg" />
         <p class="mt-6 max-w-xs text-small text-muted">{{ t('footer.tagline') }}</p>
+        <div v-if="social.length" class="mt-8">
+          <h2 class="eyebrow mb-4">{{ t('footer.followUs') }}</h2>
+          <MzSocialLinks />
+        </div>
       </div>
       <nav v-for="column in columns" :key="column.title" class="lg:col-span-2" :aria-label="column.title">
         <h2 class="eyebrow mb-6">{{ column.title }}</h2>

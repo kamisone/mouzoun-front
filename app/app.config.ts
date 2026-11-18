@@ -17,7 +17,8 @@ const tinted = <V extends string>(variants: V[], cls: (color: string) => string 
 export default defineAppConfig({
   /**
    * Public contact details. PLACEHOLDERS until the public settings API exists (the database
-   * already stores them: contact.*, social.*, location.* settings).
+   * already stores them: contact.*, social.*, location.* settings). The social profiles are
+   * real; their order, names and logos come from utils/social.ts.
    */
   site: {
     email: 'contact@mouzoun.com',
@@ -25,7 +26,12 @@ export default defineAppConfig({
     whatsapp: '',
     address: "M'ssici, Alnif — Rissani, Maroc",
     location: { lat: 31.238933, lng: -4.701349 },
-    social: { instagram: '', facebook: '', tiktok: '' },
+    social: {
+      instagram: 'https://www.instagram.com/mouzoun_mssici/',
+      tiktok: 'https://www.tiktok.com/@mouzoun.mssici',
+      youtube: 'https://www.youtube.com/@MouzounMssici',
+      facebook: 'https://www.facebook.com/profile.php?id=61596592589247',
+    },
     /** Background of the sign-in page (public bucket URL). Empty: a desert gradient. */
     authBackground: '',
   },

@@ -87,3 +87,27 @@ test('no serious accessibility violations: style guide in dark mode', async ({ p
   await page.waitForLoadState('networkidle')
   expect(await seriousViolations(page)).toEqual([])
 })
+
+test('the footer links to the four social profiles, with their logos, and declares them to search engines', async ({ page }) => {
+  await page.goto('/')
+  const profiles = {
+    instagram: 'https://www.instagram.com/mouzoun_mssici/',
+    tiktok: 'https://www.tiktok.com/@mouzoun.mssici',
+    youtube: 'https://www.youtube.com/@MouzounMssici',
+    facebook: 'https://www.facebook.com/profile.php?id=61596592589247',
+  }
+  const footer = page.locator('footer')
+  for (const [key, url] of Object.entries(profiles)) {
+    const link = footer.getByTestId(`social-${key}`)
+    await expect(link).toHaveAttribute('href', url)
+    await expect(link).toHaveAttribute('target', '_blank')
+    await expect(link).toHaveAttribute('rel', /\bnoopener\b/)
+    await expect(link.locator('.iconify, svg').first()).toBeVisible()
+    const box = (await link.boundingBox())!
+    expect(box.width).toBeGreaterThanOrEqual(44)
+  }
+  await expect(footer.getByRole('link', { name: /Mouzoun sur Instagram, @mouzoun_mssici/ })).toBeVisible()
+  const ld = await page.locator('script[type="application/ld+json"]').allTextContents()
+  const org = ld.map(s => JSON.parse(s)).find(j => j['@type'] === 'Organization')
+  expect(org.sameAs).toEqual(Object.values(profiles))
+})

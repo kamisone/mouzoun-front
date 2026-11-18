@@ -143,6 +143,7 @@ const accountLabel = computed(() => (account.value ? t('account.nav.myAccount') 
           </div>
           <UButton :to="accountTo" :label="accountLabel" icon="i-lucide-user-round" color="neutral" variant="outline" size="lg" block @click="open = false" />
           <UButton :to="localePath('/stays')" :label="t('common.book')" size="lg" block @click="open = false" />
+          <MzSocialLinks size="sm" class="justify-center" />
         </div>
       </template>
     </UModal>
