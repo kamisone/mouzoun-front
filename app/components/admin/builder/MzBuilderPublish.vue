@@ -72,6 +72,14 @@ async function publish() {
             </li>
           </ul>
         </div>
+        <div v-if="check.warnings?.length" class="flex flex-col gap-2" data-testid="publish-warnings">
+          <UAlert color="warning" variant="subtle" icon="i-lucide-languages" :title="t('admin.builder.publish.warnings', { n: check.warnings.length })" />
+          <ul class="flex flex-col gap-1 text-small">
+            <li v-for="e in check.warnings" :key="e.path + e.code">
+              <button type="button" class="text-start underline" @click="goTo(e.path)">{{ blockOf(e.path)?.name ?? b.typeOf(blockOf(e.path)?.type ?? '')?.name ?? e.path }}</button> : {{ e.message }}
+            </li>
+          </ul>
+        </div>
         <section>
           <h3 class="mb-2 text-small font-medium">{{ check.published_revision ? t('admin.builder.publish.changes', { n: check.published_revision }) : t('admin.builder.publish.first') }}</h3>
           <ul class="flex flex-col gap-1 text-small" data-testid="publish-diff">

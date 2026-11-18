@@ -654,7 +654,10 @@
         "layout": "Mise en page",
         "source": "Source",
         "advanced": "Avancé",
-        "display": "Affichage"
+        "display": "Affichage",
+        "albums": "Albums",
+        "preview": "Aperçu",
+        "viewer": "Visionneuse"
       },
       "display": {
         "devices": "Afficher sur",
@@ -761,7 +764,8 @@
         "scheduleAction": "Programmer",
         "done": "Révision {n} publiée",
         "scheduled": "Révision {n} programmée",
-        "failed": "La publication a échoué."
+        "failed": "La publication a échoué.",
+        "warnings": "À compléter ({n}), non bloquant"
       },
       "revisions": {
         "title": "Historique des révisions",
@@ -870,7 +874,9 @@
         "secondary": "Secondaire",
         "ghost": "Discret",
         "link": "Lien",
-        "rule": "Règle"
+        "rule": "Règle",
+        "albums": "Par albums",
+        "stream": "Une seule grille"
       },
       "fields": {
         "eyebrow": "Surtitre",
@@ -976,7 +982,59 @@
         "padding_bottom": "Espace en dessous",
         "width": "Largeur",
         "divider_top": "Séparateur au-dessus",
-        "divider_bottom": "Séparateur en dessous"
+        "divider_bottom": "Séparateur en dessous",
+        "view_all_label": "Bouton « Voir tout » ({count} = nombre de photos)",
+        "viewer_layout": "Disposition de la visionneuse",
+        "open_lightbox_directly": "Ouvrir directement la photo cliquée en plein écran",
+        "allow_download": "Autoriser le téléchargement",
+        "allow_share": "Autoriser le partage",
+        "autoplay_videos": "Lecture automatique des vidéos (sans le son)",
+        "description": "Description"
+      },
+      "gallery": {
+        "album": "Album {n}",
+        "albums": "Albums",
+        "summary": "{photos} photos dans {albums} albums",
+        "addAlbum": "Ajouter un album",
+        "photoCount": "{n} photos",
+        "altMissing": "Photos sans description en français",
+        "gallery": "Galerie",
+        "newGallery": "Nouvelle galerie",
+        "editPhotos": "Modifier les photos",
+        "cover": "Couverture",
+        "coverHint": "(la première photo par défaut)",
+        "photo": "Photo {n}",
+        "describe": "Décrire cette photo ({locales})",
+        "emptyGallery": "Cette galerie n’a pas encore de photo.",
+        "hiddenInPreview": "Seulement dans la galerie complète (pas dans l’aperçu)",
+        "saveFailed": "Enregistrement impossible, réessayez.",
+        "layout": "Disposition",
+        "height": "Hauteur sur grand écran",
+        "source": "Photos de l’aperçu",
+        "pickExactly": "Choisissez {n} photos ({picked} choisies)",
+        "pickBetween": "Choisissez de {min} à {max} photos ({picked} choisies)",
+        "noAlbumPhotos": "Ajoutez d’abord des photos aux albums.",
+        "showCount": "Afficher le nombre de photos",
+        "showChips": "Afficher le nom des albums sous l’aperçu",
+        "galleryName": "Nom (back-office uniquement)",
+        "photos": "Photos et vidéos",
+        "describeTitle": "Décrire la photo",
+        "altHint": "Ce que montre la photo, pour les personnes qui ne la voient pas",
+        "layouts": {
+          "mosaic": "1 grande + 4 petites",
+          "mosaic_3": "1 grande + 2 petites",
+          "cover": "Une photo large",
+          "filmstrip": "Bandeau"
+        },
+        "heights": {
+          "sm": "Petite",
+          "md": "Moyenne",
+          "lg": "Grande"
+        },
+        "sources": {
+          "auto": "Automatique",
+          "manual": "Choisies à la main"
+        }
       }
     },
     "account": {
@@ -2533,7 +2591,19 @@
     "gallery": {
       "open": "Agrandir la photo : {alt}",
       "position": "Photo {n} sur {total}",
-      "title": "Galerie"
+      "title": "Galerie",
+      "viewAll": "Voir toutes les photos",
+      "viewAllCount": "Voir les {count} photos",
+      "viewAllAria": "Voir les {count} photos de Mouzoun",
+      "albums": "Albums",
+      "close": "Revenir à la page",
+      "closePhoto": "Fermer la photo",
+      "share": "Partager",
+      "download": "Télécharger",
+      "linkCopied": "Lien copié",
+      "loadFailed": "Les photos n’ont pas pu être chargées.",
+      "retry": "Réessayer",
+      "lightbox": "{title} : visionneuse de photos"
     },
     "video": {
       "title": "Vidéo",

@@ -16,12 +16,15 @@ const path = computed(() => `/blocks/${props.index}`)
 
 const groupsOf = (root: SchemaNode | null) =>
   Object.values(resolveNode(root ?? {}, root ?? {}).properties ?? {}).map(n => (resolveNode(root!, n)['x-group'] ?? 'content') as string)
+/** The gallery has its own form (albums, preview, viewer). */
+const isGallery = computed(() => props.type.code === 'gallery' && !block.value.shared_block_id)
 const groups = computed(() => {
+  if (isGallery.value) return ['albums', 'preview', 'viewer']
   const all = new Set([...groupsOf(props.type.content_schema), ...groupsOf(props.type.settings_schema)])
   return ['content', 'source', 'layout', 'advanced'].filter(g => all.has(g))
 })
 const tabs = computed(() => [...groups.value.map(g => ({ label: t(`admin.builder.groups.${g}`), value: g })), { label: t('admin.builder.groups.display'), value: 'display' }])
-const tab = ref('content')
+const tab = ref(groups.value[0] ?? 'content')
 watch(() => block.value.id, () => (tab.value = groups.value[0] ?? 'display'))
 
 const contentHas = (group: string) => groupsOf(props.type.content_schema).includes(group)
@@ -49,7 +52,8 @@ const topErrors = computed(() => props.errors.filter(e => ['', '/type', '/id', '
 
     <UTabs v-model="tab" :items="tabs" variant="link" :content="false" class="w-full" />
 
-    <template v-if="!block.shared_block_id && tab !== 'display'">
+    <MzBuilderGalleryForm v-if="isGallery && tab !== 'display'" v-model="block" :type="props.type" :tab="tab" :path="path" :errors="errorsAt(path)" />
+    <template v-else-if="!block.shared_block_id && tab !== 'display'">
       <MzSchemaFields v-if="contentHas(tab)" v-model="block.content" :root="props.type.content_schema" :group="tab" :path="`${path}/content`" :errors="errorsAt(`${path}/content`)" localized />
       <MzSchemaFields v-model="block.settings" :root="props.type.settings_schema" :group="tab" :path="`${path}/settings`" :errors="errorsAt(`${path}/settings`)" />
       <MzBuilderItems v-if="tab === 'content' && (props.type.item_settings_schema || props.type.item_content_schema)" v-model="block" :type="props.type" :path="`${path}/items`" :errors="errorsAt(`${path}/items`)" />

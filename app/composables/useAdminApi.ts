@@ -1,7 +1,7 @@
 import { shopAdminApi } from '~/utils/shop-admin-api'
 import type { Media, MediaKind, MediaVisibility, Paginated, User } from '~/utils/types'
 import type { PaymentOption, RegisterGuest, TripItem, TripQuote } from '~/utils/booking-types'
-import type { BlockDraft, BuilderTree, FieldError, LookupOption, PageSummary, PageText, PublishCheck, RevisionSummary, SectionType, SharedSummary } from '~/utils/page-types'
+import type { AdminGallery, BlockDraft, BuilderTree, FieldError, LookupOption, PageSummary, PageText, PublishCheck, RevisionSummary, SectionType, SharedSummary } from '~/utils/page-types'
 import type { AccountsReport, AdminBookingRow, GoLiveChecklist, MfaStatus, AdminBookingView, AdminTask, CrmCustomer, CrmCustomerRow, ScannedTicket, TodayDashboard } from '~/utils/admin-types'
 
 /**
@@ -139,12 +139,21 @@ export function useAdminApi() {
     },
     lookup: (kind: string, query: { q?: string, ids?: string[] }) =>
       http<{ options: LookupOption[] }>(`/lookup/${kind}`, { query: { q: query.q || undefined, ids: query.ids?.length ? query.ids.join(',') : undefined } }),
+    /** Galleries (photo lists) used by the albums of gallery sections. */
+    galleries: {
+      get: (id: string) => http<AdminGallery>(`/galleries/${id}`),
+      create: (body: { name: string, media_ids: string[] }) => http<AdminGallery>('/galleries', { method: 'POST', body }),
+      update: (id: string, body: { name?: string, media_ids: string[] }) => http<AdminGallery>(`/galleries/${id}`, { method: 'PUT', body }),
+    },
     usages: (refType: string, id: string) => http<{ usages: { page_id: string | null, page_title: string | null, block_id: string, block_type: string, shared: boolean, live: boolean }[] }>(`/usages/${refType}/${id}`),
     media: {
       list: (query: { kind?: MediaKind; page?: number; per_page?: number } = {}) =>
         http<Paginated<Media>>('/media', { query }),
       get: (id: string) => http<Media>(`/media/${id}`),
       remove: (id: string) => http<null>(`/media/${id}`, { method: 'DELETE' }),
+      /** Alt text, title and caption per language (an empty string clears a field). */
+      texts: (id: string, translations: Record<string, { alt_text?: string, title?: string, caption?: string }>) =>
+        http<{ id: string, translations: Record<string, { alt_text: string | null, title: string | null, caption: string | null }> }>(`/media/${id}/texts`, { method: 'PUT', body: { translations } }),
       /** Multipart: the API checks the file and writes it to the bucket with its ACL. */
       upload: (file: File, visibility: MediaVisibility) => {
         const body = new FormData()

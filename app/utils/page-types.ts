@@ -21,6 +21,47 @@ export interface MediaView {
   alt: string | null
 }
 
+// ---- Gallery section ----------------------------------------------------------------------------
+
+/** An album of a gallery section, as the page payload lists it (`data.albums`). */
+export interface GalleryAlbum {
+  id: string
+  title: string
+  description: string | null
+  count: number
+  cover_media_id: string | null
+  hidden_in_preview: boolean
+}
+
+/** `data` of a gallery section: the preview only (the viewer loads the photos on demand). */
+export interface GalleryData {
+  total_count: number
+  preview: { media_id: string, album_id: string }[]
+  albums: GalleryAlbum[]
+}
+
+/** One photo of `GET /v1/sections/{id}/gallery`. */
+export interface GalleryPhoto {
+  media: MediaView
+  caption: string | null
+  album_id: string
+}
+
+/** A page of `GET /v1/sections/{id}/gallery` (albums on the first page only). */
+export interface GalleryPage {
+  albums?: { id: string, title: string, description: string | null, count: number, cover: MediaView | null }[]
+  items: GalleryPhoto[]
+  next_cursor: string | null
+  total_count: number
+}
+
+/** A gallery of the media library (`/v1/admin/galleries/{id}`). */
+export interface AdminGallery {
+  id: string
+  name: string
+  photos: { media_id: string, kind: string, url: string, width: number | null, height: number | null, public: boolean, alt: Record<string, string> }[]
+}
+
 export interface ResolvedLink {
   type: 'page' | 'product' | 'category' | 'place' | 'route' | 'url' | 'anchor'
   id?: string
@@ -161,7 +202,7 @@ export interface SchemaNode {
   '$defs'?: Record<string, SchemaNode>
   'x-widget'?: string
   'x-ref'?: string
-  'x-group'?: 'content' | 'layout' | 'source' | 'advanced'
+  'x-group'?: 'content' | 'layout' | 'source' | 'advanced' | 'preview' | 'viewer'
   'x-media-kinds'?: string[]
   [key: string]: unknown
 }
@@ -208,6 +249,8 @@ export interface SectionRef { id: string, type: string, name: string | null, tit
 
 export interface PublishCheck {
   errors: FieldError[]
+  /** Not blocking (photo descriptions missing in other languages). */
+  warnings?: FieldError[]
   published_revision: number | null
   diff: { added: SectionRef[], removed: SectionRef[], changed: SectionRef[], moved: boolean }
 }

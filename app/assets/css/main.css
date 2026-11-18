@@ -387,3 +387,13 @@ html[data-header-overlay] .mz-site-header[data-at-top] .mz-when-floating {
   .mz-prose blockquote { border-inline-start: 2px solid var(--ui-border-accented); padding-inline-start: 1em; font-style: italic; color: var(--ui-text-muted); }
   .mz-prose strong, .mz-prose b { font-weight: 600; }
 }
+
+/* Gallery section: scrim under text on a photo, fading edges of the filmstrip, the lightbox. */
+@layer components {
+  .mz-photo-scrim { background-image: linear-gradient(to top, oklch(14% 0.02 60 / 0.72), oklch(14% 0.02 60 / 0) 62%); }
+  .mz-fade-x {
+    mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent);
+  }
+  .mz-lightbox { background-color: oklch(8% 0 0); color: oklch(96% 0.005 80); }
+  .mz-lightbox-muted { color: oklch(78% 0.005 80); }
+}

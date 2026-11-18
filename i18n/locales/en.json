@@ -654,7 +654,10 @@
         "layout": "Layout",
         "source": "Source",
         "advanced": "Advanced",
-        "display": "Display"
+        "display": "Display",
+        "albums": "Albums",
+        "preview": "Preview",
+        "viewer": "Viewer"
       },
       "display": {
         "devices": "Show on",
@@ -761,7 +764,8 @@
         "scheduleAction": "Schedule",
         "done": "Revision {n} published",
         "scheduled": "Revision {n} scheduled",
-        "failed": "Publishing failed."
+        "failed": "Publishing failed.",
+        "warnings": "To complete ({n}), not blocking"
       },
       "revisions": {
         "title": "Revision history",
@@ -787,6 +791,51 @@
         "someone": "Someone saved another version while you were working.",
         "text": "Reload to start from the latest version (your unsaved changes will be lost).",
         "reload": "Reload"
+      },
+      "gallery": {
+        "album": "Album {n}",
+        "albums": "Albums",
+        "summary": "{photos} photos in {albums} albums",
+        "addAlbum": "Add an album",
+        "photoCount": "{n} photos",
+        "altMissing": "Photos without a French description",
+        "gallery": "Gallery",
+        "newGallery": "New gallery",
+        "editPhotos": "Edit the photos",
+        "cover": "Cover",
+        "coverHint": "(first photo by default)",
+        "photo": "Photo {n}",
+        "describe": "Describe this photo ({locales})",
+        "emptyGallery": "This gallery has no photo yet.",
+        "hiddenInPreview": "Only in the full gallery (not in the preview)",
+        "saveFailed": "Could not save, try again.",
+        "layout": "Layout",
+        "height": "Height on large screens",
+        "source": "Photos of the preview",
+        "pickExactly": "Pick {n} photos ({picked} chosen)",
+        "pickBetween": "Pick {min} to {max} photos ({picked} chosen)",
+        "noAlbumPhotos": "Add photos to the albums first.",
+        "showCount": "Show the number of photos",
+        "showChips": "Show the album names under the preview",
+        "galleryName": "Name (back office only)",
+        "photos": "Photos and videos",
+        "describeTitle": "Describe the photo",
+        "altHint": "What the photo shows, for people who cannot see it",
+        "layouts": {
+          "mosaic": "1 large + 4 small",
+          "mosaic_3": "1 large + 2 small",
+          "cover": "One wide photo",
+          "filmstrip": "Filmstrip"
+        },
+        "heights": {
+          "sm": "Small",
+          "md": "Medium",
+          "lg": "Large"
+        },
+        "sources": {
+          "auto": "Automatic",
+          "manual": "Hand-picked"
+        }
       }
     },
     "account": {
@@ -2343,7 +2392,19 @@
     "gallery": {
       "open": "Enlarge photo: {alt}",
       "position": "Photo {n} of {total}",
-      "title": "Gallery"
+      "title": "Gallery",
+      "viewAll": "View all photos",
+      "viewAllCount": "View all {count} photos",
+      "viewAllAria": "View all {count} photos of Mouzoun",
+      "albums": "Albums",
+      "close": "Back to the page",
+      "closePhoto": "Close the photo",
+      "share": "Share",
+      "download": "Download",
+      "linkCopied": "Link copied",
+      "loadFailed": "The photos could not be loaded.",
+      "retry": "Try again",
+      "lightbox": "{title}: photo viewer"
     },
     "video": {
       "title": "Video",
