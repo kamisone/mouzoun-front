@@ -35,6 +35,7 @@ const canPrev = computed(() => index.value > 0)
 const canNext = computed(() => index.value >= 0 && (index.value < props.items.length - 1 || props.hasMore))
 
 function go(delta: number) {
+  if (index.value < 0) return
   const target = index.value + delta
   if (target < 0) return
   const next = props.items[target]
@@ -75,8 +76,36 @@ const distance = () => {
   const [a, b] = [...pointers.values()]
   return a && b ? Math.hypot(a.x - b.x, a.y - b.y) : 0
 }
+const stage = useTemplateRef<HTMLElement>('stage')
+/** Keeps a zoomed photo from being dragged out of the screen. */
+function clampOffset() {
+  const box = stage.value?.getBoundingClientRect()
+  if (!box) return
+  const maxX = (box.width * (scale.value - 1)) / 2
+  const maxY = (box.height * (scale.value - 1)) / 2
+  offset.x = Math.min(maxX, Math.max(-maxX, offset.x))
+  offset.y = Math.min(maxY, Math.max(-maxY, offset.y))
+}
+/** Zooms to `to`, keeping the point under (clientX, clientY) where it is. */
+function zoomAt(to: number, clientX: number, clientY: number) {
+  const box = stage.value?.getBoundingClientRect()
+  if (!box) return
+  const px = clientX - (box.left + box.width / 2)
+  const py = clientY - (box.top + box.height / 2)
+  // Point p shows at p·s + o: keep it fixed when s changes.
+  const from = scale.value
+  offset.x = px - ((px - offset.x) / from) * to
+  offset.y = py - ((py - offset.y) / from) * to
+  scale.value = to
+  if (to <= 1) resetZoom()
+  else clampOffset()
+}
+
 function onDown(e: PointerEvent) {
   if (current.value?.media.kind === 'video') return
+  // Buttons on the stage (arrows) keep their own clicks: capturing here would swallow them.
+  if ((e.target as HTMLElement | null)?.closest('button, a, video')) return
+  if (e.pointerType === 'mouse' && e.button !== 0) return
   ;(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)
   pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
   start = { x: e.clientX, y: e.clientY, distance: distance(), scale: scale.value, ox: offset.x, oy: offset.y, time: Date.now() }
@@ -87,6 +116,7 @@ function onMove(e: PointerEvent) {
   pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
   if (pointers.size === 2 && start.distance) {
     scale.value = Math.min(4, Math.max(1, start.scale * (distance() / start.distance)))
+    clampOffset()
     return
   }
   const dx = e.clientX - start.x
@@ -94,6 +124,7 @@ function onMove(e: PointerEvent) {
   if (scale.value > 1) {
     offset.x = start.ox + dx
     offset.y = start.oy + dy
+    clampOffset()
   }
   else {
     drag.x = dx
@@ -117,9 +148,9 @@ function onUp(e: PointerEvent) {
   if (quick) {
     const now = Date.now()
     if (now - lastTap < 300) {
-      // Double tap: zoom in where tapped, or back out.
+      // Double tap (or double click): zoom in where tapped, or back out.
       if (scale.value > 1) resetZoom()
-      else scale.value = 2.5
+      else zoomAt(2.5, e.clientX, e.clientY)
       lastTap = 0
     }
     else lastTap = now
@@ -138,8 +169,7 @@ function onUp(e: PointerEvent) {
 function onWheel(e: WheelEvent) {
   if (!e.ctrlKey) return
   e.preventDefault()
-  scale.value = Math.min(4, Math.max(1, scale.value - e.deltaY * 0.01))
-  if (scale.value === 1) resetZoom()
+  zoomAt(Math.min(4, Math.max(1, scale.value - e.deltaY * 0.01)), e.clientX, e.clientY)
 }
 const transform = computed(() => {
   if (scale.value > 1) return `translate(${offset.x}px, ${offset.y}px) scale(${scale.value})`
@@ -184,12 +214,17 @@ watch([index, () => props.items.length], ([i]) => {
 }, { immediate: true })
 watch(() => props.photo, id => track('gallery_photo_view', { section: props.analyticsLabel, media_id: id }), { immediate: true })
 
-/** Thumbnails: keep the current one in view. */
+/** Thumbnails: keep the current one centred in its strip (scrolls the strip only, never the page). */
 const thumbs = useTemplateRef<HTMLElement>('thumbs')
-watch(index, async () => {
+async function centreThumb(smooth = true) {
   await nextTick()
-  thumbs.value?.querySelector('[aria-current="true"]')?.scrollIntoView({ block: 'nearest', inline: 'center' })
-})
+  const list = thumbs.value
+  const el = list?.querySelector<HTMLElement>('[aria-current="true"]')
+  if (!list || !el) return
+  const left = el.offsetLeft - (list.clientWidth - el.offsetWidth) / 2
+  list.scrollTo({ left, behavior: smooth ? 'smooth' : 'auto' })
+}
+watch(index, () => centreThumb())
 
 const download = computed(() => {
   const m = current.value?.media
@@ -206,6 +241,7 @@ let previous: HTMLElement | null = null
 onMounted(() => {
   previous = document.activeElement as HTMLElement | null
   root.value?.querySelector<HTMLElement>('[data-autofocus]')?.focus()
+  void centreThumb(false)
 })
 onBeforeUnmount(() => previous?.focus?.())
 </script>
@@ -216,7 +252,8 @@ onBeforeUnmount(() => previous?.focus?.())
     role="dialog"
     aria-modal="true"
     :aria-label="t('sections.gallery.lightbox', { title: props.title })"
-    class="mz-lightbox fixed inset-0 z-(--z-toast) flex select-none flex-col"
+    tabindex="-1"
+    class="mz-lightbox dark fixed inset-0 z-(--z-toast) flex select-none flex-col outline-none"
     data-testid="gallery-lightbox"
     @keydown="onKey"
   >
@@ -229,22 +266,23 @@ onBeforeUnmount(() => previous?.focus?.())
         icon="i-lucide-download"
         color="neutral"
         variant="ghost"
-        class="mz-lightbox"
+        class="mz-lightbox-control"
         :aria-label="t('sections.gallery.download')"
       />
-      <UButton v-if="props.settings.allow_share !== false" icon="i-lucide-share-2" color="neutral" variant="ghost" class="mz-lightbox" :aria-label="t('sections.gallery.share')" @click="share" />
-      <UButton icon="i-lucide-x" color="neutral" variant="ghost" class="mz-lightbox" :aria-label="t('sections.gallery.closePhoto')" data-autofocus data-testid="lightbox-close" @click="emit('close')" />
+      <UButton v-if="props.settings.allow_share !== false" icon="i-lucide-share-2" color="neutral" variant="ghost" class="mz-lightbox-control" :aria-label="t('sections.gallery.share')" @click="share" />
+      <UButton icon="i-lucide-x" color="neutral" variant="ghost" class="mz-lightbox-control" :aria-label="t('sections.gallery.closePhoto')" data-autofocus data-testid="lightbox-close" @click="emit('close')" />
     </div>
 
     <div
+      ref="stage"
       class="relative min-h-0 flex-1 touch-none overflow-hidden"
+      :class="scale > 1 ? (drag.active ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-zoom-in'"
       data-testid="lightbox-stage"
       @pointerdown="onDown"
       @pointermove="onMove"
       @pointerup="onUp"
       @pointercancel="onUp"
       @wheel="onWheel"
-      @dblclick="scale > 1 ? resetZoom() : (scale = 2.5)"
     >
       <div
         class="absolute inset-0 flex items-center justify-center p-2 md:px-24"
@@ -279,8 +317,8 @@ onBeforeUnmount(() => previous?.focus?.())
         </template>
         <UIcon v-else name="i-lucide-loader-circle" class="size-8 animate-spin" :aria-label="t('common.loading')" />
       </div>
-      <UButton v-if="canPrev" icon="i-lucide-chevron-left" color="neutral" variant="ghost" size="xl" class="mz-lightbox absolute start-4 top-1/2 hidden -translate-y-1/2 rounded-full md:flex rtl:rotate-180" :aria-label="t('common.previous')" @click.stop="go(-1)" />
-      <UButton v-if="canNext" icon="i-lucide-chevron-right" color="neutral" variant="ghost" size="xl" class="mz-lightbox absolute end-4 top-1/2 hidden -translate-y-1/2 rounded-full md:flex rtl:rotate-180" :aria-label="t('common.next')" data-testid="lightbox-next" @click.stop="go(1)" />
+      <UButton v-if="canPrev" icon="i-lucide-chevron-left" color="neutral" variant="ghost" size="xl" class="mz-lightbox-control absolute start-4 top-1/2 z-(--z-raised) hidden -translate-y-1/2 md:flex rtl:rotate-180" :aria-label="t('common.previous')" data-testid="lightbox-prev" @click.stop="go(-1)" />
+      <UButton v-if="canNext" icon="i-lucide-chevron-right" color="neutral" variant="ghost" size="xl" class="mz-lightbox-control absolute end-4 top-1/2 z-(--z-raised) hidden -translate-y-1/2 md:flex rtl:rotate-180" :aria-label="t('common.next')" data-testid="lightbox-next" @click.stop="go(1)" />
     </div>
 
     <div class="shrink-0 px-4 pb-4 pt-2 text-center">
@@ -289,11 +327,11 @@ onBeforeUnmount(() => previous?.focus?.())
         <bdi>{{ position }} / {{ props.total }}</bdi>
       </p>
       <p class="sr-only" aria-live="polite">{{ t('sections.gallery.position', { n: position, total: props.total }) }}</p>
-      <ul ref="thumbs" class="mx-auto mt-3 hidden max-w-4xl gap-2 overflow-x-auto pb-1 md:flex [scrollbar-width:none]">
+      <ul ref="thumbs" class="relative mx-auto mt-3 hidden w-fit max-w-full gap-2 overflow-x-auto p-1 md:flex lg:max-w-4xl [scrollbar-width:none]" data-testid="lightbox-thumbs">
         <li v-for="(p, i) in props.items" :key="p.media.id" class="shrink-0">
           <button
             type="button"
-            class="block size-14 overflow-hidden rounded-xs transition-opacity"
+            class="block size-14 overflow-hidden rounded-xs outline-offset-2 transition-opacity"
             :class="i === index ? 'opacity-100 ring-2 ring-primary' : 'opacity-50 hover:opacity-80'"
             :aria-current="i === index ? 'true' : undefined"
             :aria-label="t('sections.gallery.position', { n: i + 1, total: props.total })"

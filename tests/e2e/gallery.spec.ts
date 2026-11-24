@@ -150,6 +150,14 @@ test('view all photos, switch album, browse with the keyboard and a swipe, back 
   await expect(page).toHaveURL(new RegExp(`#gallery-photos/album-2/photo-${second[0]!.id}$`))
   await expect(page.getByTestId('lightbox-counter')).toHaveText('1 / 6')
   await expect(page.getByTestId('lightbox-image')).toHaveAttribute('alt', second[0]!.alt)
+  // The controls stay light on the black lightbox, also when the site is in light mode.
+  const colours = await page.evaluate(() => {
+    const box = document.querySelector('[data-testid="gallery-lightbox"]')!
+    const close = document.querySelector('[data-testid="lightbox-close"]')!
+    return { box: getComputedStyle(box).color, close: getComputedStyle(close).color, radius: getComputedStyle(close).borderRadius }
+  })
+  expect(colours.close).toBe(colours.box)
+  expect(parseFloat(colours.radius)).toBeGreaterThan(20)
 
   // Keyboard, then a swipe towards the start of the line.
   await page.keyboard.press('ArrowRight')
@@ -162,6 +170,21 @@ test('view all photos, switch album, browse with the keyboard and a swipe, back 
   await page.mouse.up()
   await expect(page.getByTestId('lightbox-counter')).toHaveText('3 / 6')
   await expect(page).toHaveURL(new RegExp(`photo-${second[2]!.id}$`))
+
+  // The arrows on the stage answer clicks; the keys still work after a click on the photo.
+  await page.getByTestId('lightbox-next').click()
+  await expect(page.getByTestId('lightbox-counter')).toHaveText('4 / 6')
+  await page.getByTestId('lightbox-prev').click()
+  await expect(page.getByTestId('lightbox-counter')).toHaveText('3 / 6')
+  await page.getByTestId('lightbox-image').click()
+  await page.keyboard.press('ArrowRight')
+  await expect(page.getByTestId('lightbox-counter')).toHaveText('4 / 6')
+  await page.keyboard.press('ArrowLeft')
+  await expect(page.getByTestId('lightbox-counter')).toHaveText('3 / 6')
+  // The thumbnail strip is centred under the photo.
+  const strip = (await page.getByTestId('lightbox-thumbs').boundingBox())!
+  const width = page.viewportSize()!.width
+  expect(Math.abs(strip.x + strip.width / 2 - width / 2)).toBeLessThan(2)
 
   // Back: the lightbox closes, then the viewer; the page stays.
   await back(page)
