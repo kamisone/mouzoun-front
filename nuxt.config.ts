@@ -48,6 +48,10 @@ export default defineNuxtConfig({
   runtimeConfig: {
     // Server-side API URL (inside Docker network); override with NUXT_API_INTERNAL_BASE
     apiInternalBase: 'http://localhost:8080',
+    // Shared with the API's INTERNAL_API_TOKEN (redirect / 404 visit counts); NUXT_INTERNAL_API_TOKEN
+    internalApiToken: '',
+    // production: robots.txt allows crawling; anything else is never indexed. NUXT_SITE_ENV
+    siteEnv: 'development',
     public: {
       // Browser-side API URL; override with NUXT_PUBLIC_API_BASE
       apiBase: 'http://localhost:8080',

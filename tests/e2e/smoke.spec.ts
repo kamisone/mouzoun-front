@@ -111,3 +111,16 @@ test('the footer links to the four social profiles, with their logos, and declar
   const org = ld.map(s => JSON.parse(s)).find(j => j['@type'] === 'Organization')
   expect(org.sameAs).toEqual(Object.values(profiles))
 })
+
+test('the server cleans paths with a 301, and outside production nothing may be indexed', async ({ request }) => {
+  // No API in this suite: redirects from the database are absent, the site still answers.
+  const res = await request.get('/stays/?utm_source=ig', { maxRedirects: 0 })
+  expect(res.status()).toBe(301)
+  expect(res.headers().location).toMatch(/\/stays\?utm_source=ig$/)
+  expect(res.headers()['cache-control']).toBe('public, max-age=3600')
+  const page = await request.get('/stays')
+  expect(page.status()).toBe(200)
+  expect(page.headers()['x-robots-tag']).toBe('noindex, nofollow')
+  const robots = await request.get('/robots.txt')
+  expect(await robots.text()).toBe('User-agent: *\nDisallow: /\n')
+})

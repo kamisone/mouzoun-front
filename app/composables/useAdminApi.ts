@@ -1,4 +1,5 @@
 import { shopAdminApi } from '~/utils/shop-admin-api'
+import { seoAdminApi } from '~/utils/seo-admin-api'
 import type { Media, MediaKind, MediaVisibility, Paginated, User } from '~/utils/types'
 import type { PaymentOption, RegisterGuest, TripItem, TripQuote } from '~/utils/booking-types'
 import type { AdminGallery, BlockDraft, BuilderTree, FieldError, LookupOption, PageSummary, PageText, PublishCheck, RevisionSummary, SectionType, SharedSummary } from '~/utils/page-types'
@@ -26,6 +27,8 @@ export function useAdminApi() {
   return {
     /** Farm shop back office (`/v1/admin/shop/...`). */
     shop: shopAdminApi(http),
+    /** Redirects, 404 log, sitemap and URL tester (`/v1/admin/seo/...`). */
+    seo: seoAdminApi(http),
     /** Machine translation of admin content: the source locale's fields → every other locale. */
     translations: {
       generate: (body: { fields: Record<string, string>, html?: string[], source_locale?: string, targets?: string[] }) =>

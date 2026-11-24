@@ -42,6 +42,9 @@ const navigation = computed<NavigationMenuItem[]>(() => [
   { label: t('admin.customers'), icon: 'i-lucide-users', to: '/admin/customers' },
   { label: t('admin.scan.title'), icon: 'i-lucide-scan-qr-code', to: '/admin/scan' },
   { label: t('admin.content'), icon: 'i-lucide-file-text', to: '/admin/pages' },
+  ...(user.value?.permissions.some(p => p === 'seo.manage' || p === 'content.read')
+    ? [{ label: t('admin.seo.title'), icon: 'i-lucide-search-check', to: '/admin/seo' }]
+    : []),
   { label: t('admin.media'), icon: 'i-lucide-images', disabled: true, badge: t('admin.upcoming') },
   { label: t('admin.settings'), icon: 'i-lucide-settings', to: '/admin/settings' },
 ])

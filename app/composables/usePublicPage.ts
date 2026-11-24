@@ -40,7 +40,8 @@ export async function usePublicPage(target: () => { kind: 'home' } | { kind: 'sl
     image: () => data.value?.page.seo.image?.url,
   })
   useHead(() => ({
-    meta: data.value?.page.seo.noindex || preview.value ? [{ name: 'robots', content: 'noindex, nofollow' }] : [],
+    // Indexability comes from the route registry (app.vue); a builder preview is never indexed.
+    meta: preview.value ? [{ key: 'robots', name: 'robots', content: 'noindex, nofollow' }] : [],
     script: (data.value?.json_ld ?? []).map(doc => ({ type: 'application/ld+json', innerHTML: JSON.stringify(doc).replace(/</g, '\\u003c') })),
   }))
 

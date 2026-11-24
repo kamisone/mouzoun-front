@@ -43,6 +43,8 @@ export default defineConfig({
     { name: 'shop', testMatch: /shop\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
     // Shop categories: admin tree, form, delete; public pages (shop.catalog + content.write).
     { name: 'categories', testMatch: /categories\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
+    // SEO: redirects, 404 log, sitemap, robots (seo.manage + shop.catalog).
+    { name: 'seo', testMatch: /seo\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
     // Page builder: the staff account needs content.publish (manager or super_admin).
     { name: 'builder', testMatch: /builder\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, viewport: { width: 1600, height: 1000 }, storageState: staffState } },
     ...(process.env.STRIPE_E2E === '1'
@@ -58,6 +60,9 @@ export default defineConfig({
       HOST: '127.0.0.1',
       NUXT_PUBLIC_API_BASE: API,
       NUXT_API_INTERNAL_BASE: API,
+      // Absolute redirect locations and canonical links on this test origin; robots.txt as in production.
+      NUXT_PUBLIC_I18N_BASE_URL: `http://127.0.0.1:${PORT}`,
+      NUXT_SITE_ENV: 'production',
     },
   },
 })

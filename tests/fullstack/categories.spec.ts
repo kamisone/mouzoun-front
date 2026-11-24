@@ -114,9 +114,9 @@ test('a category from creation to deletion', async ({ page, request }) => {
   await expect(page.getByText('L\'ancienne adresse redirigera vers la nouvelle.')).toBeVisible()
   await page.getByTestId('save-category').click()
   await expect(page.getByTestId('save-bar')).toBeHidden()
-  const moved = await page.request.get(`/boutique/${slug.fr}`, { maxRedirects: 0 })
-  expect(moved.status()).toBe(301)
-  expect(moved.headers().location).toContain(`/boutique/miel-bio-${stamp}`)
+  // Served by the site-wide redirect layer, which re-checks its map at most every 15 s.
+  await expect.poll(async () => (await page.request.get(`/boutique/${slug.fr}`, { maxRedirects: 0 })).headers().location ?? '', { timeout: 30_000 })
+    .toContain(`/boutique/miel-bio-${stamp}`)
 
   // ---- Delete, products to "Épices et épicerie" -------------------------------------------
   await page.getByRole('button', { name: 'Supprimer' }).first().click()
@@ -128,8 +128,7 @@ test('a category from creation to deletion', async ({ page, request }) => {
   await page.getByTestId('delete-category').click()
   await expect(page).toHaveURL(/\/admin\/shop\/categories$/)
   for (const old of [`/boutique/${slug.fr}`, `/boutique/miel-bio-${stamp}`]) {
-    const gone = await page.request.get(old, { maxRedirects: 0 })
-    expect(gone.status(), old).toBe(301)
-    expect(gone.headers().location).toContain('/boutique/epices-epicerie')
+    await expect.poll(async () => (await page.request.get(old, { maxRedirects: 0 })).headers().location ?? '', { timeout: 30_000, message: old })
+      .toContain('/boutique/epices-epicerie')
   }
 })

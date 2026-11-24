@@ -36,6 +36,11 @@ PORT_GREEN="${PORT_GREEN:-13002}"
 # Docker Desktop (local testing) cannot use host networking; the VPS always does.
 NETWORK_MODE="${NETWORK_MODE:-host}"
 
+# robots.txt and X-Robots-Tag: anything but "production" is never indexed (Disallow: /).
+SITE_ENV="${SITE_ENV:-production}"
+# Shared with the API (INTERNAL_API_TOKEN) to send redirect / 404 visit counts; optional.
+INTERNAL_API_TOKEN="${INTERNAL_API_TOKEN:-}"
+
 STATE_FILE="$ROOT/active-color"
 
 log() { printf '\033[1;34m[deploy]\033[0m %s\n' "$*"; }
@@ -71,6 +76,8 @@ docker run -d --name "$NEW_CONTAINER" --restart unless-stopped --init \
   -e NUXT_API_INTERNAL_BASE="$API_INTERNAL_BASE" \
   -e NUXT_PUBLIC_API_BASE="$APP_URL/api" \
   -e NUXT_PUBLIC_I18N_BASE_URL="$APP_URL" \
+  -e NUXT_SITE_ENV="$SITE_ENV" \
+  -e NUXT_INTERNAL_API_TOKEN="$INTERNAL_API_TOKEN" \
   "${NET_ARGS[@]}" \
   --stop-timeout 30 --log-opt max-size=20m --log-opt max-file=5 \
   "$IMAGE" >/dev/null

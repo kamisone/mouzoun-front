@@ -3,9 +3,9 @@
  * A shop category: breadcrumbs, cover (above the fold: eager, sized, blur-up), title,
  * description (three lines on phones, "Lire plus"), subcategory chips, then the listing with
  * the products of its subcategories too (pinned first, then the category's default sort).
- * An inactive category or an old address answers 301 (the API says where). JSON-LD
- * `CollectionPage` + `BreadcrumbList`; canonical without filters (only `page`); `noindex` while
- * it has no published product.
+ * An inactive category answers 301 to its parent (the API says where); old addresses are
+ * answered by the site-wide redirect layer. JSON-LD `CollectionPage` + `BreadcrumbList`; the
+ * canonical, hreflang and `noindex` (no published product) come from the route registry (app.vue).
  */
 definePageMeta({
   i18n: { paths: { fr: '/boutique/[category]', en: '/shop/[category]', ar: '/boutique/[category]' } },
@@ -50,15 +50,7 @@ useSeo({
 const setI18nParams = useSetI18nParams()
 setI18nParams(Object.fromEntries(Object.entries(c.value.slugs ?? {}).map(([l, s]) => [l, { category: s }])))
 
-const base = computed(() => String((runtime.public.i18n as { baseUrl?: string })?.baseUrl ?? '').replace(/\/$/, ''))
-const canonical = computed(() => {
-  const p = Number(route.query.page ?? 1)
-  return `${base.value}${route.path}${p > 1 ? `?page=${p}` : ''}`
-})
 useHead(() => ({
-  // Replaces the i18n canonical (same key): no filter parameters, `page` kept.
-  link: [{ key: 'i18n-can', id: 'i18n-can', rel: 'canonical', href: canonical.value }],
-  meta: c.value.indexable ? [] : [{ key: 'robots', name: 'robots', content: 'noindex, follow' }],
   script: [{
     key: 'ld-collection',
     type: 'application/ld+json',
@@ -67,7 +59,7 @@ useHead(() => ({
       '@type': 'CollectionPage',
       'name': c.value.name,
       'description': c.value.seo_description || plain(c.value.description) || undefined,
-      'url': canonical.value,
+      'url': `${String((runtime.public.i18n as { baseUrl?: string })?.baseUrl ?? '').replace(/\/$/, '')}${route.path}`,
       'inLanguage': locale.value,
       ...(c.value.cover ? { image: c.value.cover.url } : {}),
     }),

@@ -251,7 +251,7 @@ const tabs = computed(() => [
             <div v-for="l in LOCALES" :key="l" class="flex flex-col gap-3" :dir="l === 'ar' ? 'rtl' : 'ltr'">
               <p class="font-medium uppercase">{{ l }} <UBadge v-if="missing(l)" color="warning" variant="soft" size="sm" :label="t('admin.shop.products.missing')" /></p>
               <UFormField :label="t('admin.shop.products.name')" :name="`name-${l}`"><UInput v-model="form.translations[l].name" class="w-full" /></UFormField>
-              <UFormField :label="t('admin.shop.products.slug')" :name="`slug-${l}`"><UInput v-model="form.translations[l].slug" class="w-full" dir="ltr" /></UFormField>
+              <UFormField :label="t('admin.shop.products.slug')" :name="`slug-${l}`" :help="product?.translations?.[l]?.slug && form.translations[l].slug !== product.translations[l].slug ? t('admin.shop.categories.slugRedirect') : undefined"><UInput v-model="form.translations[l].slug" class="w-full" dir="ltr" /></UFormField>
               <UFormField :label="t('admin.shop.products.subtitle')" :name="`subtitle-${l}`"><UInput v-model="form.translations[l].subtitle" class="w-full" /></UFormField>
               <UFormField :label="t('admin.shop.products.short')" :name="`short-${l}`"><UTextarea v-model="form.translations[l].short_description" :rows="2" class="w-full" /></UFormField>
               <UFormField :label="t('shop.product.tabs.description')" :name="`desc-${l}`"><UTextarea v-model="form.translations[l].description" :rows="6" class="w-full" /></UFormField>
