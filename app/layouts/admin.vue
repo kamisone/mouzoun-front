@@ -27,6 +27,7 @@ const navigation = computed<NavigationMenuItem[]>(() => [
           { label: t('admin.shop.nav.dashboard'), to: '/admin/shop', exact: true },
           { label: t('admin.shop.nav.orders'), to: '/admin/shop/orders' },
           { label: t('admin.shop.nav.products'), to: '/admin/shop/products' },
+          { label: t('admin.shop.nav.categories'), to: '/admin/shop/categories' },
           { label: t('admin.shop.nav.variations'), to: '/admin/shop/variations' },
           { label: t('admin.shop.nav.inventory'), to: '/admin/shop/inventory' },
           { label: t('admin.shop.nav.returns'), to: '/admin/shop/returns' },

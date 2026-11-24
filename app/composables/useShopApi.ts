@@ -1,4 +1,4 @@
-import type { Address, Cart, CheckoutResult, FulfillmentMethod, OrderView, PaymentMethod, RelayPoint, ShopCategory, ShopConfig, ShopList, ShopProduct } from '~/utils/shop-types'
+import type { Address, Cart, CheckoutResult, FulfillmentMethod, OrderView, PaymentMethod, RelayPoint, ShopCategory, ShopCategoryPage, ShopConfig, ShopList, ShopProduct } from '~/utils/shop-types'
 
 export interface ShopListQuery {
   category?: string
@@ -66,6 +66,7 @@ export function useShopApi() {
     products: (query: ShopListQuery) => http<ShopList>('/products', { query }),
     product: (slug: string) => http<ShopProduct>(`/products/by-slug/${encodeURIComponent(slug)}`),
     categories: () => http<{ data: ShopCategory[] }>('/categories'),
+    category: (slug: string) => http<ShopCategoryPage>(`/categories/${encodeURIComponent(slug)}`),
     cart: {
       get: () => http<Cart>('/cart'),
       add: (variant_id: string, quantity: number) => http<Cart>('/cart/items', { method: 'POST', body: { variant_id, quantity } }),

@@ -63,8 +63,7 @@ const foodShare = computed({
   },
 })
 
-const [{ data: categories }, { data: shipping }, { data: taxes }, { data: allProducts }] = await Promise.all([
-  useAsyncData('admin-shop-categories', () => admin.shop.categories.list()),
+const [{ data: shipping }, { data: taxes }, { data: allProducts }] = await Promise.all([
   useAsyncData('admin-shop-shipping', () => admin.shop.shipping.get()),
   useAsyncData('admin-shop-taxes', () => admin.shop.taxes.list()),
   useAsyncData('admin-shop-all-products', () => admin.shop.products.list({ per_page: 100 })),
@@ -222,7 +221,12 @@ const tabs = computed(() => [
           <div class="grid max-w-3xl gap-4 pt-4 sm:grid-cols-2">
             <UFormField :label="t('admin.shop.orders.status')" name="status"><USelect v-model="form.status" :items="['draft', 'published', 'archived'].map(s => ({ value: s, label: t(`admin.shop.products.statuses.${s}`) }))" class="w-full" /></UFormField>
             <UFormField :label="t('shop.filters.type')" name="type"><USelect v-model="form.shop.product_type" :items="['food', 'drink', 'cosmetic', 'craft', 'gift_box', 'other'].map(v => ({ value: v, label: t(`shop.types.${v}`) }))" class="w-full" /></UFormField>
-            <UFormField :label="t('shop.filters.category')" name="categories" class="sm:col-span-2"><USelectMenu v-model="form.category_ids" multiple value-key="value" :items="(categories?.data ?? []).map(c => ({ value: c.id, label: c.translations.fr?.name ?? c.id }))" class="w-full" /></UFormField>
+            <UFormField :label="t('shop.filters.category')" name="categories" class="sm:col-span-2" :hint="t('admin.shop.categories.primaryHint')">
+              <MzCategoryPicker v-model="form.category_ids" multiple />
+              <template #help>
+                <UButton :label="t('admin.shop.categories.manage')" to="/admin/shop/categories" target="_blank" icon="i-lucide-external-link" trailing color="neutral" variant="link" size="xs" class="px-0" />
+              </template>
+            </UFormField>
             <UFormField :label="t('admin.shop.shipping.profile')" name="profile"><USelect v-model="form.shop.shipping_profile_id" :items="(shipping?.profiles ?? []).map((p: Json) => ({ value: p.id, label: p.name }))" class="w-full" /></UFormField>
             <UFormField :label="t('admin.shop.taxes.title')" name="taxes"><USelectMenu v-model="form.tax_ids" multiple value-key="value" :items="(taxes?.data ?? []).map(x => ({ value: x.id, label: `${x.code} · ${x.rate_percent} %` }))" class="w-full" /></UFormField>
             <UFormField :label="t('admin.shop.products.maxPerOrder')" name="max"><UInputNumber v-model="form.shop.max_per_order" :min="1" class="w-full" /></UFormField>

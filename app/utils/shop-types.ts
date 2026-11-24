@@ -1,3 +1,4 @@
+import type { MediaView } from '~/utils/page-types'
 /** Types of the shop API (`/v1/shop`, `/v1/admin/shop`). Money is integer cents. */
 
 export type ShopStatus = 'closed' | 'catalog_only' | 'open'
@@ -80,6 +81,8 @@ export interface ShopList {
   per_page: number
   next_cursor: string | null
   facets: ShopFacets
+  /** The sort applied (a category's default when none was chosen). */
+  sort?: string
 }
 
 export interface ShopCategory {
@@ -92,6 +95,37 @@ export interface ShopCategory {
   seo_title: string | null
   seo_description: string | null
   slugs: Record<string, string> | null
+  icon?: string | null
+  /** False: hidden from the shop sidebar and menus (its page still works). */
+  in_menu?: boolean
+  depth?: number
+  /** Published products, subcategories included. */
+  product_count?: number
+}
+
+export interface ShopCategoryCrumb { id: string, name: string, slug: string }
+
+/** `GET /shop/categories/{slug}`: the page, or where to send the visitor (301). */
+export interface ShopCategoryPage {
+  redirect?: string
+  category?: {
+    id: string
+    name: string
+    slug: string
+    slugs: Record<string, string>
+    icon: string | null
+    description: string | null
+    seo_title: string | null
+    seo_description: string | null
+    default_sort: string
+    in_menu: boolean
+    /** Same shape as page section media: variants, blur-up, focal point, alt. */
+    cover: MediaView | null
+    breadcrumbs: ShopCategoryCrumb[]
+    children: (ShopCategoryCrumb & { product_count: number })[]
+    product_count: number
+    indexable: boolean
+  }
 }
 
 export interface OptionValue { code: string, label: string, swatch_url: string | null, swatch_color?: string | null }
@@ -128,7 +162,9 @@ export interface ShopProduct {
   description: string | null
   seo: { title: string | null, description: string | null }
   product_type: string
-  categories: { id: string, name: string, slug: string }[]
+  categories: { id: string, name: string, slug: string, is_primary?: boolean }[]
+  /** Root → primary category (shop breadcrumbs). */
+  breadcrumbs?: { id: string, name: string, slug: string }[]
   currency: string
   options: ProductOption[]
   variants: ShopVariant[]

@@ -1,5 +1,9 @@
 <script setup lang="ts">
-/** `catalog_only`: buying is off; visitors leave their email to hear about the opening. */
+/**
+ * `catalog_only`: buying is off; visitors leave their email to hear about the opening. Also the
+ * "tell me" form of an empty category (`title` and `text` given).
+ */
+const props = defineProps<{ title?: string, text?: string }>()
 const { t } = useI18n()
 const api = useShopApi()
 const email = ref('')
@@ -24,8 +28,8 @@ async function submit() {
 
 <template>
   <section class="flex flex-col gap-3 rounded-md border border-default bg-elevated p-6" data-testid="shop-coming-soon" aria-labelledby="coming-soon-title">
-    <h2 id="coming-soon-title" class="font-display text-h3 text-highlighted">{{ t('shop.comingSoon.title') }}</h2>
-    <p class="text-body text-muted">{{ t('shop.comingSoon.text') }}</p>
+    <h2 id="coming-soon-title" class="font-display text-h3 text-highlighted">{{ props.title ?? t('shop.comingSoon.title') }}</h2>
+    <p class="text-body text-muted">{{ props.text ?? t('shop.comingSoon.text') }}</p>
     <p v-if="state === 'done'" class="text-body text-success" role="status">{{ t('shop.comingSoon.done') }}</p>
     <form v-else class="flex flex-wrap gap-2" novalidate @submit.prevent="submit">
       <UInput

@@ -11,9 +11,8 @@ const router = useRouter()
 const admin = useAdminApi()
 const { money } = useMoney()
 const { can, act, statusColor } = useShopAdmin()
-const query = computed(() => ({ q: route.query.q as string | undefined, status: route.query.status as string | undefined, sort: route.query.sort as string | undefined, page: Number(route.query.page ?? 1), per_page: 25 }))
+const query = computed(() => ({ q: route.query.q as string | undefined, status: route.query.status as string | undefined, category_id: route.query.category as string | undefined, sort: route.query.sort as string | undefined, page: Number(route.query.page ?? 1), per_page: 25 }))
 const { data, pending, refresh } = await useAsyncData(() => `admin-shop-products-${JSON.stringify(query.value)}`, () => admin.shop.products.list(query.value), { watch: [query] })
-const { data: categories } = await useAsyncData('admin-shop-categories', () => admin.shop.categories.list())
 const search = ref(query.value.q ?? '')
 watchDebounced(search, q => router.replace({ query: { ...route.query, q: q || undefined, page: undefined } }), { debounce: 300 })
 const selected = ref<string[]>([])
@@ -53,11 +52,19 @@ const toggle = (id: string, on: boolean) => { selected.value = on ? [...selected
     <div class="flex flex-wrap items-center gap-2">
       <UInput v-model="search" icon="i-lucide-search" :placeholder="t('admin.shop.products.search')" :aria-label="t('admin.shop.products.search')" class="w-64" />
       <USelect :model-value="query.status || 'all'" :items="[{ value: 'all', label: t('admin.shop.orders.any') }, ...['draft', 'published', 'archived'].map(s => ({ value: s, label: t(`admin.shop.products.statuses.${s}`) }))]" class="w-40" :aria-label="t('admin.shop.orders.status')" @update:model-value="v => router.replace({ query: { ...route.query, status: v === 'all' ? undefined : v } })" />
+      <div class="w-56">
+        <MzCategoryPicker
+          :model-value="(route.query.category as string) || null"
+          :none-label="t('admin.shop.orders.any')"
+          :placeholder="t('shop.filters.category')"
+          @update:model-value="v => router.replace({ query: { ...route.query, category: typeof v === 'string' ? v : undefined, page: undefined } })"
+        />
+      </div>
       <template v-if="selected.length && can('shop.catalog')">
         <span class="text-small text-muted">{{ t('admin.shop.products.selected', { n: selected.length }) }}</span>
         <UButton :label="t('admin.shop.products.publish')" size="sm" @click="bulk('publish')" />
         <UButton :label="t('admin.shop.products.archive')" size="sm" color="neutral" variant="outline" @click="bulk('archive')" />
-        <USelect v-model="bulkCategory" :items="(categories?.data ?? []).map(c => ({ value: c.id, label: c.translations.fr?.name ?? c.id }))" :placeholder="t('shop.filters.category')" size="sm" class="w-44" />
+        <div class="w-56"><MzCategoryPicker v-model="bulkCategory" :placeholder="t('shop.filters.category')" /></div>
         <UButton :label="t('admin.shop.products.setCategory')" size="sm" color="neutral" variant="outline" :disabled="!bulkCategory" @click="bulk('set_category')" />
       </template>
     </div>

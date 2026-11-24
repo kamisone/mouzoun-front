@@ -16,8 +16,6 @@ const admin = useAdminApi()
 const { money } = useMoney()
 const { can, act } = useShopAdmin()
 const { data, refresh } = await useAsyncData('admin-shop-variations', () => admin.shop.variations.list())
-const { data: categories } = await useAsyncData('admin-shop-categories', () => admin.shop.categories.list())
-const categoryItems = computed(() => [{ value: 'all', label: t('admin.shop.variations.noCategory') }, ...(categories.value?.data ?? []).map(c => ({ value: c.id as string, label: (c.translations.fr?.name ?? c.id) as string }))])
 const canEdit = computed(() => can('shop.catalog'))
 
 const names = (o: Json) => ({ fr: '', en: '', ar: '', ...(o ?? {}) })
@@ -25,6 +23,11 @@ const blankValue = (): Json => ({ id: null, code: '', labels: names({}), swatch_
 const blank = (): Json => ({ code: '', admin_label: '', display_type: 'button', category_id: 'all', sort_order: 0, is_active: true, names: names({}), values: [blankValue()] })
 
 const form = ref<Json>(blank())
+/** The picker's "none" is `null`; the form keeps 'all' (no category) as before. */
+const categoryModel = computed({
+  get: () => (form.value.category_id === 'all' ? null : form.value.category_id),
+  set: (v: string | string[] | null | undefined) => { form.value.category_id = typeof v === 'string' ? v : 'all' },
+})
 const editing = ref<string | null>(null)
 const open = ref(false)
 function edit(a?: Json) {
@@ -156,7 +159,7 @@ const adjustment = (minor: number | null) => minor ? `${minor > 0 ? '+' : '−'}
               <USelect v-model="form.display_type" :items="DISPLAYS.map(d => ({ value: d, label: t(`admin.shop.variations.displays.${d}`) }))" class="w-full" />
             </UFormField>
             <UFormField :label="t('admin.shop.variations.category')" name="category">
-              <USelect v-model="form.category_id" :items="categoryItems" class="w-full" />
+              <MzCategoryPicker v-model="categoryModel" :none-label="t('admin.shop.variations.noCategory')" />
             </UFormField>
             <UFormField :label="t('admin.shop.variations.order')" name="order">
               <UInputNumber v-model="form.sort_order" :min="0" class="w-full" />

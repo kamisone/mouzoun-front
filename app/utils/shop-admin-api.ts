@@ -40,6 +40,41 @@ export interface AdminProductRow {
   updated_at: string
 }
 
+/** A shop category in the admin list (flat; the screens build the tree). */
+export interface AdminCategoryRow {
+  id: string
+  parent_id: string | null
+  icon: string | null
+  cover_media_id: string | null
+  cover_url: string | null
+  sort_order: number
+  is_active: boolean
+  show_in_menu: boolean
+  default_sort: string
+  first_activated_at: string | null
+  updated_at: string
+  translations: Record<string, { name: string, slug: string, description: string | null, seo_title: string | null, seo_description: string | null }>
+  product_count: number
+  published_count: number
+  product_count_total: number
+  published_count_total: number
+}
+
+export interface CategoryImpact {
+  id: string
+  name: string
+  parent_id: string | null
+  products: number
+  products_without_category: number
+  subcategories: { id: string, name: string }[]
+  promotions: { id: string, name: string, active: boolean }[]
+  shipping_rules: { id: string, name: string }[]
+  variations: { id: string, name: string }[]
+  menu_links: { id: string, name: string }[]
+  requires_confirmation: boolean
+  blocked: boolean
+}
+
 type Query = Record<string, string | number | boolean | undefined | null>
 
 /** Back-office shop endpoints (`/v1/admin/shop`), declared through `useAdminApi().shop`. */
@@ -73,10 +108,20 @@ export function shopAdminApi(http: ReturnType<typeof $fetch.create>) {
       save: (body: Json, id?: string) => send(id ? 'PUT' : 'POST', id ? `/variations/${id}` : '/variations', body),
       remove: (id: string) => send('DELETE', `/variations/${id}`),
     },
+    /** Shop categories (Admin › Boutique › Catégories): tree, form, delete with impact, product order. */
     categories: {
-      list: () => get<{ data: Json[] }>('/categories'),
-      save: (body: Json, id?: string) => send(id ? 'PUT' : 'POST', id ? `/categories/${id}` : '/categories', body),
-      remove: (id: string) => send('DELETE', `/categories/${id}`),
+      list: () => get<{ data: AdminCategoryRow[], version: string, max_depth: number }>('/categories'),
+      get: (id: string) => get(`/categories/${id}`),
+      save: (body: Json, id?: string) => send(id ? 'PATCH' : 'POST', id ? `/categories/${id}` : '/categories', body),
+      tree: (version: string, items: { id: string, parent_id: string | null, sort_order: number }[]) =>
+        send<{ version: string }>('PUT', '/categories/tree', { version, items }),
+      impact: (id: string) => get<CategoryImpact>(`/categories/${id}/impact`),
+      remove: (id: string, options: Json = {}) => send('DELETE', `/categories/${id}`, options),
+      products: (id: string) => get<{ default_sort: string, data: Json[] }>(`/categories/${id}/products`),
+      orderProducts: (id: string, items: { product_id: string, sort_order: number, is_pinned: boolean }[]) => send('PUT', `/categories/${id}/products`, items),
+      addProducts: (id: string, product_ids: string[]) => send('POST', `/categories/${id}/products`, { product_ids }),
+      removeProduct: (id: string, productId: string) => send('DELETE', `/categories/${id}/products/${productId}`),
+      suggested: () => send<{ created: number }>('POST', '/categories/suggested'),
     },
     promotions: {
       list: () => get<{ data: Json[] }>('/promotions'),

@@ -74,6 +74,15 @@ const availabilityLabel = computed(() => {
   return v.availability === 'low_stock' && v.quantity_left ? t('shop.availability.low_stock', { n: v.quantity_left }) : t(`shop.availability.${v.availability}`)
 })
 
+// Accueil › Boutique › (parents ›) primary category › product.
+const localePath = useLocalePath()
+const crumbs = computed(() => [
+  { label: t('nav.home'), to: localePath('/') },
+  { label: t('shop.title'), to: shopPath() },
+  ...(p.value.breadcrumbs ?? p.value.categories.slice(0, 1)).map(c => ({ label: c.name, to: shopPath(c.slug) })),
+  { label: p.value.name },
+])
+
 useSeo({
   title: () => `${p.value.seo.title || p.value.name} · ${t('shop.title')}`,
   description: () => p.value.seo.description || p.value.short_description || t('shop.description'),
@@ -114,13 +123,7 @@ useHead({
 
 <template>
   <MzContainer class="flex flex-col gap-16 py-12 pt-24">
-    <nav :aria-label="t('admin.breadcrumb')" class="text-small text-muted">
-      <NuxtLink :to="shopPath()" class="hover:underline">{{ t('shop.title') }}</NuxtLink>
-      <template v-if="p.categories[0]">
-        <span aria-hidden="true"> / </span>
-        <NuxtLink :to="shopPath(p.categories[0].slug)" class="hover:underline">{{ p.categories[0].name }}</NuxtLink>
-      </template>
-    </nav>
+    <MzShopBreadcrumbs :items="crumbs" />
     <div class="grid gap-12 lg:grid-cols-2">
       <section :aria-label="p.name" class="flex flex-col gap-3">
         <MzImage v-if="images[current]" :key="images[current]!.url" :src="images[current]!.url" :alt="p.name" ratio="4/5" priority sizes="xs:100vw lg:50vw" />

@@ -8,7 +8,6 @@ const admin = useAdminApi()
 const { money } = useMoney()
 const { can, act } = useShopAdmin()
 const { data, refresh } = await useAsyncData('admin-shop-promotions', () => admin.shop.promotions.list())
-const { data: categories } = await useAsyncData('admin-shop-categories', () => admin.shop.categories.list())
 const blank = (): Json => ({ code: '', scope: 'shop', discount_type: 'percent', percent: 10, amount: 5, min_subtotal: null, min_quantity: null, starts_at: '', ends_at: '', applies_to_all: true, applies_to_shipping: false, is_stackable: false, is_active: false, customer_eligibility: 'all', max_redemptions: null, max_per_customer: null, category_ids: [], product_ids: [], name_fr: '', name_en: '', name_ar: '' })
 const form = ref<Json>(blank())
 const editing = ref<string | null>(null)
@@ -72,7 +71,7 @@ const describe = (p: Json) => p.discount_type === 'percent' ? `−${Number(p.per
           <UFormField :label="t('admin.shop.promotions.maxRedemptions')" name="maxr"><UInputNumber v-model="form.max_redemptions" :min="1" class="w-full" /></UFormField>
           <UFormField :label="t('admin.shop.promotions.maxPerCustomer')" name="maxc"><UInputNumber v-model="form.max_per_customer" :min="1" class="w-full" /></UFormField>
           <USwitch v-model="form.applies_to_all" :label="t('admin.shop.promotions.allProducts')" />
-          <UFormField v-if="!form.applies_to_all" :label="t('shop.filters.category')" name="cats" class="sm:col-span-2"><USelectMenu v-model="form.category_ids" multiple value-key="value" :items="(categories?.data ?? []).map(c => ({ value: c.id, label: c.translations.fr?.name ?? c.id }))" class="w-full" /></UFormField>
+          <UFormField v-if="!form.applies_to_all" :label="t('shop.filters.category')" name="cats" class="sm:col-span-2"><MzCategoryPicker v-model="form.category_ids" multiple /></UFormField>
           <USwitch v-if="form.discount_type === 'percent'" v-model="form.applies_to_shipping" :label="t('admin.shop.promotions.onShipping')" />
           <USwitch v-model="form.is_stackable" :label="t('admin.shop.promotions.stackable')" />
           <USwitch v-model="form.is_active" :label="t('admin.shop.promotions.active')" />

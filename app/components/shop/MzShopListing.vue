@@ -6,6 +6,7 @@ import type { ShopCategory, ShopList } from '~/utils/shop-types'
  * in the URL (shareable, rendered on the server); "Load more" appends the next page while a
  * real `?page=` link stays in the markup for crawlers.
  */
+/** In a category with no sort chosen, the API applies its default sort (pinned products first). */
 const props = defineProps<{ category?: ShopCategory | null }>()
 const { t } = useI18n()
 const route = useRoute()
@@ -18,7 +19,7 @@ const canBuy = computed(() => config.value?.status === 'open')
 const query = computed(() => ({
   category: props.category?.id,
   q: (route.query.q as string) || undefined,
-  sort: (route.query.sort as string) || 'featured',
+  sort: (route.query.sort as string) || (props.category ? undefined : 'featured'),
   in_stock: route.query.in_stock === '1' || undefined,
   product_type: (route.query.type as string) || undefined,
   min_price: route.query.min ? Number(route.query.min) * 100 : undefined,
@@ -60,7 +61,11 @@ function update(patch: Record<string, string | undefined>) {
   const next = Object.fromEntries(Object.entries(merged).filter(([, v]) => v !== undefined && v !== '')) as Record<string, string>
   router.replace({ query: next })
 }
-const sortItems = computed(() => ['featured', 'newest', 'price_asc', 'price_desc', 'best_selling'].map(v => ({ value: v, label: t(`shop.sort.${v}`) })))
+const sortItems = computed(() => [
+  ...(props.category ? [{ value: 'default', label: t('shop.sort.default') }] : []),
+  ...['featured', 'newest', 'price_asc', 'price_desc', 'best_selling', 'name'].map(v => ({ value: v, label: t(`shop.sort.${v}`) })),
+])
+const sortValue = computed(() => (route.query.sort as string) || (props.category ? 'default' : 'featured'))
 const typeItems = computed(() => [{ value: 'all', label: t('shop.filters.all') }, ...['food', 'craft', 'gift_box', 'cosmetic', 'drink'].map(v => ({ value: v, label: t(`shop.types.${v}`) }))])
 const categories = computed(() => data.value?.facets.categories ?? [])
 const priceMin = ref((route.query.min as string) ?? '')
@@ -85,7 +90,9 @@ watchDebounced([priceMin, priceMax], ([a, b]) => update({ min: a || undefined, m
             </NuxtLink>
             <ul v-if="categories.some(s => s.parent_id === c.id)" class="ms-3 flex flex-col">
               <li v-for="s in categories.filter(s => s.parent_id === c.id)" :key="s.id">
-                <NuxtLink :to="shopPath(s.slug)" class="block rounded-sm px-2 py-1 text-small hover:bg-elevated">{{ s.name }}</NuxtLink>
+                <NuxtLink :to="shopPath(s.slug)" class="flex justify-between rounded-sm px-2 py-1 text-small hover:bg-elevated" :class="props.category?.id === s.id && 'font-medium text-highlighted'" :aria-current="props.category?.id === s.id ? 'page' : undefined">
+                  <span>{{ s.name }}</span><span class="text-muted tabular-nums">{{ s.count }}</span>
+                </NuxtLink>
               </li>
             </ul>
           </li>
@@ -108,7 +115,7 @@ watchDebounced([priceMin, priceMax], ([a, b]) => update({ min: a || undefined, m
     <section class="flex flex-col gap-6" :aria-busy="pending">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <p class="text-small text-muted" aria-live="polite">{{ t('shop.results', { n: data?.total ?? 0 }, data?.total ?? 0) }}</p>
-        <USelect :model-value="query.sort" :items="sortItems" :aria-label="t('shop.filters.sort')" class="w-56" @update:model-value="v => update({ sort: v === 'featured' ? undefined : v })" />
+        <USelect :model-value="sortValue" :items="sortItems" :aria-label="t('shop.filters.sort')" class="w-56" @update:model-value="v => update({ sort: v === 'default' || (!props.category && v === 'featured') ? undefined : v })" />
       </div>
       <MzEmptyState v-if="!pending && !cards.length" icon="i-lucide-search-x" :title="t('shop.empty')" description="" />
       <ul v-else class="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 xl:grid-cols-4">
