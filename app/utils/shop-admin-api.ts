@@ -1,6 +1,13 @@
 import type { Paginated } from '~/utils/types'
 
 /** Loose JSON object of the admin shop API (screens read the fields they show). */
+/** A checklist line; `detail.missing` lists field codes, `detail.link` the form to fix them. */
+export interface ComplianceItem {
+  code: string
+  ok: boolean
+  detail: Json | null
+}
+
 export type Json = Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
 
 export interface AdminOrderRow {
@@ -133,6 +140,8 @@ export function shopAdminApi(http: ReturnType<typeof $fetch.create>) {
       saveZone: (body: Json, id?: string) => send(id ? 'PUT' : 'POST', id ? `/shipping/zones/${id}` : '/shipping/zones', body),
       saveRate: (body: Json, id?: string) => send(id ? 'PUT' : 'POST', id ? `/shipping/rates/${id}` : '/shipping/rates', body),
       deleteRate: (id: string) => send('DELETE', `/shipping/rates/${id}`),
+      /** Every placeholder rate, once each was opened: they become real prices offered at checkout. */
+      confirmPlaceholders: (ids: string[]) => send('POST', '/shipping/rates/confirm-placeholders', { ids }),
     },
     taxes: {
       list: () => get<{ data: Json[] }>('/taxes'),
@@ -175,7 +184,7 @@ export function shopAdminApi(http: ReturnType<typeof $fetch.create>) {
     customerOrders: (id: string) => get(`/customers/${id}/orders`),
     // French operation: entities, VAT, compliance, accounting exports.
     france: {
-      compliance: () => get<{ ok: boolean, items: { code: string, ok: boolean, detail: Json | null }[], oss: Json }>('/compliance'),
+      compliance: () => get<{ ok: boolean, items: ComplianceItem[], oss: Json }>('/compliance'),
       entities: () => get<{ data: Json[] }>('/legal-entities'),
       saveEntity: (id: string, body: Json) => send('PUT', `/legal-entities/${id}`, body),
       invoicePreviewPath: (id: string) => `/shop/legal-entities/${id}/invoice-preview`,

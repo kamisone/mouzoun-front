@@ -1,5 +1,5 @@
 import { type APIRequestContext, expect, test } from '@playwright/test'
-import { ready } from './helpers'
+import { completeFoodInformation, ready } from './helpers'
 
 /**
  * "Produits de la boutique" end to end against the real API: added to the home page in the
@@ -25,7 +25,7 @@ async function openShop(request: APIRequestContext) {
   await request.fetch(`${API}/v1/admin/shop/legal-entities/${fr.id}`, { method: 'PUT', headers: { Origin: ORIGIN }, data: {
     legal_name: 'MOUZOUN TEST SAS', legal_form: 'SAS', share_capital_minor: 100000,
     address: { line1: '1 rue de Test', postal_code: '75001', city: 'Paris', country_code: 'FR' },
-    registration: { siren: '123456789', siret: '12345678900011', rcs_city: 'Paris', vat_number: 'FR12123456789' },
+    registration: { siren: '732829320', siret: '73282932000074', rcs_city: 'Paris', vat_number: 'FR44732829320' },
     email: 'boutique@example.com', host: { name: 'Google Cloud France SARL' },
   } })
   const tax = await staff(request, 'GET', '/shop/tax-rates')
@@ -33,6 +33,7 @@ async function openShop(request: APIRequestContext) {
     await request.fetch(`${API}/v1/admin/shop/tax-rates/${r.id}`, { method: 'PUT', headers: { Origin: ORIGIN }, data: { ...r, is_confirmed: true } })
   }
   await staff(request, 'PATCH', '/shop/settings', { 'payments.stripe.enabled': true, 'shop.consumer_mediator': { name: 'Médiateur test', url: 'https://mediateur.example' } })
+  await completeFoodInformation(request, API, ORIGIN)
   await staff(request, 'PATCH', '/shop/settings', { 'shop.status': 'open' })
 }
 

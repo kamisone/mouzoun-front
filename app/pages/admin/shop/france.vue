@@ -55,6 +55,8 @@ const iso = (d: Date) => d.toISOString().slice(0, 10)
 const from = ref(iso(new Date(now.getFullYear(), now.getMonth() - 1, 1)))
 const to = ref(iso(new Date(now.getFullYear(), now.getMonth(), 0)))
 const exports = ['sales-journal', 'documents', 'stripe'] as const
+/** Label of a field code of the legal entity form (`registration.siren` → "SIREN"). */
+const fieldLabel = (code: string) => t(`admin.legalEntity.fields.${code.replace('.', '_')}`)
 const ossColor = (l: string) => (l === 'exceeded' ? 'error' : l === 'warning' ? 'warning' : 'success')
 </script>
 
@@ -70,11 +72,21 @@ const ossColor = (l: string) => (l === 'exceeded' ? 'error' : l === 'warning' ? 
         </div>
       </template>
       <ul class="flex flex-col gap-2">
-        <li v-for="i in compliance?.items ?? []" :key="i.code" class="flex items-start gap-3">
-          <UIcon :name="i.ok ? 'i-lucide-circle-check' : 'i-lucide-circle-alert'" class="mt-1 size-5 shrink-0" :class="i.ok ? 'text-success' : 'text-warning'" aria-hidden="true" />
-          <div>
+        <li v-for="i in compliance?.items ?? []" :key="i.code" class="flex items-start gap-3" :data-testid="`check-${i.code}`">
+          <UIcon :name="i.ok ? 'i-lucide-circle-check' : 'i-lucide-circle-alert'" class="mt-1 size-5 shrink-0" :class="i.ok ? 'text-success' : 'text-error'" aria-hidden="true" />
+          <div class="flex flex-col gap-1">
             <p>{{ t(`admin.shop.france.items.${i.code}`) }}</p>
-            <p v-if="!i.ok && i.detail && Object.keys(i.detail).length" class="text-small text-muted" dir="ltr">{{ JSON.stringify(i.detail) }}</p>
+            <template v-if="!i.ok">
+              <p v-if="i.detail?.link" class="flex flex-wrap items-center gap-2 text-small text-muted">
+                <span v-if="i.detail.missing?.length">{{ t('admin.shop.france.missingFields', { fields: i.detail.missing.map((f: string) => fieldLabel(f)).join(', ') }) }}</span>
+                <UButton :to="i.detail.link" :label="t('admin.shop.france.completeFields')" size="xs" color="neutral" variant="outline" trailing-icon="i-lucide-arrow-right" :data-testid="`check-${i.code}-link`" />
+              </p>
+              <p v-else-if="i.code === 'shipping_rates_france' && i.detail?.placeholders" class="text-small text-warning">{{ t('admin.shop.france.placeholderRates', { n: i.detail.placeholders }) }}</p>
+              <p v-else-if="i.code === 'food_information'" class="text-small text-muted">{{ t('admin.shop.france.foodMissing', { n: i.detail?.missing ?? 0 }) }}<template v-if="i.detail?.products?.length"> — {{ i.detail.products.join(', ') }}</template></p>
+              <p v-else-if="i.code === 'stripe_webhook' && i.detail?.reason" class="text-small text-muted" dir="ltr">{{ i.detail.reason }}</p>
+              <p v-else-if="i.detail && Object.keys(i.detail).length" class="text-small text-muted" dir="ltr">{{ JSON.stringify(i.detail) }}</p>
+            </template>
+            <p v-else-if="i.code === 'shipping_rates_france' && i.detail?.placeholders" class="text-small text-warning">{{ t('admin.shop.france.placeholderRates', { n: i.detail.placeholders }) }}</p>
           </div>
         </li>
       </ul>

@@ -1,5 +1,6 @@
 import { shopAdminApi } from '~/utils/shop-admin-api'
 import { seoAdminApi } from '~/utils/seo-admin-api'
+import type { LegalEntityForm, LegalEntityResponse } from '~/utils/legal-entity'
 import type { Media, MediaKind, MediaVisibility, Paginated, User } from '~/utils/types'
 import type { PaymentOption, RegisterGuest, TripItem, TripQuote } from '~/utils/booking-types'
 import type { AdminGallery, BlockDraft, BuilderTree, FieldError, LookupOption, PageSummary, PageText, PublishCheck, RevisionSummary, SectionType, SharedSummary } from '~/utils/page-types'
@@ -111,6 +112,11 @@ export function useAdminApi() {
         http(`/bookings/${id}/resend`, { method: 'POST', body: { email } }),
       guests: (id: string) => http<{ guests: RegisterGuest[], revealed: boolean }>(`/bookings/${id}/guests`),
     },
+    /** Admin › Settings › Legal entity: the seller identity and the mediator (`settings.write`). */
+    legalEntity: {
+      get: () => http<LegalEntityResponse>('/settings/legal-entity'),
+      save: (body: LegalEntityForm) => http<LegalEntityResponse>('/settings/legal-entity', { method: 'PUT', body }),
+    },
     pages: {
       list: () => http<{ pages: PageSummary[] }>('/pages'),
       create: (body: { page_type: string, translations: Record<string, PageText> }) => http<{ id: string }>('/pages', { method: 'POST', body }),
@@ -125,6 +131,8 @@ export function useAdminApi() {
         http<BuilderTree>(`/blocks/${blockId}`, { method: 'PATCH', body, headers: { 'If-Match': `"${version}"` } }),
       deleteBlock: (blockId: string, version: number) => http<BuilderTree>(`/blocks/${blockId}`, { method: 'DELETE', headers: { 'If-Match': `"${version}"` } }),
       publishCheck: (id: string) => http<PublishCheck>(`/pages/${id}/publish-check`),
+      /** Tokens a legal page may use (the builder's "Insert company field" picker). */
+      legalTokens: () => http<{ tokens: string[] }>('/pages/legal-tokens'),
       publish: (id: string, body: { publish_at?: string | null, note?: string | null }) => http<{ revision: RevisionSummary }>(`/pages/${id}/publish`, { method: 'POST', body }),
       revisions: (id: string) => http<{ revisions: RevisionSummary[] }>(`/pages/${id}/revisions`),
       restore: (revisionId: string) => http<{ tree: BuilderTree, errors: FieldError[] }>(`/revisions/${revisionId}/restore`, { method: 'POST' }),

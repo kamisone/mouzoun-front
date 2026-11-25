@@ -46,7 +46,18 @@ const navigation = computed<NavigationMenuItem[]>(() => [
     ? [{ label: t('admin.seo.title'), icon: 'i-lucide-search-check', to: '/admin/seo' }]
     : []),
   { label: t('admin.media'), icon: 'i-lucide-images', disabled: true, badge: t('admin.upcoming') },
-  { label: t('admin.settings'), icon: 'i-lucide-settings', to: '/admin/settings' },
+  ...(user.value?.permissions.includes('settings.write')
+    ? [{
+        label: t('admin.settings'),
+        icon: 'i-lucide-settings',
+        to: '/admin/settings',
+        defaultOpen: route.path.startsWith('/admin/settings'),
+        children: [
+          { label: t('admin.settingsAccount'), to: '/admin/settings', exact: true },
+          { label: t('admin.legalEntity.nav'), to: '/admin/settings/legal-entity' },
+        ],
+      } as NavigationMenuItem]
+    : [{ label: t('admin.settings'), icon: 'i-lucide-settings', to: '/admin/settings' }]),
 ])
 const footerNavigation = computed<NavigationMenuItem[]>(() => [
   { label: t('admin.styleguide'), icon: 'i-lucide-palette', to: '/_styleguide' },

@@ -8,7 +8,7 @@ import type { ShopVariant } from '~/utils/shop-types'
  */
 definePageMeta({ i18n: { paths: { fr: '/boutique/p/[slug]', en: '/shop/p/[slug]', ar: '/boutique/p/[slug]' } } })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const api = useShopApi()
@@ -149,7 +149,7 @@ useHead({
           <p v-if="variant?.compare_at_price_minor && variant.reference_price_minor" class="text-caption text-muted" data-testid="reference-price">
             {{ t('shop.product.referencePrice', { price: money(variant.reference_price_minor, p.currency) }) }}
           </p>
-          <p class="text-caption text-muted">{{ t('shop.product.ttc') }}<template v-if="variant?.country_of_origin"> · {{ t('shop.product.origin', { country: variant.country_of_origin }) }}</template></p>
+          <p class="text-caption text-muted">{{ t('shop.product.ttc') }}<template v-if="variant?.net_quantity && variant.net_unit"> · <span data-testid="net-quantity">{{ t('shop.product.netQuantity', { quantity: Number(variant.net_quantity).toLocaleString(locale), unit: t(`shop.product.netUnits.${variant.net_unit}`) }) }}</span></template><template v-if="variant?.country_of_origin"> · {{ t('shop.product.origin', { country: variant.country_of_origin }) }}</template></p>
           <p v-if="variant?.unit_price" class="text-small text-muted">
             {{ t('shop.product.unitPrice', { price: money(variant.unit_price.amount_minor, p.currency), unit: t(`shop.product.units.${variant.unit_price.unit}`) }) }}
           </p>

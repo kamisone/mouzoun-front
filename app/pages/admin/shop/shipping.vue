@@ -18,7 +18,15 @@ const LOCALES = ['fr', 'en', 'ar']
 
 // A generic edit dialog: `kind` picks the fields and the save call.
 const dialog = reactive<{ open: boolean, kind: string, id?: string, form: Json }>({ open: false, kind: '', form: {} })
+// Placeholder rates (seeded, never offered at checkout): each must be opened before "Confirm all".
+const seen = ref(new Set<string>())
+const placeholders = computed(() => (shipping.value?.rates ?? []).filter((r: Json) => r.is_placeholder))
+const allSeen = computed(() => placeholders.value.every((r: Json) => seen.value.has(r.id)))
+async function confirmPlaceholders() {
+  if (await act(() => admin.shop.shipping.confirmPlaceholders(placeholders.value.map((r: Json) => r.id)), t('admin.shop.shipping.placeholders.confirmed'))) await refresh()
+}
 function edit(kind: string, row?: Json) {
+  if (kind === 'rate' && row?.is_placeholder) seen.value = new Set([...seen.value, row.id])
   const forms: Record<string, () => Json> = {
     profile: () => ({ code: row?.code ?? '', name: row?.name ?? '', is_default: row?.is_default ?? false }),
     zone: () => ({ code: row?.code ?? '', countries: (row?.country_codes ?? ['MA']).join(', '), postal: (row?.postal_code_patterns ?? []).join(', '), is_export: row?.is_export ?? false, is_active: row?.is_active ?? true, sort_order: row?.sort_order ?? 0, ...Object.fromEntries(LOCALES.map(l => [`name_${l}`, row?.names?.[l] ?? ''])) }),
@@ -59,10 +67,24 @@ const boolFields = computed(() => Object.keys(dialog.form).filter(k => typeof di
       <template #actions><UButton v-if="writable" icon="i-lucide-plus" :label="t('admin.shop.shipping.add')" @click="edit(newKind)" /></template>
     </MzPageHeader>
     <UTabs v-model="tab" :items="['rates', 'zones', 'profiles', 'taxes', 'locations'].map(v => ({ value: v, label: t(`admin.shop.shipping.tabs.${v}`) }))" variant="link" :content="false" />
+    <UAlert
+      v-if="tab === 'rates' && placeholders.length"
+      color="warning"
+      variant="subtle"
+      icon="i-lucide-triangle-alert"
+      data-testid="placeholder-rates"
+      :title="t('admin.shop.shipping.placeholders.title', { n: placeholders.length })"
+      :description="t('admin.shop.shipping.placeholders.text', { seen: placeholders.filter((r: Json) => seen.has(r.id)).length, n: placeholders.length })"
+      :actions="writable ? [{ label: t('admin.shop.shipping.placeholders.confirmAll'), disabled: !allSeen, onClick: confirmPlaceholders }] : undefined"
+    />
     <table class="w-full text-small">
       <tbody v-if="tab === 'rates'">
         <tr v-for="r in shipping?.rates ?? []" :key="r.id" class="cursor-pointer border-t border-default hover:bg-elevated" @click="writable && edit('rate', r)">
-          <td class="p-2 font-medium">{{ r.translations.fr?.name ?? r.code }}</td><td class="p-2">{{ zoneName(r.zone_id) }} · {{ profileName(r.profile_id) }}</td>
+          <td class="p-2 font-medium">
+            {{ r.translations.fr?.name ?? r.code }}
+            <UBadge v-if="r.is_placeholder" :color="seen.has(r.id) ? 'neutral' : 'warning'" variant="soft" size="sm" class="ms-2" :icon="seen.has(r.id) ? 'i-lucide-eye' : undefined" :label="t('admin.shop.shipping.placeholders.badge')" data-testid="placeholder-badge" />
+            <span v-if="r.min_weight_grams !== null || r.max_weight_grams !== null" class="ms-2 text-muted" dir="ltr">{{ (r.min_weight_grams ?? 0) / 1000 }}–{{ (r.max_weight_grams ?? 0) / 1000 }} kg</span>
+          </td><td class="p-2">{{ zoneName(r.zone_id) }} · {{ profileName(r.profile_id) }}</td>
           <td class="p-2">{{ t(`admin.shop.shipping.kinds.${r.kind}`) }} · {{ r.amount_minor !== null ? money(r.amount_minor) : '' }}<template v-if="r.per_kg_minor"> + {{ money(r.per_kg_minor) }}/kg</template><template v-if="r.free_over_minor"> · {{ t('admin.shop.shipping.freeOver', { amount: money(r.free_over_minor) }) }}</template></td>
           <td class="p-2">{{ r.carrier }}<template v-if="r.allows_cash_on_delivery"> · COD</template></td><td class="p-2">{{ r.is_active ? '' : t('admin.shop.promotions.inactive') }}</td>
         </tr>

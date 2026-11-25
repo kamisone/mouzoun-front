@@ -126,7 +126,8 @@
       "cookies": "Cookies",
       "withdrawal": "Right of withdrawal",
       "shipping": "Delivery and returns"
-    }
+    },
+    "mediator": "Consumer mediator: {name}"
   },
   "price": {
     "free": "Free",
@@ -846,6 +847,32 @@
       "typeDescriptions": {
         "shop_products": "Shop products with their card (price, add to cart), picked by hand or by a rule.",
         "product_carousel": "Bookable stays, activities and packages, picked by hand or by a rule."
+      },
+      "tokens": {
+        "insert": "Insert company field",
+        "seller_legal_name": "Company name",
+        "seller_legal_form": "Legal form",
+        "seller_share_capital": "Share capital",
+        "seller_address": "Registered office",
+        "seller_siren": "SIREN",
+        "seller_siret": "SIRET",
+        "seller_rcs_city": "RCS city",
+        "seller_vat_number": "VAT number",
+        "seller_ape_code": "APE code",
+        "seller_email": "Email",
+        "seller_phone": "Phone",
+        "seller_publication_director": "Publication director",
+        "host_name": "Host",
+        "host_address": "Host address",
+        "host_phone": "Host phone",
+        "mediator_name": "Mediator",
+        "mediator_url": "Mediator website",
+        "mediator_address": "Mediator address",
+        "shop_name": "Shop name",
+        "shop_site_url": "Site address",
+        "shop_withdrawal_days": "Withdrawal period (days)",
+        "shop_refund_deadline_days": "Refund deadline (days)",
+        "shop_return_costs": "Return costs"
       }
     },
     "account": {
@@ -1377,6 +1404,13 @@
           "cod": "Cash on delivery",
           "fulfills_online_orders": "Ships online orders",
           "is_pickup_point": "Pickup point"
+        },
+        "placeholders": {
+          "title": "{n} placeholder rate(s) to confirm",
+          "text": "These rates are not offered at checkout. Open each one to check its price, weight and delay ({seen}/{n} seen), or save it: it then becomes a real rate.",
+          "confirmAll": "Confirm all",
+          "badge": "Placeholder",
+          "confirmed": "Rates confirmed"
         }
       },
       "taxes": {
@@ -1419,7 +1453,9 @@
           "products_complete_in_french": "Published products complete in French",
           "shipping_rates_france": "Shipping rates in France",
           "stock_location": "Warehouse of the French entity",
-          "emails_in_french": "Customer emails complete in French"
+          "emails_in_french": "Customer emails complete in French",
+          "stripe_webhook": "Mouzoun's Stripe webhook set up and received",
+          "food_information": "Food products with all mandatory information"
         },
         "entities": "Legal entities",
         "preview": "Invoice preview",
@@ -1458,7 +1494,11 @@
           "sales-journal": "Sales journal",
           "documents": "Invoices and credit notes",
           "stripe": "Stripe fees and payouts"
-        }
+        },
+        "placeholderRates": "{n} placeholder rate(s) to confirm",
+        "foodMissing": "Food products missing mandatory information: {n}",
+        "missingFields": "Missing fields: {fields}",
+        "completeFields": "Complete"
       },
       "variations": {
         "title": "Variations",
@@ -1806,7 +1846,61 @@
         "not_in_sitemap": "excluded from the sitemap",
         "canonical_elsewhere": "the canonical address points elsewhere"
       }
-    }
+    },
+    "legalEntity": {
+      "title": "Legal entity",
+      "nav": "Legal entity",
+      "intro": "The French company selling in the shop: identity printed on invoices, at checkout, in emails, the footer and the legal pages.",
+      "identity": "Company identity",
+      "mediator": "Consumer mediator",
+      "mediatorHint": "Required to sell to consumers (French Consumer Code, L612-1).",
+      "saved": "Legal entity saved",
+      "unchanged": "No change",
+      "invalid": "Some fields are invalid",
+      "error": "Saving failed",
+      "forbidden": "You do not have access to these settings.",
+      "missingTitle": "To complete before opening the shop",
+      "invoiceNote": "Invoices already issued keep the identity they were issued with.",
+      "fields": {
+        "legal_name": "Company name",
+        "legal_form": "Legal form",
+        "share_capital_minor": "Share capital",
+        "address_line1": "Registered office",
+        "address_line2": "Address line 2",
+        "address_postal_code": "Postal code",
+        "address_city": "City",
+        "country_code": "Country (ISO code)",
+        "email": "Contact email",
+        "phone": "Phone",
+        "registration_siren": "SIREN",
+        "registration_siret": "Head office SIRET",
+        "registration_rcs_city": "Trade register (RCS) city",
+        "registration_vat_number": "EU VAT number",
+        "registration_ape_code": "APE / NAF code",
+        "publication_director": "Publication director",
+        "mediator_name": "Mediator name",
+        "mediator_url": "Mediator website",
+        "mediator_address": "Mediator address",
+        "shop_legal_entity": "Shop legal entity"
+      },
+      "rules": {
+        "required": "Required.",
+        "positive": "A positive amount.",
+        "country": "2-letter country code (FR).",
+        "postal_code": "5 digits.",
+        "email": "Invalid email address.",
+        "digits_9": "9 digits.",
+        "digits_14": "14 digits.",
+        "luhn": "Invalid check digit.",
+        "siren_prefix": "Must start with the SIREN.",
+        "vat_format": "FR followed by 11 digits.",
+        "vat_siren": "Must end with the SIREN.",
+        "vat_key": "Invalid VAT key for this SIREN.",
+        "ape": "Expected format: 01.25Z.",
+        "https": "An https:// address."
+      }
+    },
+    "settingsAccount": "My account"
   },
   "error": {
     "notFound": "Page not found",
@@ -2875,6 +2969,14 @@
         "perishable": "Perishable food: no right of withdrawal.",
         "unsealed_hygiene": "Can be withdrawn only if the packaging was not opened (hygiene).",
         "personalised": "Personalised product: no right of withdrawal."
+      },
+      "netQuantity": "Net quantity: {quantity} {unit}",
+      "netUnits": {
+        "g": "g",
+        "kg": "kg",
+        "ml": "ml",
+        "l": "L",
+        "piece": "piece(s)"
       }
     },
     "cart": {

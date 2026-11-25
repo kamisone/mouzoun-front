@@ -18,6 +18,8 @@ await builder.load()
 const device = ref<'desktop' | 'tablet' | 'mobile'>('desktop')
 const previewLocale = ref<string>('fr')
 provide('builder-locale', previewLocale)
+// Legal pages offer "Insert company field" in the text editor (tokens filled from the data).
+provide('builder-page-type', computed(() => tree.value?.page.page_type))
 const token = ref<string | null>(null)
 const revisionPreview = ref<string | null>(null)
 const addOpen = ref(false)
@@ -74,6 +76,7 @@ async function reload() {
 async function onPublished() {
   await builder.load()
 }
+
 
 onBeforeRouteLeave(() => {
   if ((dirty.value || saving.value) && !window.confirm(t('admin.builder.leaveConfirm'))) return false

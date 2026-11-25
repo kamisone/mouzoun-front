@@ -21,6 +21,11 @@ const legalLinks = computed(() => {
     .filter(k => pages[k])
     .map(k => ({ key: k, label: t(`footer.legalPages.${k}`), to: localePath(`/${pages[k]}`) }))
 })
+// Consumer mediator (Consumer Code L616-1): shown once it is set.
+const mediator = computed(() => {
+  const m = shop.value?.consumer_mediator
+  return m?.name && m.url?.startsWith('https://') ? { name: m.name, url: m.url } : null
+})
 const email = ref('')
 
 // The official profiles, also declared to search engines (schema.org sameAs) so they show
@@ -117,6 +122,7 @@ function subscribe() {
             <span>{{ t('footer.legal') }}</span>
             <span>{{ t('footer.privacy') }}</span>
           </template>
+          <a v-if="mediator" :href="mediator.url" target="_blank" rel="noopener" class="hover:text-default" data-testid="footer-mediator">{{ t('footer.mediator', { name: mediator.name }) }}</a>
           <button type="button" class="hover:text-default" data-testid="footer-cookies" @click="reopen">{{ t('footer.cookies') }}</button>
           <details class="group">
             <summary class="cursor-pointer list-none hover:text-default">{{ t('footer.photoCredits') }}</summary>

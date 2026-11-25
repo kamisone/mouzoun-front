@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Zero-downtime blue/green deployment of the Mouzoun front (Nuxt) on a single VPS (no Kubernetes).
 #
-# Called by GitHub Actions over SSH, as root:   sudo bash ~/mouzoun/front/deploy.sh <image:tag> <app_url>
+# Called by GitHub Actions over SSH, as root:   sudo bash ~/mouzoun/front/deploy.sh <image:tag> <app_url> [--token-stdin]
+#   --token-stdin: the first line of stdin is INTERNAL_API_TOKEN (shared with the API; may be empty).
 #
 # The front never touches nginx (the back owns it). nginx's website upstream lists both ports
 # (blue 127.0.0.1:13001, green 127.0.0.1:13002) and skips whichever is not running:
@@ -12,7 +13,8 @@
 #      (requests reaching it while it stops are retried by nginx on the new one)
 #
 # Any failure before step 3 removes the new container: the current release keeps serving.
-# No secrets: runtime config is derived from APP_URL (e.g. https://mouzoun.com).
+# Runtime config is derived from APP_URL (e.g. https://mouzoun.com); the only secret, the internal
+# token, comes on stdin (never on a command line).
 
 set -Eeuo pipefail
 
@@ -40,6 +42,9 @@ NETWORK_MODE="${NETWORK_MODE:-host}"
 SITE_ENV="${SITE_ENV:-production}"
 # Shared with the API (INTERNAL_API_TOKEN) to send redirect / 404 visit counts; optional.
 INTERNAL_API_TOKEN="${INTERNAL_API_TOKEN:-}"
+if [ "${3:-}" = "--token-stdin" ]; then
+  IFS= read -r INTERNAL_API_TOKEN || true
+fi
 
 STATE_FILE="$ROOT/active-color"
 

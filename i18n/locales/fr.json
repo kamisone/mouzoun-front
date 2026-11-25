@@ -126,7 +126,8 @@
       "cookies": "Cookies",
       "withdrawal": "Droit de rétractation",
       "shipping": "Livraison et retours"
-    }
+    },
+    "mediator": "Médiateur de la consommation : {name}"
   },
   "price": {
     "free": "Gratuit",
@@ -1045,6 +1046,32 @@
       "typeDescriptions": {
         "shop_products": "Produits de la boutique avec leur carte (prix, ajout au panier), choisis à la main ou par règle.",
         "product_carousel": "Hébergements, activités et séjours réservables, choisis à la main ou par règle."
+      },
+      "tokens": {
+        "insert": "Insérer un champ société",
+        "seller_legal_name": "Raison sociale",
+        "seller_legal_form": "Forme juridique",
+        "seller_share_capital": "Capital social",
+        "seller_address": "Adresse du siège",
+        "seller_siren": "SIREN",
+        "seller_siret": "SIRET",
+        "seller_rcs_city": "Ville du RCS",
+        "seller_vat_number": "N° de TVA",
+        "seller_ape_code": "Code APE",
+        "seller_email": "E-mail",
+        "seller_phone": "Téléphone",
+        "seller_publication_director": "Directeur de la publication",
+        "host_name": "Hébergeur",
+        "host_address": "Adresse de l'hébergeur",
+        "host_phone": "Téléphone de l'hébergeur",
+        "mediator_name": "Médiateur",
+        "mediator_url": "Site du médiateur",
+        "mediator_address": "Adresse du médiateur",
+        "shop_name": "Nom de la boutique",
+        "shop_site_url": "Adresse du site",
+        "shop_withdrawal_days": "Délai de rétractation (jours)",
+        "shop_refund_deadline_days": "Délai de remboursement (jours)",
+        "shop_return_costs": "Frais de retour"
       }
     },
     "account": {
@@ -1576,6 +1603,13 @@
           "cod": "Paiement à la livraison",
           "fulfills_online_orders": "Expédie les commandes en ligne",
           "is_pickup_point": "Point de retrait"
+        },
+        "placeholders": {
+          "title": "{n} tarif(s) provisoire(s) à confirmer",
+          "text": "Ces tarifs ne sont pas proposés au paiement. Ouvrez chacun pour vérifier le prix, le poids et le délai ({seen}/{n} vus), ou enregistrez-le : il devient alors un vrai tarif.",
+          "confirmAll": "Tout confirmer",
+          "badge": "Provisoire",
+          "confirmed": "Tarifs confirmés"
         }
       },
       "taxes": {
@@ -1618,7 +1652,9 @@
           "products_complete_in_french": "Produits publiés complets en français",
           "shipping_rates_france": "Tarifs de livraison en France",
           "stock_location": "Entrepôt de l'entité française",
-          "emails_in_french": "E-mails clients complets en français"
+          "emails_in_french": "E-mails clients complets en français",
+          "stripe_webhook": "Webhook Stripe de Mouzoun configuré et reçu",
+          "food_information": "Produits alimentaires avec toutes les informations obligatoires"
         },
         "entities": "Entités juridiques",
         "preview": "Aperçu de facture",
@@ -1657,7 +1693,11 @@
           "sales-journal": "Journal des ventes",
           "documents": "Factures et avoirs",
           "stripe": "Frais et virements Stripe"
-        }
+        },
+        "placeholderRates": "{n} tarif(s) provisoire(s) à confirmer",
+        "foodMissing": "Produits alimentaires sans information obligatoire : {n}",
+        "missingFields": "Champs manquants : {fields}",
+        "completeFields": "Compléter"
       },
       "variations": {
         "title": "Variations",
@@ -2005,7 +2045,61 @@
         "not_in_sitemap": "exclu du plan du site",
         "canonical_elsewhere": "l'adresse canonique pointe ailleurs"
       }
-    }
+    },
+    "legalEntity": {
+      "title": "Entité juridique",
+      "nav": "Entité juridique",
+      "intro": "La société française qui vend dans la boutique : identité imprimée sur les factures, au paiement, dans les e-mails, le pied de page et les pages légales.",
+      "identity": "Identité de la société",
+      "mediator": "Médiateur de la consommation",
+      "mediatorHint": "Obligatoire pour vendre aux consommateurs (Code de la consommation, L612-1).",
+      "saved": "Entité juridique enregistrée",
+      "unchanged": "Aucun changement",
+      "invalid": "Certains champs sont invalides",
+      "error": "L'enregistrement a échoué",
+      "forbidden": "Vous n'avez pas accès à ces réglages.",
+      "missingTitle": "À compléter avant d'ouvrir la boutique",
+      "invoiceNote": "Les factures déjà émises gardent l'identité avec laquelle elles ont été émises.",
+      "fields": {
+        "legal_name": "Raison sociale",
+        "legal_form": "Forme juridique",
+        "share_capital_minor": "Capital social",
+        "address_line1": "Adresse du siège",
+        "address_line2": "Complément d'adresse",
+        "address_postal_code": "Code postal",
+        "address_city": "Ville",
+        "country_code": "Pays (code ISO)",
+        "email": "E-mail de contact",
+        "phone": "Téléphone",
+        "registration_siren": "SIREN",
+        "registration_siret": "SIRET du siège",
+        "registration_rcs_city": "Ville du RCS",
+        "registration_vat_number": "N° de TVA intracommunautaire",
+        "registration_ape_code": "Code APE / NAF",
+        "publication_director": "Directeur de la publication",
+        "mediator_name": "Nom du médiateur",
+        "mediator_url": "Site du médiateur",
+        "mediator_address": "Adresse du médiateur",
+        "shop_legal_entity": "Entité juridique de la boutique"
+      },
+      "rules": {
+        "required": "Champ obligatoire.",
+        "positive": "Montant positif attendu.",
+        "country": "Code pays à 2 lettres (FR).",
+        "postal_code": "5 chiffres.",
+        "email": "Adresse e-mail invalide.",
+        "digits_9": "9 chiffres.",
+        "digits_14": "14 chiffres.",
+        "luhn": "Clé de contrôle invalide.",
+        "siren_prefix": "Doit commencer par le SIREN.",
+        "vat_format": "FR suivi de 11 chiffres.",
+        "vat_siren": "Doit se terminer par le SIREN.",
+        "vat_key": "Clé de TVA invalide pour ce SIREN.",
+        "ape": "Format attendu : 01.25Z.",
+        "https": "Adresse en https:// attendue."
+      }
+    },
+    "settingsAccount": "Mon compte"
   },
   "error": {
     "notFound": "Page introuvable",
@@ -3074,6 +3168,14 @@
         "perishable": "Denrée périssable : pas de droit de rétractation.",
         "unsealed_hygiene": "Rétractation possible uniquement si l'emballage n'a pas été ouvert (hygiène).",
         "personalised": "Produit personnalisé : pas de droit de rétractation."
+      },
+      "netQuantity": "Quantité nette : {quantity} {unit}",
+      "netUnits": {
+        "g": "g",
+        "kg": "kg",
+        "ml": "ml",
+        "l": "L",
+        "piece": "pièce(s)"
       }
     },
     "cart": {

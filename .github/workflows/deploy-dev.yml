@@ -98,12 +98,14 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_PASS: ${{ secrets.DOCKER_HUB_PASSWORD }}
           SUDO_PASS: ${{ secrets.SERVER_USER_PASSWORD }}
+          # Optional: same value as the API's INTERNAL_API_TOKEN (redirect / 404 visit counts).
+          INTERNAL_API_TOKEN: ${{ secrets.NUXT_INTERNAL_API_TOKEN }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
           password: ${{ secrets.SERVER_USER_PASSWORD }}
-          envs: IMAGE_REF,APP_URL,DOCKER_USER,DOCKER_PASS,SUDO_PASS
+          envs: IMAGE_REF,APP_URL,DOCKER_USER,DOCKER_PASS,SUDO_PASS,INTERNAL_API_TOKEN
           command_timeout: 15m
           script: |
             set -e
@@ -112,4 +114,7 @@ jobs:
             # sudo reads its password line, docker login reads the next one.
             { printf '%s\n' "$SUDO_PASS"; printf '%s\n' "$DOCKER_PASS"; } | sudo -S -p '' docker login -u "$DOCKER_USER" --password-stdin >/dev/null
             test -n "$APP_URL" || { echo "Missing secret APP_URL"; exit 1; }
-            printf '%s\n' "$SUDO_PASS" | sudo -S -p '' bash "$HOME/mouzoun/front/deploy.sh" "$IMAGE_REF" "$APP_URL"
+            # sudo reads its password line, deploy.sh reads the next one (the internal token, maybe
+            # empty): secrets never appear on a command line.
+            { printf '%s\n' "$SUDO_PASS"; printf '%s\n' "$INTERNAL_API_TOKEN"; } |
+              sudo -S -p '' bash "$HOME/mouzoun/front/deploy.sh" "$IMAGE_REF" "$APP_URL" --token-stdin

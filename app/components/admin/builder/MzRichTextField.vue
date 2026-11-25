@@ -1,12 +1,78 @@
 <script setup lang="ts">
+import type { DropdownMenuItem } from '@nuxt/ui'
+import type { Ref } from 'vue'
+
 /**
  * Minimal rich text editor (paragraphs, bold, italic, lists, links) producing the HTML subset the
  * API keeps; the API sanitises it again and refuses scripts. Pasted text is inserted as plain text.
+ * On legal pages, "Insert company field" adds a token such as `{{seller.siren}}` at the cursor:
+ * the page shows the value from Admin › Settings › Legal entity (the list comes from the API, so
+ * only tokens the renderer knows can be inserted).
  */
 const props = withDefaults(defineProps<{ label: string, dir?: 'ltr' | 'rtl', lang?: string }>(), { dir: 'ltr', lang: undefined })
 const model = defineModel<string | undefined>()
 const { t } = useI18n()
 const editor = useTemplateRef<HTMLDivElement>('editor')
+
+// ---- Company field tokens (legal pages only) ---------------------------------------------------
+const pageType = inject<Ref<string | undefined> | undefined>('builder-page-type', undefined)
+const isLegal = computed(() => pageType?.value === 'legal')
+const PICKED = ['seller.', 'mediator.', 'host.', 'shop.']
+const api = useAdminApi()
+const tokens = ref<string[]>([])
+watch(isLegal, async (legal) => {
+  if (!legal || tokens.value.length) return
+  try {
+    tokens.value = (await api.pages.legalTokens()).tokens.filter(tk => PICKED.some(p => tk.startsWith(p)))
+  }
+  catch { /* no picker without the list */ }
+}, { immediate: true })
+const tokenItems = computed<DropdownMenuItem[][]>(() => PICKED.map(prefix => tokens.value
+  .filter(tk => tk.startsWith(prefix))
+  .map(tk => ({ label: t(`admin.builder.tokens.${tk.replace('.', '_')}`), description: `{{${tk}}}`, onSelect: () => insertToken(tk) })))
+  .filter(g => g.length))
+// The cursor is lost when the menu takes the focus: keep the last range inside the editor.
+let range: Range | null = null
+function keepRange() {
+  const sel = window.getSelection()
+  if (sel?.rangeCount && editor.value?.contains(sel.anchorNode)) range = sel.getRangeAt(0).cloneRange()
+}
+function insertToken(token: string) {
+  const el = editor.value
+  if (!el) return
+  el.focus()
+  const sel = window.getSelection()
+  if (sel) {
+    sel.removeAllRanges()
+    if (range) {
+      sel.addRange(range)
+    }
+    else {
+      const end = document.createRange()
+      end.selectNodeContents(el)
+      end.collapse(false)
+      sel.addRange(end)
+    }
+  }
+  const text = `{{${token}}}`
+  const done = typeof document.execCommand === 'function' && document.execCommand('insertText', false, text)
+  if (!done) {
+    // No editing command (some browsers, tests): insert a text node at the cursor.
+    const at = sel?.rangeCount ? sel.getRangeAt(0) : null
+    if (at && el.contains(at.startContainer)) {
+      at.deleteContents()
+      const node = document.createTextNode(text)
+      at.insertNode(node)
+      at.setStartAfter(node)
+      at.collapse(true)
+    }
+    else {
+      el.append(text)
+    }
+  }
+  sync()
+  keepRange()
+}
 
 onMounted(() => {
   if (editor.value) editor.value.innerHTML = model.value ?? ''
@@ -44,6 +110,9 @@ function paste(e: ClipboardEvent) {
       <UButton icon="i-lucide-list-ordered" size="xs" color="neutral" variant="ghost" :aria-label="t('admin.builder.richtext.orderedList')" @mousedown.prevent="exec('insertOrderedList')" />
       <UButton icon="i-lucide-link" size="xs" color="neutral" variant="ghost" :aria-label="t('admin.builder.richtext.link')" @mousedown.prevent="link" />
       <UButton icon="i-lucide-remove-formatting" size="xs" color="neutral" variant="ghost" :aria-label="t('admin.builder.richtext.clear')" @mousedown.prevent="exec('removeFormat')" />
+      <UDropdownMenu v-if="isLegal && tokenItems.length" :items="tokenItems" :content="{ align: 'end' }" :ui="{ content: 'max-h-80' }">
+        <UButton :label="t('admin.builder.tokens.insert')" icon="i-lucide-building-2" size="xs" color="neutral" variant="ghost" class="ms-auto" data-testid="insert-token" @mousedown="keepRange" />
+      </UDropdownMenu>
     </div>
     <div
       ref="editor"
@@ -54,7 +123,9 @@ function paste(e: ClipboardEvent) {
       :dir="props.dir"
       :lang="props.lang"
       class="mz-prose min-h-32 px-3 py-2 text-small focus:outline-none [&_p]:text-small"
-      @input="sync"
+      @input="sync(); keepRange()"
+      @keyup="keepRange"
+      @mouseup="keepRange"
       @blur="sync"
       @paste="paste"
     />

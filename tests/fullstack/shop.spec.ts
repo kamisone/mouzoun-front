@@ -1,5 +1,5 @@
 import { type APIRequestContext, expect, test } from '@playwright/test'
-import { ready } from './helpers'
+import { completeFoodInformation, ready } from './helpers'
 
 /**
  * Farm shop end to end against the real API (simulated card provider, PAYMENTS_FAKE=true):
@@ -29,7 +29,7 @@ async function makeCompliant(request: APIRequestContext) {
   await staffSend(request, 'PUT', `/shop/legal-entities/${fr.id}`, {
     legal_name: 'MOUZOUN TEST SAS', legal_form: 'SAS', share_capital_minor: 100000,
     address: { line1: '1 rue de Test', postal_code: '75001', city: 'Paris', country_code: 'FR' },
-    registration: { siren: '123456789', siret: '12345678900011', rcs_city: 'Paris', vat_number: 'FR12123456789' },
+    registration: { siren: '732829320', siret: '73282932000074', rcs_city: 'Paris', vat_number: 'FR44732829320' },
     email: 'boutique@example.com', host: { name: 'Google Cloud France SARL' },
   })
   const tax = await staffApi(request, 'GET', '/shop/tax-rates')
@@ -37,6 +37,7 @@ async function makeCompliant(request: APIRequestContext) {
     await staffSend(request, 'PUT', `/shop/tax-rates/${r.id}`, { ...r, is_confirmed: true })
   }
   await staffApi(request, 'PATCH', '/shop/settings', { 'payments.stripe.enabled': true, 'shop.consumer_mediator': { name: 'Médiateur test', url: 'https://mediateur.example' } })
+  await completeFoodInformation(request, API, process.env.FULLSTACK_ORIGIN ?? 'http://127.0.0.1:3210')
 }
 
 test('the cookie banner refuses as easily as it accepts, and comes back from the footer', async ({ page }) => {
@@ -77,6 +78,7 @@ test('a guest buys two variants by card and follows the parcel', async ({ page, 
   const refused = await staffSend(request, 'PATCH', '/shop/settings', { 'shop.status': 'open' })
   expect(refused.status()).toBe(409)
   await makeCompliant(request)
+  // Once the checklist passes, opening needs nothing else.
   await staffApi(request, 'PATCH', '/shop/settings', { 'shop.status': 'open' })
   const code = `E2E${Date.now() % 100000}`
   await staffApi(request, 'POST', '/shop/promotions', { code, scope: 'shop', discount_type: 'percent', percent: '10', is_active: true, applies_to_all: true, translations: { fr: { name: 'E2E' } } })

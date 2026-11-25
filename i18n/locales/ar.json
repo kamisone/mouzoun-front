@@ -126,7 +126,8 @@
       "cookies": "ملفات تعريف الارتباط",
       "withdrawal": "حق التراجع",
       "shipping": "التوصيل والإرجاع"
-    }
+    },
+    "mediator": "وسيط الاستهلاك: {name}"
   },
   "price": {
     "free": "مجاني",
@@ -846,6 +847,32 @@
       "typeDescriptions": {
         "shop_products": "منتجات المتجر ببطاقتها (السعر، الإضافة إلى السلة)، مختارة يدويًا أو بقاعدة.",
         "product_carousel": "إقامات وأنشطة وباقات قابلة للحجز، مختارة يدويًا أو بقاعدة."
+      },
+      "tokens": {
+        "insert": "إدراج حقل الشركة",
+        "seller_legal_name": "الاسم التجاري",
+        "seller_legal_form": "الشكل القانوني",
+        "seller_share_capital": "رأس المال",
+        "seller_address": "عنوان المقر",
+        "seller_siren": "SIREN",
+        "seller_siret": "SIRET",
+        "seller_rcs_city": "مدينة السجل التجاري",
+        "seller_vat_number": "رقم الضريبة",
+        "seller_ape_code": "رمز APE",
+        "seller_email": "البريد الإلكتروني",
+        "seller_phone": "الهاتف",
+        "seller_publication_director": "مدير النشر",
+        "host_name": "المستضيف",
+        "host_address": "عنوان المستضيف",
+        "host_phone": "هاتف المستضيف",
+        "mediator_name": "الوسيط",
+        "mediator_url": "موقع الوسيط",
+        "mediator_address": "عنوان الوسيط",
+        "shop_name": "اسم المتجر",
+        "shop_site_url": "عنوان الموقع",
+        "shop_withdrawal_days": "مهلة التراجع (أيام)",
+        "shop_refund_deadline_days": "مهلة الاسترداد (أيام)",
+        "shop_return_costs": "مصاريف الإرجاع"
       }
     },
     "account": {
@@ -1377,6 +1404,13 @@
           "cod": "الدفع عند الاستلام",
           "fulfills_online_orders": "يشحن الطلبات",
           "is_pickup_point": "نقطة استلام"
+        },
+        "placeholders": {
+          "title": "{n} سعر مؤقت للتأكيد",
+          "text": "لا تُعرض هذه الأسعار عند الدفع. افتح كل سعر للتحقق من الثمن والوزن والمدة ({seen}/{n})، أو احفظه ليصبح سعراً فعلياً.",
+          "confirmAll": "تأكيد الكل",
+          "badge": "مؤقت",
+          "confirmed": "تم تأكيد الأسعار"
         }
       },
       "taxes": {
@@ -1419,7 +1453,9 @@
           "products_complete_in_french": "المنتجات المنشورة مكتملة بالفرنسية",
           "shipping_rates_france": "أسعار التوصيل في فرنسا",
           "stock_location": "مستودع الكيان الفرنسي",
-          "emails_in_french": "رسائل العملاء مكتملة بالفرنسية"
+          "emails_in_french": "رسائل العملاء مكتملة بالفرنسية",
+          "stripe_webhook": "إعداد Webhook ‏Stripe الخاص بموزون واستلامه",
+          "food_information": "المنتجات الغذائية بكل المعلومات الإلزامية"
         },
         "entities": "الكيانات القانونية",
         "preview": "معاينة الفاتورة",
@@ -1458,7 +1494,11 @@
           "sales-journal": "دفتر المبيعات",
           "documents": "الفواتير والإشعارات الدائنة",
           "stripe": "رسوم وتحويلات Stripe"
-        }
+        },
+        "placeholderRates": "{n} سعر مؤقت للتأكيد",
+        "foodMissing": "منتجات غذائية تنقصها معلومات إلزامية: {n}",
+        "missingFields": "حقول ناقصة: {fields}",
+        "completeFields": "إكمال"
       },
       "variations": {
         "title": "التنويعات",
@@ -1806,7 +1846,61 @@
         "not_in_sitemap": "مستبعد من خريطة الموقع",
         "canonical_elsewhere": "العنوان الأساسي يشير إلى مكان آخر"
       }
-    }
+    },
+    "legalEntity": {
+      "title": "الكيان القانوني",
+      "nav": "الكيان القانوني",
+      "intro": "الشركة الفرنسية التي تبيع في المتجر: هويتها على الفواتير وعند الدفع وفي الرسائل وأسفل الصفحات والصفحات القانونية.",
+      "identity": "هوية الشركة",
+      "mediator": "وسيط الاستهلاك",
+      "mediatorHint": "إلزامي للبيع للمستهلكين (قانون الاستهلاك الفرنسي، L612-1).",
+      "saved": "تم حفظ الكيان القانوني",
+      "unchanged": "لا تغيير",
+      "invalid": "بعض الحقول غير صالحة",
+      "error": "فشل الحفظ",
+      "forbidden": "ليس لديك صلاحية الوصول إلى هذه الإعدادات.",
+      "missingTitle": "يجب إكماله قبل افتتاح المتجر",
+      "invoiceNote": "تحتفظ الفواتير الصادرة بالهوية التي صدرت بها.",
+      "fields": {
+        "legal_name": "الاسم التجاري",
+        "legal_form": "الشكل القانوني",
+        "share_capital_minor": "رأس المال",
+        "address_line1": "عنوان المقر",
+        "address_line2": "تكملة العنوان",
+        "address_postal_code": "الرمز البريدي",
+        "address_city": "المدينة",
+        "country_code": "البلد (رمز ISO)",
+        "email": "البريد الإلكتروني للتواصل",
+        "phone": "الهاتف",
+        "registration_siren": "SIREN",
+        "registration_siret": "SIRET المقر",
+        "registration_rcs_city": "مدينة السجل التجاري",
+        "registration_vat_number": "رقم الضريبة على القيمة المضافة",
+        "registration_ape_code": "رمز APE / NAF",
+        "publication_director": "مدير النشر",
+        "mediator_name": "اسم الوسيط",
+        "mediator_url": "موقع الوسيط",
+        "mediator_address": "عنوان الوسيط",
+        "shop_legal_entity": "الكيان القانوني للمتجر"
+      },
+      "rules": {
+        "required": "حقل إلزامي.",
+        "positive": "مبلغ موجب.",
+        "country": "رمز البلد من حرفين (FR).",
+        "postal_code": "5 أرقام.",
+        "email": "بريد إلكتروني غير صالح.",
+        "digits_9": "9 أرقام.",
+        "digits_14": "14 رقماً.",
+        "luhn": "رقم التحقق غير صالح.",
+        "siren_prefix": "يجب أن يبدأ بـ SIREN.",
+        "vat_format": "FR متبوعة بـ 11 رقماً.",
+        "vat_siren": "يجب أن ينتهي بـ SIREN.",
+        "vat_key": "مفتاح الضريبة غير صالح لهذا SIREN.",
+        "ape": "الصيغة المتوقعة: 01.25Z.",
+        "https": "عنوان يبدأ بـ https://."
+      }
+    },
+    "settingsAccount": "حسابي"
   },
   "error": {
     "notFound": "الصفحة غير موجودة",
@@ -2875,6 +2969,14 @@
         "perishable": "مادة قابلة للتلف: لا يوجد حق تراجع.",
         "unsealed_hygiene": "التراجع ممكن فقط إذا لم يُفتح الغلاف (لأسباب صحية).",
         "personalised": "منتج مخصص: لا يوجد حق تراجع."
+      },
+      "netQuantity": "الكمية الصافية: {quantity} {unit}",
+      "netUnits": {
+        "g": "غ",
+        "kg": "كغ",
+        "ml": "مل",
+        "l": "ل",
+        "piece": "قطعة"
       }
     },
     "cart": {
