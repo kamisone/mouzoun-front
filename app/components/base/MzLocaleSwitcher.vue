@@ -15,17 +15,26 @@ const props = withDefaults(defineProps<{
 const { t, locale, locales, setLocale } = useI18n()
 const switchLocalePath = useSwitchLocalePath()
 const { size: densitySize } = useDensity()
+// Admin choice, kept apart from i18n's own cookie (rewritten from the URL on every load).
+const adminLocale = useCookie<string | null>(ADMIN_LOCALE_COOKIE, { maxAge: 60 * 60 * 24 * 365, sameSite: 'lax', path: '/' })
+async function choose(code: string) {
+  adminLocale.value = code
+  await setLocale(code as typeof locale.value)
+}
 
 const current = computed(() => locales.value.find(l => l.code === locale.value))
+// Plain items (a `checkbox` item ignores its link: choosing a language did nothing); the current
+// one is marked with a check icon and `aria-current`.
 const items = computed<DropdownMenuItem[]>(() =>
   locales.value.map(l => ({
     label: l.name ?? l.code,
     ...(props.mode === 'route'
       ? { to: switchLocalePath(l.code) }
-      : { onSelect: () => setLocale(l.code) }),
-    type: 'checkbox' as const,
-    checked: l.code === locale.value,
+      : { onSelect: () => choose(l.code) }),
+    trailingIcon: l.code === locale.value ? 'i-lucide-check' : undefined,
+    'aria-current': l.code === locale.value ? 'true' : undefined,
     lang: l.language ?? l.code,
+    'data-testid': `locale-${l.code}`,
   })),
 )
 </script>

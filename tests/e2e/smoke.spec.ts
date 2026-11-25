@@ -124,3 +124,25 @@ test('the server cleans paths with a 301, and outside production nothing may be 
   const robots = await request.get('/robots.txt')
   expect(await robots.text()).toBe('User-agent: *\nDisallow: /\n')
 })
+
+test('choosing a language on the public site opens the same page in that language', async ({ page }) => {
+  await page.goto('/')
+  await page.waitForFunction(() => !!(document.querySelector('#__nuxt') as unknown as { __vue_app__?: unknown })?.__vue_app__)
+  await page.locator('header').getByRole('button', { name: /Langue/ }).first().click()
+  await page.getByTestId('locale-en').click()
+  await expect(page).toHaveURL(/\/en$/)
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en-GB')
+})
+
+test('the admin keeps the language chosen there after a reload', async ({ page }) => {
+  await mockApi(page, true)
+  await page.goto('/admin')
+  await expect(page.getByRole('heading', { level: 1, name: "Aujourd'hui" })).toBeVisible()
+  await page.getByRole('button', { name: /Langue/ }).first().click()
+  await page.getByTestId('locale-en').click()
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en-GB')
+  await page.reload()
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en-GB')
+  await expect(page.getByRole('heading', { level: 1, name: "Aujourd'hui" })).toBeHidden()
+  await expect(page).toHaveURL(/\/admin$/)
+})
