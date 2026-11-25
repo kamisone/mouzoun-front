@@ -36,6 +36,12 @@ function edit(kind: string, row?: Json) {
   }
   Object.assign(dialog, { open: true, kind, id: row?.id, form: forms[kind]!() })
 }
+// Carriers come from Réglages › Transporteurs; a rate keeps its carrier even if it left the list.
+const carrierOptions = computed(() => {
+  const list: string[] = shipping.value?.carriers ?? []
+  const current = dialog.form.carrier as string | undefined
+  return ['', ...list, ...(current && !list.includes(current) ? [current] : [])]
+})
 const cents = (v: number | null) => (v === null || v === undefined || v === 0 ? null : Math.round(Number(v) * 100))
 async function save() {
   const f = dialog.form
@@ -117,7 +123,7 @@ const boolFields = computed(() => Object.keys(dialog.form).filter(k => typeof di
             <UFormField :label="t('admin.shop.shipping.zone')" name="zone"><USelect v-model="dialog.form.zone_id" :items="(shipping?.zones ?? []).map((z: Json) => ({ value: z.id, label: z.code }))" class="w-full" /></UFormField>
             <UFormField :label="t('admin.shop.shipping.profile')" name="profile"><USelect v-model="dialog.form.profile_id" :items="(shipping?.profiles ?? []).map((p: Json) => ({ value: p.id, label: p.name }))" class="w-full" /></UFormField>
             <UFormField :label="t('admin.shop.shipping.kind')" name="kind"><USelect v-model="dialog.form.kind" :items="['flat', 'weight_based', 'price_based', 'free'].map(k => ({ value: k, label: t(`admin.shop.shipping.kinds.${k}`) }))" class="w-full" /></UFormField>
-            <UFormField :label="t('admin.shop.orders.carrier')" name="carrier"><USelect v-model="dialog.form.carrier" :items="['', 'amana', 'ctm', 'dhl']" class="w-full" /></UFormField>
+            <UFormField :label="t('admin.shop.orders.carrier')" name="carrier"><USelect v-model="dialog.form.carrier" :items="carrierOptions" class="w-full" /></UFormField>
           </template>
           <UFormField v-for="k in textFields" :key="k" :label="t(`admin.shop.shipping.fields.${k.replace(/_(fr|en|ar)$/, '')}`) + (k.match(/_(fr|en|ar)$/) ? ` (${k.slice(-2)})` : '')" :name="k"><UInput v-model="dialog.form[k]" class="w-full" /></UFormField>
           <UFormField v-for="k in numberFields" :key="k" :label="t(`admin.shop.shipping.fields.${k}`)" :name="k"><UInputNumber v-model="dialog.form[k]" :step="['amount', 'per_kg', 'free_over', 'cod_fee', 'rate'].includes(k) ? 0.01 : 1" class="w-full" /></UFormField>
