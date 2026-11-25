@@ -658,7 +658,8 @@
         "display": "Affichage",
         "albums": "Albums",
         "preview": "Aperçu",
-        "viewer": "Visionneuse"
+        "viewer": "Visionneuse",
+        "card": "Carte"
       },
       "display": {
         "devices": "Afficher sur",
@@ -1036,6 +1037,14 @@
           "auto": "Automatique",
           "manual": "Choisies à la main"
         }
+      },
+      "typeNames": {
+        "shop_products": "Produits de la boutique",
+        "product_carousel": "Hébergements et activités"
+      },
+      "typeDescriptions": {
+        "shop_products": "Produits de la boutique avec leur carte (prix, ajout au panier), choisis à la main ou par règle.",
+        "product_carousel": "Hébergements, activités et séjours réservables, choisis à la main ou par règle."
       }
     },
     "account": {
@@ -1365,7 +1374,9 @@
         "lowest30": "Plus bas 30 j",
         "lowest30Hint": "Prix le plus bas pratiqué ces 30 derniers jours",
         "referenceMax": "barré max {price}",
-        "originCountry": "Origine"
+        "originCountry": "Origine",
+        "usedIn": "Utilisé dans :",
+        "draftOnly": "brouillon"
       },
       "promotions": {
         "active": "Active",
@@ -2941,7 +2952,10 @@
     },
     "posts": {
       "read": "Lire"
-    }
+    },
+    "shopAll": "Voir toute la boutique",
+    "shopEmpty": "Aucun produit ne correspond à ces critères.",
+    "shopProducts": "Produits de la boutique"
   },
   "shop": {
     "nav": "Boutique de la ferme",
@@ -3332,6 +3346,17 @@
     "categoryNotify": {
       "title": "Prévenez-moi",
       "text": "Laissez votre e-mail : nous vous écrirons quand les produits arriveront."
+    },
+    "card": {
+      "soon": "Bientôt disponible",
+      "notify": "Me prévenir",
+      "options": "Choisir les options"
+    },
+    "badges": {
+      "sale": "Promo",
+      "new": "Nouveau",
+      "seasonal": "De saison",
+      "sold_out": "Épuisé"
     }
   },
   "consent": {

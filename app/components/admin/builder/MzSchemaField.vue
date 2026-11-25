@@ -41,6 +41,9 @@ const pickers: Record<string, string> = {
   product_picker: 'product', category_picker: 'category', place_picker: 'place', faq_picker: 'faq',
   promotion_picker: 'promotion', gallery_picker: 'gallery',
 }
+/** `x-kinds` (product kinds) and `x-scope` (category scope) restrict what a picker lists. */
+const pickerKinds = computed(() => n.value['x-kinds'] as string[] | undefined)
+const pickerScope = computed(() => n.value['x-scope'] as string | undefined)
 const ownError = computed(() => props.errors.find(e => e.path === props.path)?.message ?? props.errors[0]?.message)
 const schemes = ['light', 'dark', 'sand', 'night', 'brand'] as const
 
@@ -166,7 +169,7 @@ function num(v: string | number) {
     <MzMediaField v-else-if="widget === 'media_list'" v-model="model" multiple :kinds="n['x-media-kinds']" :label="props.label" />
     <MzLinkField v-else-if="widget === 'link'" v-model="model" />
     <MzLinkField v-else-if="widget === 'cta'" v-model="model" with-style />
-    <MzEntityPicker v-else-if="pickers[widget]" v-model="model" :kind="pickers[widget]!" :multiple="isArray" :label="props.label" />
+    <MzEntityPicker v-else-if="pickers[widget]" v-model="model" :kind="pickers[widget]!" :multiple="isArray" :label="props.label" :kinds="pickerKinds" :scope="pickerScope" />
     <MzDateTimeField v-else-if="widget === 'datetime'" v-model="model" :label="props.label" />
     <UInput v-else :model-value="model ?? ''" class="w-full" :aria-label="props.label" @update:model-value="v => (model = v)" />
   </UFormField>

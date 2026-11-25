@@ -140,8 +140,9 @@ export function useAdminApi() {
       remove: (id: string) => http<null>(`/shared-sections/${id}`, { method: 'DELETE' }),
       usages: (id: string) => http<{ usages: { page_id: string, page_title: string | null, block_id: string }[] }>(`/shared-sections/${id}/usages`),
     },
-    lookup: (kind: string, query: { q?: string, ids?: string[] }) =>
-      http<{ options: LookupOption[] }>(`/lookup/${kind}`, { query: { q: query.q || undefined, ids: query.ids?.length ? query.ids.join(',') : undefined } }),
+    /** `kinds` (products) and `scope` (categories) come from the schema's `x-kinds` / `x-scope`. */
+    lookup: (kind: string, query: { q?: string, ids?: string[], kinds?: string[], scope?: string }) =>
+      http<{ options: LookupOption[] }>(`/lookup/${kind}`, { query: { q: query.q || undefined, ids: query.ids?.length ? query.ids.join(',') : undefined, kinds: query.kinds?.length ? query.kinds.join(',') : undefined, scope: query.scope || undefined } }),
     /** Galleries (photo lists) used by the albums of gallery sections. */
     galleries: {
       get: (id: string) => http<AdminGallery>(`/galleries/${id}`),

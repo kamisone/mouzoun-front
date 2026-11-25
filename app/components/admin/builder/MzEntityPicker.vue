@@ -2,7 +2,16 @@
 import type { LookupOption } from '~/utils/page-types'
 
 /** Searchable picker of products, categories, places, FAQs, promotions, galleries or pages (one or several). */
-const props = withDefaults(defineProps<{ kind: string, multiple?: boolean, label: string }>(), { multiple: false })
+const props = withDefaults(defineProps<{
+  kind: string
+  multiple?: boolean
+  label: string
+  /** Product kinds allowed (`x-kinds`), category scope allowed (`x-scope`). */
+  kinds?: string[]
+  scope?: string
+}>(), { multiple: false, kinds: undefined, scope: undefined })
+const { t } = useI18n()
+const { money } = useMoney()
 const model = defineModel<string | string[] | undefined>()
 const api = useAdminApi()
 const search = ref('')
@@ -15,7 +24,7 @@ const ids = computed(() => (Array.isArray(model.value) ? model.value : model.val
 async function find(q: string) {
   loading.value = true
   try {
-    options.value = (await api.lookup(props.kind, { q })).options
+    options.value = (await api.lookup(props.kind, { q, kinds: props.kinds, scope: props.scope })).options
     for (const o of options.value) known.value[o.id] = o
   }
   catch {
@@ -30,14 +39,21 @@ onMounted(async () => {
   await find('')
   const unknown = ids.value.filter(id => !known.value[id])
   if (!unknown.length) return
-  const found = await api.lookup(props.kind, { ids: unknown }).catch(() => ({ options: [] }))
+  const found = await api.lookup(props.kind, { ids: unknown, kinds: props.kinds, scope: props.scope }).catch(() => ({ options: [] }))
   for (const o of found.options) known.value[o.id] = o
 })
 const items = computed(() => {
   const all = new Map<string, LookupOption>()
   for (const id of ids.value) if (known.value[id]) all.set(id, known.value[id]!)
   for (const o of options.value) all.set(o.id, o)
-  return [...all.values()].map(o => ({ label: o.label, value: o.id, description: o.hint ?? undefined }))
+  return [...all.values()].map(o => ({
+    label: o.label,
+    value: o.id,
+    description: o.price_minor != null || o.availability
+      ? [o.price_minor != null ? money(o.price_minor) : null, o.availability ? t(`shop.availability.${o.availability === 'low_stock' ? 'low_stock_generic' : o.availability}`) : null].filter(Boolean).join(' · ')
+      : (o.hint ?? undefined),
+    avatar: o.image_url ? { src: o.image_url, alt: '' } : undefined,
+  }))
 })
 function remove(id: string) {
   model.value = props.multiple ? ids.value.filter(x => x !== id) : undefined

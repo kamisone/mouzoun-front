@@ -658,7 +658,8 @@
         "display": "Display",
         "albums": "Albums",
         "preview": "Preview",
-        "viewer": "Viewer"
+        "viewer": "Viewer",
+        "card": "Card"
       },
       "display": {
         "devices": "Show on",
@@ -837,6 +838,14 @@
           "auto": "Automatic",
           "manual": "Hand-picked"
         }
+      },
+      "typeNames": {
+        "shop_products": "Shop products",
+        "product_carousel": "Stays and activities"
+      },
+      "typeDescriptions": {
+        "shop_products": "Shop products with their card (price, add to cart), picked by hand or by a rule.",
+        "product_carousel": "Bookable stays, activities and packages, picked by hand or by a rule."
       }
     },
     "account": {
@@ -1166,7 +1175,9 @@
         "lowest30": "30-day low",
         "lowest30Hint": "Lowest price of the last 30 days",
         "referenceMax": "compare-at max {price}",
-        "originCountry": "Origin"
+        "originCountry": "Origin",
+        "usedIn": "Used in:",
+        "draftOnly": "draft"
       },
       "promotions": {
         "active": "Active",
@@ -2742,7 +2753,10 @@
     },
     "posts": {
       "read": "Read"
-    }
+    },
+    "shopAll": "Shop all",
+    "shopEmpty": "No product matches these criteria.",
+    "shopProducts": "Shop products"
   },
   "shop": {
     "nav": "Farm shop",
@@ -3133,6 +3147,17 @@
     "categoryNotify": {
       "title": "Tell me",
       "text": "Leave your email: we will write when the products arrive."
+    },
+    "card": {
+      "soon": "Coming soon",
+      "notify": "Notify me",
+      "options": "Choose options"
+    },
+    "badges": {
+      "sale": "Sale",
+      "new": "New",
+      "seasonal": "Seasonal",
+      "sold_out": "Sold out"
     }
   },
   "consent": {

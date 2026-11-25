@@ -196,6 +196,8 @@ async function duplicate() {
   const out = await act(() => admin.shop.products.duplicate(id.value), t('admin.shop.products.duplicated'))
   if (out) await navigateTo(`/admin/shop/products/${out.id}`)
 }
+// Pages showing this product (page-builder sections that picked it), from content_block_refs.
+const { data: usages } = await useAsyncData(`admin-product-usages-${id.value}`, () => (id.value ? admin.usages('product', id.value) : Promise.resolve({ usages: [] })))
 const tabs = computed(() => [
   { label: t('admin.shop.products.tabs.general'), slot: 'general' as const },
   { label: t('admin.shop.products.tabs.translations'), slot: 'translations' as const, badge: LOCALES.filter(missing).length ? t('admin.shop.products.missing') : undefined },
@@ -215,6 +217,12 @@ const tabs = computed(() => [
         <UButton v-if="!readOnly" :label="t('common.save')" icon="i-lucide-save" :loading="saving" data-testid="save-product" @click="save" />
       </template>
     </MzPageHeader>
+    <section v-if="usages?.usages.length" class="flex flex-wrap items-center gap-2 text-small" data-testid="product-used-in">
+      <span class="text-muted">{{ t('admin.shop.products.usedIn') }}</span>
+      <UButton
+v-for="u in usages.usages" :key="u.block_id" :to="u.page_id ? `/admin/pages/${u.page_id}/builder` : undefined" size="xs" color="neutral" variant="outline"
+               :label="`${u.page_title ?? '—'}${u.live ? '' : ` (${t('admin.shop.products.draftOnly')})`}`" />
+    </section>
     <fieldset :disabled="readOnly">
       <UTabs :items="tabs" variant="link" class="w-full">
         <template #general>

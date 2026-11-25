@@ -269,4 +269,12 @@ export interface PageSummary {
 
 export interface SharedSummary { id: string, type: string, name: string | null, usages: number, updated_at: string }
 
-export interface LookupOption { id: string, label: string, hint: string | null }
+export interface LookupOption {
+  id: string
+  label: string
+  hint: string | null
+  /** Shop products: cover, lowest price and stock status, so a sold-out product is not picked by mistake. */
+  image_url?: string | null
+  price_minor?: number | null
+  availability?: 'in_stock' | 'low_stock' | 'out_of_stock' | 'backorder' | null
+}

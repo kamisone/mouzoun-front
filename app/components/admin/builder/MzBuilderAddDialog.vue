@@ -9,7 +9,7 @@ import type { Builder } from '~/composables/useBuilder'
  */
 const props = defineProps<{ builder: Builder, position: number, pageType: string }>()
 const open = defineModel<boolean>('open', { required: true })
-const { t } = useI18n()
+const { t, te } = useI18n()
 const api = useAdminApi()
 const b = props.builder
 const tab = ref('types')
@@ -44,6 +44,15 @@ async function pickShared(s: SharedSummary) {
   b.addShared(block, props.position)
   open.value = false
 }
+// Names the editors read in their language where the library's own name would be ambiguous.
+function typeName(type: { code: string, name: string }) {
+  const key = `admin.builder.typeNames.${type.code}`
+  return te(key) ? t(key) : type.name
+}
+function typeDescription(type: { code: string, description?: string | null }) {
+  const key = `admin.builder.typeDescriptions.${type.code}`
+  return te(key) ? t(key) : type.description
+}
 </script>
 
 <template>
@@ -64,8 +73,8 @@ async function pickShared(s: SharedSummary) {
                 @click="pick(type)"
               >
                 <img v-if="type.preview_url" :src="type.preview_url" alt="" class="aspect-video w-full rounded-xs object-cover" loading="lazy">
-                <span class="flex items-center gap-2 font-medium"><UIcon :name="type.icon ?? 'i-lucide-square'" class="size-4 text-primary" aria-hidden="true" />{{ type.name }}</span>
-                <span class="text-small text-muted">{{ type.description }}</span>
+                <span class="flex items-center gap-2 font-medium"><UIcon :name="type.icon ?? 'i-lucide-square'" class="size-4 text-primary" aria-hidden="true" />{{ typeName(type) }}</span>
+                <span class="text-small text-muted">{{ typeDescription(type) }}</span>
                 <span v-if="reason(type)" class="text-caption text-warning">{{ reason(type) }}</span>
               </button>
             </li>

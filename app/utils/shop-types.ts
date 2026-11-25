@@ -67,6 +67,18 @@ export interface ShopCard {
   rating_avg: number | null
   rating_count: number
   is_featured: boolean
+  /** Its page in the request language (route registry, never built by the front). */
+  url: string
+  cover: MediaView | null
+  secondary_image: MediaView | null
+  /** Lowest active variant. */
+  price_minor: number
+  compare_at_price_minor: number | null
+  price_is_from: boolean
+  unit_price: { amount_minor: number, unit: 'kg' | 'l' | 'piece' } | null
+  max_quantity: number
+  badges: ('sale' | 'new' | 'seasonal' | 'sold_out')[]
+  rating: { average: number, count: number } | null
 }
 
 export interface ShopFacets {

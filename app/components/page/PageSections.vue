@@ -19,6 +19,7 @@ const registry: Record<string, Component> = {
   hero_slider: defineAsyncComponent(() => import('~/components/sections/HeroSlider.vue')),
   booking_search: defineAsyncComponent(() => import('~/components/sections/BookingSearch.vue')),
   product_carousel: defineAsyncComponent(() => import('~/components/sections/ProductCarousel.vue')),
+  shop_products: defineAsyncComponent(() => import('~/components/sections/ShopProducts.vue')),
   category_tiles: defineAsyncComponent(() => import('~/components/sections/CategoryTiles.vue')),
   image_text: defineAsyncComponent(() => import('~/components/sections/ImageText.vue')),
   features: defineAsyncComponent(() => import('~/components/sections/Features.vue')),

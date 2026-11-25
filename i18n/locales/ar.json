@@ -658,7 +658,8 @@
         "display": "العرض",
         "albums": "الألبومات",
         "preview": "المعاينة",
-        "viewer": "العارض"
+        "viewer": "العارض",
+        "card": "البطاقة"
       },
       "display": {
         "devices": "العرض على",
@@ -837,6 +838,14 @@
           "auto": "تلقائي",
           "manual": "اختيار يدوي"
         }
+      },
+      "typeNames": {
+        "shop_products": "منتجات المتجر",
+        "product_carousel": "الإقامات والأنشطة"
+      },
+      "typeDescriptions": {
+        "shop_products": "منتجات المتجر ببطاقتها (السعر، الإضافة إلى السلة)، مختارة يدويًا أو بقاعدة.",
+        "product_carousel": "إقامات وأنشطة وباقات قابلة للحجز، مختارة يدويًا أو بقاعدة."
       }
     },
     "account": {
@@ -1166,7 +1175,9 @@
         "lowest30": "الأدنى 30 يومًا",
         "lowest30Hint": "أدنى سعر خلال آخر 30 يومًا",
         "referenceMax": "أقصى سعر مشطوب {price}",
-        "originCountry": "المنشأ"
+        "originCountry": "المنشأ",
+        "usedIn": "مستعمل في:",
+        "draftOnly": "مسودة"
       },
       "promotions": {
         "active": "نشط",
@@ -2742,7 +2753,10 @@
     },
     "posts": {
       "read": "اقرأ"
-    }
+    },
+    "shopAll": "تصفح المتجر",
+    "shopEmpty": "لا يوجد منتج يطابق هذه المعايير.",
+    "shopProducts": "منتجات المتجر"
   },
   "shop": {
     "nav": "متجر المزرعة",
@@ -3133,6 +3147,17 @@
     "categoryNotify": {
       "title": "أخبرني",
       "text": "اترك بريدك الإلكتروني: سنراسلك عند وصول المنتجات."
+    },
+    "card": {
+      "soon": "قريبًا",
+      "notify": "أخبرني",
+      "options": "اختر الخيارات"
+    },
+    "badges": {
+      "sale": "تخفيض",
+      "new": "جديد",
+      "seasonal": "موسمي",
+      "sold_out": "نفد"
     }
   },
   "consent": {
