@@ -71,13 +71,29 @@ Every spec that needs a shop mode declares it: `shop`, `shop-section`, `categori
 purchase uses one unit of each Medjool variant, which the seed stocks plentifully. The database
 is never reset between specs.
 
+## Personal pages are never cached
+
+`nuxt.config.ts` caches public pages (`/**`: `swr: 300`). Personal and back-office routes opt out
+with **`cache: false`**. `swr: false` does not undo the inherited cache in Nitro: with it, `/trip`,
+`/checkout` and `/account` came back with the page cache's ETag, and `/account` with
+`s-maxage=300`. `/**` patterns do not match the bare path, so `/admin` and `/account` have
+their own rules. `privacy.spec.ts` checks it end to end: two visitors, each signed up with their
+own cart, open the cart, trip, checkout and account pages alternately. Each sees only their own
+email and cart line, and every one of these pages answers `no-store` without an ETag.
+
+Sign-in codes are limited to 20 requests per IP per 15 minutes (5 per address). A suite run
+uses about 8 and `--repeat-each=2` about 16. Repeating the sign-up specs in a tight loop hits the
+limit (the code email never arrives); `stack.sh prepare` empties the test's Redis index, which
+resets it.
+
 ## Serial project
 
 `playwright.fullstack.config.ts` keeps `workers: 1` for the whole suite: one database means specs
 that publish the same builder page or change shop settings would race. The specs that change the
-shop's global state also share one project, `shop-state` (`shop`, `shop-section`, `legal-entity`),
+shop's global state also share one project, `shop-state` (`shop`, `shop-section`, `legal-entity`,
+`privacy`),
 with `workers: 1` and `fullyParallel: false`, so they stay serial even if the global limit is
-raised.
+raised. `privacy` is there too: it opens the shop for its two visitors.
 
 The setup project reuses the staff session saved by the previous run while the API still accepts
 it, so several runs in a row do not hit the sign-in rate limit.

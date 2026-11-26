@@ -43,11 +43,11 @@ export default defineConfig({
     // Specs that change the shop's global state (mode, legal entity, compliance data): one at a
     // time, in file order, whatever `--workers` says. Each declares the mode it starts from and
     // the `shop` fixture restores what it changed (tests/fullstack/fixtures.ts, README.md).
-    // Farm shop, page-builder shop section, Admin › Settings › Legal entity (shop.*,
-    // content.publish, settings.write).
+    // Farm shop, page-builder shop section, Admin › Settings › Legal entity, two visitors'
+    // carts and accounts kept apart (shop.*, content.publish, settings.write).
     {
       name: 'shop-state',
-      testMatch: [/\/shop\.spec\.ts/, /\/shop-section\.spec\.ts/, /\/legal-entity\.spec\.ts/],
+      testMatch: [/\/shop\.spec\.ts/, /\/shop-section\.spec\.ts/, /\/legal-entity\.spec\.ts/, /\/privacy\.spec\.ts/],
       dependencies: ['setup'],
       workers: 1,
       fullyParallel: false,

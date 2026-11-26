@@ -78,39 +78,44 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    // Personal and back-office routes below say `cache: false`: in Nitro, `swr: false` does not
+    // undo the `cache` they inherit from `/**`, so a page rendered for one visitor could be
+    // served to the next (tests/fullstack/privacy.spec.ts checks two visitors never mix).
     // Public pages: cache rendered HTML at the server (stale-while-revalidate)
     '/**': { swr: 300 },
     // Admin back-office: client-rendered SPA, never cached or indexed
-    '/admin/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store' } },
+    // `/**` patterns do not match the bare path: the dashboard needs its own rule.
+    '/admin': { ssr: false, cache: false, headers: { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store' } },
+    '/admin/**': { ssr: false, cache: false, headers: { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store' } },
     // Style guide: client-rendered review tool, guarded by app/middleware/styleguide.ts
-    '/_styleguide': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
-    '/*/_styleguide': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
+    '/_styleguide': { ssr: false, cache: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
+    '/*/_styleguide': { ssr: false, cache: false, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
     // Booking funnel and guest pages: personal, never cached nor indexed.
-    '/trip': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
-    '/*/trip': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
-    '/checkout': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
-    '/*/checkout': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
-    '/booking/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
-    '/*/booking/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    '/trip': { cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/trip': { cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/checkout': { cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/checkout': { cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/booking/**': { ssr: false, cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    '/*/booking/**': { ssr: false, cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
     // Shop: cart, checkout and order pages are personal (never cached nor indexed).
-    '/boutique/cart': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
-    '/*/boutique/cart': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
-    '/*/shop/cart': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
-    '/boutique/checkout': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
-    '/*/boutique/checkout': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
-    '/*/shop/checkout': { swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
-    '/boutique/orders/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
-    '/*/boutique/orders/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
-    '/*/shop/orders/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    '/boutique/cart': { cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/boutique/cart': { cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/shop/cart': { cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/boutique/checkout': { cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/boutique/checkout': { cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/shop/checkout': { cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/boutique/orders/**': { ssr: false, cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    '/*/boutique/orders/**': { ssr: false, cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    '/*/shop/orders/**': { ssr: false, cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
     // Guest account: private, client-rendered (its API session must never rotate during SSR).
-    '/account/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
-    '/*/account/**': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
-    '/account': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
-    '/*/account': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
-    '/wishlists/**': { swr: false, headers: { 'X-Robots-Tag': 'noindex' } },
-    '/*/wishlists/**': { swr: false, headers: { 'X-Robots-Tag': 'noindex' } },
+    '/account/**': { ssr: false, cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    '/*/account/**': { ssr: false, cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' } },
+    '/account': { ssr: false, cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/*/account': { ssr: false, cache: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
+    '/wishlists/**': { cache: false, headers: { 'X-Robots-Tag': 'noindex' } },
+    '/*/wishlists/**': { cache: false, headers: { 'X-Robots-Tag': 'noindex' } },
     // Sitemaps: cached by the API in Redis and dropped on every SEO change (seo.changed); the
-    // `/**` cache here would keep serving renamed addresses for 5 minutes. (`swr: false` does
+    // `/**` cache here would keep serving renamed addresses for 5 minutes. (`cache: false` does
     // not undo the inherited `cache` in Nitro: `cache: false` does.)
     '/sitemap.xml': { cache: false },
     '/sitemaps/**': { cache: false },
