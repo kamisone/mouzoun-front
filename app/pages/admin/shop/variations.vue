@@ -190,7 +190,7 @@ const adjustment = (minor: number | null) => minor ? `${minor > 0 ? '+' : '−'}
                     <input v-model="v.swatch_color" type="color" class="size-8 cursor-pointer rounded border border-default bg-default" :aria-label="`${t('admin.shop.variations.color')} ${v.labels.fr}`">
                     <UInput v-model="v.swatch_color" size="xs" dir="ltr" placeholder="#rrggbb" class="w-24" />
                   </label>
-                  <MzMediaField v-model="v.swatch_media_id" :label="t('admin.shop.variations.image')" />
+                  <MzMediaField v-model="v.swatch_media_id" purpose="swatch" />
                 </template>
                 <USwitch v-model="v.is_active" size="sm" :label="t('admin.shop.variations.active')" />
                 <span v-if="v.product_count" class="text-caption text-muted">{{ t('admin.shop.variations.usedBy', { count: v.product_count }) }}</span>

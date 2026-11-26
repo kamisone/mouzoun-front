@@ -9,6 +9,8 @@ import { resolveNode } from '~/utils/page-builder'
  * that shows it changes).
  */
 const props = defineProps<{ type: SectionType, index: number, errors: FieldError[], appearanceSchema: SchemaNode }>()
+// Media fields name their purpose per section type (`media.purposes.builder.<type>.<field>`).
+provide('builder-section-type', computed(() => props.type.code))
 const block = defineModel<BlockDraft>({ required: true })
 const emit = defineEmits<{ editShared: [id: string] }>()
 const { t, locales } = useI18n()

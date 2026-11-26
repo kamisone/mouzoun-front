@@ -95,8 +95,6 @@ export async function completeFoodInformation(request: APIRequestContext, api: s
     const stale = Object.keys(tr).filter(l => /confirmer|compléter|to confirm/i.test(tr[l]?.producer_name ?? ''))
     if (!stale.length) continue
     for (const l of stale) tr[l]!.producer_name = 'Ferme de Mouzoun, Alnif (Maroc) — importateur : MOUZOUN TEST SAS, 1 rue de Test, 75001 Paris'
-    // The detail returns the VAT split shares as numbers, the update wants decimal strings.
-    for (const share of (d.shop.bundle_vat_split ?? []) as { share_percent: number | string }[]) share.share_percent = String(share.share_percent)
     await call('PUT', `/shop/products/${p.id}`, {
       status: d.status, is_featured: d.is_featured, sort_order: d.sort_order, cover_media_id: d.cover_media_id, gallery_media_ids: d.gallery_media_ids,
       category_ids: d.category_ids, related_ids: d.related_ids, tax_ids: d.tax_ids, tag_ids: d.tag_ids, translations: d.translations, shop: d.shop,

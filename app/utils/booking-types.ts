@@ -60,6 +60,8 @@ export interface ProductPage extends ProductCard {
   seo_description: string | null
   alternates: { locale: string, slug: string }[]
   gallery: MediaRef[]
+  /** Library video shown as the first gallery slide (cover as poster), loaded on tap. */
+  video?: MediaRef | null
   amenities: { code: string, group: string, icon: string | null, name: string, description: string | null }[]
   accommodation: null | {
     accommodation_kind: string

@@ -24,6 +24,14 @@ const props = withDefaults(defineProps<{
 const model = defineModel<any>()
 const { t } = useI18n()
 const n = computed(() => resolveNode(props.root, props.node))
+// A media field says what it is for: `media.purposes.builder.<section type>.<field>` when written.
+const { te } = useI18n()
+const sectionType = inject<Ref<string> | undefined>('builder-section-type', undefined)
+const mediaPurpose = computed(() => {
+  const key = props.path.split('/').pop() ?? ''
+  const purpose = `builder.${sectionType?.value ?? ''}.${key}`
+  return sectionType?.value && te(`media.purposes.${purpose}.title`) ? purpose : undefined
+})
 const widget = computed(() => {
   const w = n.value['x-widget']
   if (w) return w
@@ -165,8 +173,8 @@ function num(v: string | number) {
       </span>
       <UInput :model-value="model ?? ''" placeholder="i-lucide-coffee" class="flex-1" :aria-label="props.label" @update:model-value="v => (model = v || undefined)" />
     </div>
-    <MzMediaField v-else-if="widget === 'media'" v-model="model" :kinds="n['x-media-kinds']" :label="props.label" />
-    <MzMediaField v-else-if="widget === 'media_list'" v-model="model" multiple :kinds="n['x-media-kinds']" :label="props.label" />
+    <MzMediaField v-else-if="widget === 'media'" v-model="model" :kinds="n['x-media-kinds']" :purpose="mediaPurpose" :label="mediaPurpose ? undefined : props.label" />
+    <MzMediaField v-else-if="widget === 'media_list'" v-model="model" multiple :kinds="n['x-media-kinds']" :purpose="mediaPurpose" :label="mediaPurpose ? undefined : props.label" />
     <MzLinkField v-else-if="widget === 'link'" v-model="model" />
     <MzLinkField v-else-if="widget === 'cta'" v-model="model" with-style />
     <MzEntityPicker v-else-if="pickers[widget]" v-model="model" :kind="pickers[widget]!" :multiple="isArray" :label="props.label" :kinds="pickerKinds" :scope="pickerScope" />

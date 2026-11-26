@@ -196,7 +196,7 @@ const title = computed(() => form.value.translations.fr.name || t('admin.shop.ca
           </div>
           <div class="grid gap-4 sm:grid-cols-2">
             <div class="flex flex-col gap-3">
-              <MzMediaField v-model="form.cover_media_id" :label="t('admin.shop.categories.cover')" />
+              <MzMediaField v-model="form.cover_media_id" purpose="categoryCover" />
               <template v-if="form.cover_media_id">
                 <UFormField v-for="l in LOCALES" :key="l" :label="`${t('admin.shop.categories.alt')} (${l.toUpperCase()})`" :name="`alt-${l}`" :required="l === 'fr'" :error="l === 'fr' ? err('cover.alt') : undefined">
                   <UInput v-model="form.alt[l]" class="w-full" :dir="l === 'ar' ? 'rtl' : 'ltr'" />

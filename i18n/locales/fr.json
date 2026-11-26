@@ -158,7 +158,14 @@
     "uploadType": "Format non accepté : JPEG, PNG, WebP ou AVIF.",
     "uploadTooLarge": "Le fichier est trop volumineux.",
     "dateRange": "Dates",
-    "selectDates": "Choisir les dates"
+    "selectDates": "Choisir les dates",
+    "uploadMov": "Les vidéos .mov (iPhone, QuickTime) ne sont pas acceptées. Exportez la vidéo en MP4 (H.264) depuis le téléphone ou le logiciel de montage, puis réessayez.",
+    "uploadTypeOf": "Format non accepté. Formats acceptés : {formats}.",
+    "uploadTooLargeMax": "Le fichier est trop volumineux ({max} Mo maximum).",
+    "media": {
+      "imageFormats": "JPEG, PNG, WebP ou AVIF, {max} Mo max.",
+      "videoFormats": "MP4 (H.264) ou WebM, {max} Mo max."
+    }
   },
   "validation": {
     "required": "Ce champ est obligatoire.",
@@ -2099,7 +2106,656 @@
         "https": "Adresse en https:// attendue."
       }
     },
-    "settingsAccount": "Mon compte"
+    "settingsAccount": "Mon compte",
+    "catalog": {
+      "title": "Catalogue",
+      "pricingTitle": "Tarifs",
+      "nav": {
+        "stays": "Hébergements",
+        "activities": "Activités",
+        "packages": "Formules",
+        "extras": "Extras",
+        "resources": "Ressources",
+        "seasons": "Saisons",
+        "ratePlans": "Plans tarifaires",
+        "guestCategories": "Catégories de voyageurs",
+        "policies": "Conditions d'annulation"
+      },
+      "new": {
+        "stays": "Nouvel hébergement",
+        "activities": "Nouvelle activité",
+        "packages": "Nouvelle formule",
+        "extras": "Nouvel extra"
+      },
+      "tabs": {
+        "general": "Général",
+        "details": "Détails",
+        "media": "Médias",
+        "units": "Unités",
+        "calendar": "Calendrier",
+        "content": "Contenu",
+        "programme": "Programme",
+        "schedules": "Horaires",
+        "departures": "Départs",
+        "resources": "Ressources",
+        "pricing": "Tarifs",
+        "seo": "SEO",
+        "related": "Liens"
+      },
+      "statuses": {
+        "draft": "Brouillon",
+        "published": "Publié",
+        "archived": "Archivé"
+      },
+      "statusDone": {
+        "publish": "Publié",
+        "unpublish": "Repassé en brouillon",
+        "archive": "Archivé"
+      },
+      "kinds": {
+        "accommodation": "Hébergement",
+        "activity": "Activité",
+        "extra": "Extra",
+        "package": "Formule"
+      },
+      "bookingMode": "Réservation",
+      "bookingModes": {
+        "instant": "Réservation instantanée",
+        "on_request": "Sur demande",
+        "not_bookable": "Non réservable"
+      },
+      "bookingModeHints": {
+        "instant": "Le client paie ou réserve et c'est confirmé tout de suite.",
+        "on_request": "Le client envoie une demande ; vous l'acceptez ou la refusez.",
+        "not_bookable": "Visible sur le site, sans réservation en ligne."
+      },
+      "onRequestForced": "Une activité « sur demande » ne peut être réservée que sur demande.",
+      "organisation": "Organisation",
+      "status": "Statut",
+      "featured": "Mis en avant",
+      "place": "Lieu",
+      "categories": "Catégories",
+      "primaryFirst": "La première catégorie est la catégorie principale.",
+      "tags": "Étiquettes",
+      "amenities": "Équipements",
+      "sku": "Référence interne",
+      "publish": "Publier",
+      "unpublish": "Dépublier",
+      "archive": "Archiver",
+      "duplicate": "Dupliquer",
+      "duplicated": "Copie créée en brouillon",
+      "view": "Voir la page",
+      "publishedAt": "Publié le {date}",
+      "saved": "Enregistré",
+      "created": "Créé",
+      "deleted": "Supprimé",
+      "unsaved": "Modifications non enregistrées",
+      "discard": "Annuler les modifications",
+      "saveBar": "Enregistrement",
+      "leaveConfirm": "Des modifications ne sont pas enregistrées. Quitter quand même ?",
+      "saveFirst": "Enregistrez vos modifications d'abord.",
+      "stale": "Quelqu'un a enregistré ce produit après vous. Rechargez pour voir sa version (vos modifications non enregistrées seront perdues).",
+      "reload": "Recharger",
+      "missing": "manquant",
+      "error": "erreur",
+      "moveDown": "Descendre",
+      "addLine": "Ajouter une ligne",
+      "active": "Actif",
+      "daysOfWeek": "Jours de la semaine",
+      "weekdays": {
+        "0": "Lun",
+        "1": "Mar",
+        "2": "Mer",
+        "3": "Jeu",
+        "4": "Ven",
+        "5": "Sam",
+        "6": "Dim"
+      },
+      "usedIn": "Utilisé dans {n} formule(s) ou extra(s) obligatoire(s) publiés",
+      "bookedNoDelete": "Ce produit a des réservations : il ne peut qu'être archivé (les réservations restent valables).",
+      "deleteTitle": "Supprimer ce produit ?",
+      "deleteHint": "Le produit disparaît du catalogue ; son adresse redirige vers la liste. Il n'a jamais été réservé.",
+      "typeName": "Tapez « {name} » pour confirmer",
+      "generalIntro": "Le français est obligatoire. « Générer » traduit les textes français vers l'anglais et l'arabe ; relisez-les.",
+      "fields": {
+        "name": "Nom",
+        "subtitle": "Sous-titre",
+        "shortDescription": "Description courte",
+        "description": "Description",
+        "highlights": "Points forts",
+        "included": "Inclus",
+        "notIncluded": "Non inclus",
+        "whatToBring": "À apporter",
+        "requirements": "Conditions de participation",
+        "importantInfo": "Informations importantes",
+        "slug": "Adresse (slug)",
+        "seoTitle": "Titre SEO",
+        "seoDescription": "Description SEO",
+        "ogImage": "Image de partage",
+        "cover": "Image principale",
+        "video": "Vidéo",
+        "gallery": "Galerie"
+      },
+      "slugFromName": "créée à partir du nom",
+      "slugRedirect": "L'ancienne adresse redirigera vers la nouvelle.",
+      "googlePreview": "Aperçu Google",
+      "alt": "Texte alternatif",
+      "altTitle": "Textes alternatifs des images",
+      "altRequired": "Obligatoire",
+      "altSaved": "Texte alternatif enregistré",
+      "saveAlt": "Enregistrer",
+      "altAfterSave": "Les textes alternatifs se saisissent après le premier enregistrement.",
+      "readOnlyPricing": "Lecture seule : la modification des tarifs demande la permission « tarifs ».",
+      "pricingSettings": "Réglages partagés :",
+      "stay": {
+        "kind": "Type d'hébergement",
+        "kinds": {
+          "tent_pitch": "Emplacement tente",
+          "campervan_pitch": "Emplacement van",
+          "caravan_pitch": "Emplacement caravane",
+          "furnished_tent": "Tente meublée",
+          "nomad_tent": "Khaïma nomade",
+          "bivouac": "Bivouac",
+          "bungalow": "Bungalow",
+          "room": "Chambre",
+          "dormitory_bed": "Lit en dortoir",
+          "other": "Autre"
+        },
+        "maxGuests": "Voyageurs maximum",
+        "maxAdults": "Adultes maximum",
+        "maxChildren": "Enfants maximum",
+        "standardOccupancy": "Occupation standard",
+        "standardOccupancyHint": "Prix de base pour {n} personne(s) ; au-delà, le supplément par personne s'applique.",
+        "minNights": "Nuits minimum",
+        "maxNights": "Nuits maximum",
+        "surface": "Surface (m²)",
+        "checkInFrom": "Arrivée à partir de",
+        "checkInUntil": "Arrivée jusqu'à",
+        "checkOutUntil": "Départ avant",
+        "beds": "Couchages",
+        "bedType": "Type de lit",
+        "bedCount": "Nombre",
+        "addBed": "Ajouter un couchage",
+        "bedTypes": {
+          "single": "Lit simple",
+          "double": "Lit double",
+          "bunk": "Lits superposés",
+          "sofa_bed": "Canapé-lit",
+          "mattress": "Matelas"
+        }
+      },
+      "activity": {
+        "location": "Lieu",
+        "locations": {
+          "on_site": "Sur place",
+          "off_site": "Hors du camp"
+        },
+        "scheduling": "Programmation",
+        "modes": {
+          "fixed_slots": "Départs fixes",
+          "on_request": "Sur demande",
+          "anytime": "À tout moment"
+        },
+        "modeHints": {
+          "fixed_slots": "Des départs à heures fixes, générés à partir des horaires.",
+          "on_request": "Le client propose un jour ; vous confirmez.",
+          "anytime": "Le client choisit son jour, sans horaire ni limite de départs."
+        },
+        "duration": "Durée (minutes)",
+        "difficulty": "Difficulté",
+        "difficulties": {
+          "easy": "Facile",
+          "moderate": "Modérée",
+          "challenging": "Difficile",
+          "extreme": "Extrême"
+        },
+        "minParticipants": "Participants minimum",
+        "maxParticipants": "Participants maximum",
+        "minAge": "Âge minimum",
+        "cutoff": "Délai de réservation (heures)",
+        "cutoffHint": "Plus de réservation en ligne moins de N heures avant le départ.",
+        "languages": "Langues du guide",
+        "languagesHint": "fr, en, ar ou d'autres codes de langue.",
+        "guided": "Guidé",
+        "pickup": "Prise en charge possible",
+        "standalone": "Réservable sans séjour",
+        "meetingPlace": "Lieu de rendez-vous"
+      },
+      "package": {
+        "days": "Durée (jours)",
+        "nights": "Nuits",
+        "pricingMode": "Calcul du prix",
+        "modes": {
+          "fixed": "Prix fixe",
+          "sum_of_items": "Somme des éléments",
+          "sum_minus_discount": "Somme moins remise"
+        },
+        "modeHints": {
+          "fixed": "La formule a ses propres règles de prix (onglet Tarifs).",
+          "sum_of_items": "Le prix est la somme des prix des éléments.",
+          "sum_minus_discount": "La somme des éléments moins un pourcentage."
+        },
+        "discount": "Remise (%)",
+        "computed": "Prix calculé à partir des éléments",
+        "computedHint": "Aucune règle de prix sur la formule elle-même : utilisez le simulateur pour voir le prix élément par élément."
+      },
+      "extra": {
+        "appliesTo": "S'applique à",
+        "targets": {
+          "booking": "La réservation",
+          "accommodation": "Un hébergement",
+          "activity": "Une activité",
+          "any": "Tout"
+        },
+        "maxQuantity": "Quantité maximum",
+        "stock": "Stock",
+        "stockHint": "Vide = illimité.",
+        "requiresDate": "Demande une date"
+      },
+      "units": {
+        "mode": "Gestion des places",
+        "modeUnit": "Unités numérotées",
+        "modeUnitHint": "Chaque emplacement ou tente a son code (P-01, K-03...).",
+        "modePool": "Places interchangeables",
+        "modePoolHint": "Un nombre de places, sans numéro.",
+        "poolCapacity": "Nombre de places",
+        "poolCapacityHint": "Appliqué à toutes les nuits à venir (jamais en dessous des réservations).",
+        "code": "Code",
+        "name": "Nom",
+        "zone": "Zone",
+        "status": "Statut",
+        "coordinates": "Coordonnées",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "notes": "Notes",
+        "statuses": {
+          "active": "Actif",
+          "maintenance": "Maintenance",
+          "retired": "Retiré"
+        },
+        "none": "Aucune unité.",
+        "add": "Ajouter",
+        "prefix": "Préfixe",
+        "from": "De",
+        "to": "À",
+        "bulk": "Créer {first} à {last}"
+      },
+      "pricingUnits": {
+        "per_unit_per_night": "Par unité et par nuit",
+        "per_person_per_night": "Par personne et par nuit",
+        "per_person": "Par personne",
+        "per_unit": "Par unité",
+        "per_booking": "Par réservation",
+        "per_hour": "Par heure",
+        "per_day": "Par jour"
+      },
+      "calendar": {
+        "previous": "Mois précédent",
+        "next": "Mois suivant",
+        "cellLabel": "{available} libres sur {capacity}",
+        "noRow": "pas encore ouvert",
+        "reservedShort": "{n} rés.",
+        "closedShort": "Fermé",
+        "bulk": "Modifier une période",
+        "pick": "Cliquez une première nuit puis une dernière pour choisir une période.",
+        "range": "Du {from} au {to} : {n} nuit(s)",
+        "onlyDays": "Seulement ces jours",
+        "stopSell": "Arrêt des ventes",
+        "cta": "Arrivée impossible (CTA)",
+        "ctd": "Départ impossible (CTD)",
+        "minNights": "Séjour minimum",
+        "clear": "Retirer",
+        "capacity": "Capacité",
+        "capacityHint": "Jamais en dessous des réservations.",
+        "apply": "Appliquer",
+        "applied": "{n} nuit(s) modifiée(s)",
+        "keep": "Inchangé",
+        "on": "Oui",
+        "off": "Non"
+      },
+      "closures": {
+        "title": "Fermetures",
+        "none": "Aucune fermeture.",
+        "reason": "Motif",
+        "scope": "Concerne",
+        "wholeStay": "Tout l'hébergement",
+        "unit": "Unité",
+        "public": "Annoncée",
+        "publicNotice": "Afficher sur le site",
+        "add": "Fermer cette période"
+      },
+      "schedules": {
+        "start": "Heure",
+        "capacity": "Places",
+        "from": "Valable du",
+        "to": "au",
+        "add": "Ajouter un horaire",
+        "save": "Enregistrer les horaires",
+        "saved": "Horaires enregistrés : {created} départ(s) créé(s), {deleted} supprimé(s)",
+        "preview": "Les 14 prochains départs",
+        "noPreview": "Aucun départ à venir avec ces horaires.",
+        "invalid": "Horaires incomplets.",
+        "places": "{n} places",
+        "overResources": "Plus que les ressources ne permettent ({max}).",
+        "keptBooked": "{n} départ(s) avec des réservations n'ont pas été modifiés : à traiter.",
+        "reserved": "{n} réservé(s)"
+      },
+      "departures": {
+        "nextDays": "{n} prochains jours",
+        "window": "Période",
+        "when": "Départ",
+        "capacity": "Places",
+        "booked": "Réservés",
+        "left": "{n} libres",
+        "status": "Statut",
+        "statuses": {
+          "open": "Ouvert",
+          "closed": "Fermé",
+          "full": "Complet",
+          "cancelled": "Annulé"
+        },
+        "guide": "Guide",
+        "language": "Langue",
+        "oneOff": "ponctuel",
+        "reopen": "Rouvrir",
+        "close": "Fermer",
+        "cancel": "Annuler le départ",
+        "none": "Aucun départ sur cette période.",
+        "addOneOff": "Ajouter un départ ponctuel"
+      },
+      "resources": {
+        "units": "Nombre",
+        "kind": "Type",
+        "per": "pour",
+        "participants": "Participants",
+        "participantsWord": "participant(s)",
+        "available": "{n} actif(s), soit {max} participants maximum",
+        "max": "Maximum par départ : {n} participants",
+        "over": "Horaires au-dessus de ce maximum : {list}",
+        "add": "Ajouter un besoin",
+        "manage": "Gérer les ressources",
+        "kinds": {
+          "vehicle": "Véhicule (quad…)",
+          "equipment": "Équipement",
+          "animal": "Animal",
+          "guide": "Guide",
+          "room": "Salle",
+          "other": "Autre"
+        },
+        "seats": "Places",
+        "user": "Compte du guide",
+        "intro": "Quads, guides, dromadaires... Les activités les comptent pour limiter les départs."
+      },
+      "itinerary": {
+        "day": "Jour",
+        "title": "Titre",
+        "description": "Description",
+        "duration": "Durée (min)",
+        "place": "Lieu",
+        "image": "Image",
+        "add": "Ajouter une étape"
+      },
+      "items": {
+        "add": "Ajouter un élément",
+        "nights": "Nuits",
+        "quantity": "Quantité",
+        "day": "Jour",
+        "optional": "Optionnel",
+        "none": "Aucun élément.",
+        "samplePrice": "{price} le {date} (1 adulte)"
+      },
+      "check": {
+        "title": "Vérifier une date",
+        "start": "Début",
+        "adults": "Adultes",
+        "children": "Enfants",
+        "run": "Vérifier",
+        "available": "Réservable : {total}",
+        "blocked": "Pas réservable à cette date"
+      },
+      "prices": {
+        "none": "Aucune règle de prix.",
+        "ratePlan": "Plan tarifaire",
+        "allPlans": "Tous les plans",
+        "season": "Saison",
+        "base": "Prix de base",
+        "guestCategory": "Voyageur",
+        "anyGuest": "Tous",
+        "unit": "Unité",
+        "amount": "Montant (€)",
+        "extraGuest": "Supplément par personne",
+        "extraGuestHint": "au-delà de l'occupation standard",
+        "minQuantity": "Quantité min.",
+        "maxQuantity": "Quantité max.",
+        "minNights": "Nuits min.",
+        "validFrom": "Valable du",
+        "validTo": "au (exclu)",
+        "priority": "Priorité",
+        "priorityHint": "La plus haute l'emporte à égalité.",
+        "ambiguous": "Deux règles s'appliquent au même cas ; la priorité décide.",
+        "duplicate": "Dupliquer la règle",
+        "add": "Ajouter une règle"
+      },
+      "taxes": {
+        "title": "Taxes",
+        "suggest": "Suggestion : {name}.",
+        "add": "Ajouter"
+      },
+      "simulator": {
+        "title": "Simulateur de prix",
+        "departure": "Départ",
+        "byDate": "Par date",
+        "arrival": "Arrivée",
+        "date": "Date",
+        "departureDate": "Départ (date)",
+        "quantity": "Quantité",
+        "defaultPlan": "Plan par défaut",
+        "promo": "Code promo",
+        "run": "Calculer",
+        "inPackage": "dans la formule",
+        "line": "Ligne",
+        "rule": "Règle",
+        "amount": "Montant",
+        "included": "incluse",
+        "subtotal": "Sous-total",
+        "discount": "Remise",
+        "taxes": "Taxes",
+        "total": "Total",
+        "deposit": "Acompte",
+        "cancellation": "Annulation",
+        "refundUntil": "{percent} % remboursé jusqu'au {date}",
+        "refundAfter": "{percent} % remboursé ensuite"
+      },
+      "related": {
+        "products": "Produits liés",
+        "extras": "Extras proposés",
+        "mandatory": "Obligatoire",
+        "blocks": "Les blocs du constructeur de pages s'ajoutent depuis Contenu (sections « produits »)."
+      },
+      "checklist": {
+        "title": "Avant de publier",
+        "items": {
+          "fr_name": "Nom en français",
+          "fr_slug": "Adresse en français",
+          "fr_short_description": "Description courte en français",
+          "cover": "Image principale",
+          "cover_alt": "Texte alternatif de l'image principale",
+          "price": "Au moins une règle de prix active",
+          "cancellation_policy": "Conditions d'annulation (via un plan tarifaire)",
+          "inventory": "Au moins une unité active ou des places",
+          "departures": "Un horaire actif avec des départs à venir",
+          "package_items": "Au moins un élément",
+          "package_items_published": "Tous les éléments obligatoires publiés"
+        },
+        "warnings": {
+          "en_missing": "Anglais manquant",
+          "ar_missing": "Arabe manquant",
+          "gallery": "Pas de galerie",
+          "gallery_alt": "Images de galerie sans texte alternatif",
+          "seo_description": "Pas de description SEO",
+          "category": "Pas de catégorie"
+        }
+      },
+      "list": {
+        "search": "Rechercher",
+        "anyStatus": "Tous les statuts",
+        "anyMode": "Tous les modes",
+        "sort": "Tri",
+        "sorts": {
+          "manual": "Ordre du site",
+          "name": "Nom",
+          "updated": "Dernière modification"
+        },
+        "selected": "{n} sélectionné(s)",
+        "bulkDone": "{ok} fait(s), {failed} refusé(s)",
+        "dragHint": "Glissez les lignes (ou utilisez les flèches) pour l'ordre des listes du site.",
+        "select": "Sélection",
+        "selectRow": "Sélectionner {name}",
+        "from": "À partir de",
+        "numbers": "En bref",
+        "updated": "Modifié",
+        "order": "Ordre",
+        "orderSaved": "Ordre enregistré",
+        "empty": "Rien pour l'instant.",
+        "missingLocale": "{locale} manquant",
+        "units": "{n} unité(s)",
+        "pool": "{n} places",
+        "guests": "{n} pers. max",
+        "next": "prochain départ {date}",
+        "seatsWeek": "{n} places cette semaine",
+        "nights": "{n} nuit(s)",
+        "items": "{n} élément(s)",
+        "stock": "stock {n}",
+        "unlimited": "illimité",
+        "intro": {
+          "stays": "Emplacements, tentes et khaïmas : contenu, unités, calendrier et prix.",
+          "activities": "Activités, horaires et départs.",
+          "packages": "Formules composées d'un hébergement, d'activités et d'extras.",
+          "extras": "Repas, bois, transferts... proposés avec les réservations."
+        }
+      },
+      "settings": {
+        "add": "Ajouter",
+        "edit": "Modifier",
+        "view": "Voir",
+        "none": "Rien pour l'instant.",
+        "code": "Code",
+        "name": "Nom",
+        "color": "Couleur",
+        "priority": "Priorité",
+        "priorityHint": "La saison de plus haute priorité l'emporte quand deux périodes se chevauchent.",
+        "periods": "Périodes",
+        "periodsHint": "Date de fin exclue.",
+        "addPeriod": "Ajouter une période",
+        "from": "Du",
+        "to": "Au",
+        "seasonsIntro": "Les saisons colorent le calendrier et permettent des prix différents.",
+        "yearView": "Année {year}",
+        "usedBy": "{n} règle(s) de prix",
+        "usedByPlans": "{n} plan(s) tarifaire(s)",
+        "policy": "Conditions d'annulation",
+        "mealPlan": "Repas",
+        "meals": {
+          "none": "Aucun",
+          "breakfast": "Petit-déjeuner",
+          "half_board": "Demi-pension",
+          "full_board": "Pension complète"
+        },
+        "deposit": "Acompte",
+        "deposits": {
+          "none": "Aucun",
+          "percent": "Pourcentage",
+          "fixed": "Montant fixe",
+          "full": "Totalité"
+        },
+        "depositPercent": "Acompte (%)",
+        "depositAmount": "Acompte (€)",
+        "payment": "Paiement",
+        "payments": {
+          "pay_on_site": "Sur place",
+          "optional_online": "En ligne ou sur place",
+          "online_required": "En ligne obligatoire"
+        },
+        "public": "Proposé sur le site",
+        "order": "Ordre",
+        "ratePlansIntro": "Chaque plan fixe l'annulation, l'acompte et le paiement.",
+        "minAge": "Âge minimum",
+        "maxAge": "Âge maximum",
+        "ages": "Âges",
+        "countsCapacity": "Compte dans la capacité",
+        "guestCategoriesIntro": "Tranches d'âge tarifées à part (enfant à demi-tarif...).",
+        "rules": "Règles",
+        "rulesHint": "Du plus tôt au plus tard ; la dernière ligne (0 heure) vaut jusqu'à l'arrivée.",
+        "moreThan": "Plus de",
+        "hours": "Heures",
+        "hoursBefore": "heures avant :",
+        "refund": "Remboursement",
+        "percentRefunded": "% remboursé",
+        "addRule": "Ajouter une règle",
+        "default": "Par défaut",
+        "ruleText": "> {hours} h : {percent} %",
+        "policiesIntro": "Remboursement selon le délai avant l'arrivée.",
+        "uses": {
+          "price_rules": "règle(s) de prix",
+          "bookings": "réservation(s)",
+          "rate_plans": "plan(s) tarifaire(s)"
+        }
+      },
+      "errors": {
+        "generic": "Une erreur est survenue.",
+        "invalid_fields": "Certains champs sont à corriger.",
+        "required": "Obligatoire",
+        "slug_taken": "Adresse déjà utilisée",
+        "too_long": "Trop long",
+        "taken": "Déjà utilisé",
+        "invalid": "Valeur invalide",
+        "min": "Trop petit",
+        "range": "Hors limites",
+        "format": "Format invalide",
+        "above_max_guests": "Au-dessus du nombre de voyageurs maximum",
+        "below_min_nights": "En dessous des nuits minimum",
+        "below_min_participants": "En dessous du minimum",
+        "above_days": "Plus de nuits que de jours",
+        "before_from": "Avant la date de début",
+        "before_check_in_from": "Avant l'heure d'arrivée",
+        "below_min": "En dessous du minimum",
+        "use_inventory_tab": "Changez le mode dans l'onglet Unités.",
+        "wrong_scope": "Catégorie d'un autre type",
+        "not_in_categories": "Pas dans les catégories",
+        "self": "Le produit lui-même",
+        "not_bookable_kind": "Seuls les hébergements, activités et extras",
+        "unknown_extra": "Extra inconnu",
+        "unknown_locale": "Langue inconnue",
+        "publish_blocked": "Des éléments obligatoires manquent pour publier.",
+        "stale": "Version obsolète",
+        "in_use": "Utilisé ailleurs : retirez-le d'abord.",
+        "in_use_count": "Encore utilisé par {n} {what}.",
+        "booked": "Ce produit a des réservations : archivez-le.",
+        "confirm_name": "Tapez le nom exact pour supprimer.",
+        "below_reserved": "Des nuits ou départs passeraient sous le nombre de réservations.",
+        "unit_booked": "Cette unité est attribuée à des réservations à venir.",
+        "mode_locked": "Impossible de changer de mode avec des réservations à venir.",
+        "unit_has_history": "Unité déjà réservée : passez-la en « Retiré ».",
+        "slot_booked": "Ce départ a des réservations : annulez-les depuis l'écran des réservations.",
+        "package_in_package": "Pas de formule dans une formule",
+        "one_stay_only": "Un seul hébergement par formule",
+        "nights_mismatch": "Le nombre de nuits doit être celui de la formule",
+        "required_with_stay": "Indiquez le nombre de nuits de la formule.",
+        "not_allowed_for_kind": "Unité de prix non autorisée ici",
+        "stays_only": "Hébergements uniquement",
+        "unit_mode": "En mode unités, la capacité suit les unités.",
+        "past": "Date passée",
+        "too_many": "200 au maximum",
+        "deleted": "Supprimé",
+        "unknown": "Inconnu",
+        "duplicate": "En double",
+        "overlap": "Chevauche une autre période",
+        "unknown_reference": "Saison, plan ou catégorie inconnu",
+        "unknown_category": "Catégorie inconnue",
+        "not_allowed": "Non autorisé",
+        "not_found": "Introuvable"
+      }
+    }
   },
   "error": {
     "notFound": "Page introuvable",
@@ -2624,6 +3280,10 @@
       "refund_too_large": "Le montant dépasse ce qui peut être remboursé.",
       "internal_error": "Une erreur est survenue de notre côté.",
       "validation_failed": "Vérifiez le formulaire."
+    },
+    "video": {
+      "play": "Lire la vidéo",
+      "title": "{name} en vidéo"
     }
   },
   "legal": {
@@ -3467,5 +4127,166 @@
     "policy": "En savoir plus",
     "reject": "Tout refuser",
     "accept": "Tout accepter"
+  },
+  "media": {
+    "purposes": {
+      "generic": {
+        "image": {
+          "title": "Image",
+          "hint": "",
+          "button": "Choisir l'image"
+        },
+        "images": {
+          "title": "Images",
+          "hint": "",
+          "button": "Ajouter des images"
+        },
+        "video": {
+          "title": "Vidéo",
+          "hint": "",
+          "button": "Choisir la vidéo"
+        }
+      },
+      "cover": {
+        "title": "Image de couverture",
+        "hint": "Affichée sur les cartes (accueil, listes) et comme affiche de la vidéo. Paysage, 1600 px de large minimum, texte alternatif obligatoire.",
+        "button": "Choisir l'image de couverture"
+      },
+      "video": {
+        "title": "Vidéo de présentation",
+        "hint": "Affichée en première diapositive de la galerie sur la page publique. Optionnelle, 1080p recommandé.",
+        "button": "Choisir la vidéo"
+      },
+      "gallery": {
+        "title": "Galerie photos",
+        "hint": "Affichée dans la galerie de la page publique, dans l'ordre choisi. Plusieurs images, texte alternatif recommandé.",
+        "button": "Ajouter des photos"
+      },
+      "itineraryImage": {
+        "title": "Image de l'étape",
+        "hint": "Affichée avec cette étape du programme. Paysage recommandé.",
+        "button": "Choisir l'image de l'étape"
+      },
+      "ogImage": {
+        "title": "Image de partage",
+        "hint": "Affichée quand la page est partagée (WhatsApp, Facebook…). Sinon, l'image de couverture. 1200 × 630 px recommandé.",
+        "button": "Choisir l'image de partage"
+      },
+      "shopCover": {
+        "title": "Image principale du produit",
+        "hint": "Affichée sur les cartes de la boutique et en tête de la fiche produit. Carrée ou paysage, 1600 px minimum, texte alternatif obligatoire.",
+        "button": "Choisir l'image principale"
+      },
+      "shopGallery": {
+        "title": "Galerie du produit",
+        "hint": "Affichée sur la fiche produit, dans l'ordre choisi. Plusieurs images, texte alternatif recommandé.",
+        "button": "Ajouter des photos"
+      },
+      "swatch": {
+        "title": "Image de la variante",
+        "hint": "Affichée quand le client choisit cette variante (et comme pastille). Optionnelle.",
+        "button": "Choisir l'image de la variante"
+      },
+      "categoryCover": {
+        "title": "Image de la catégorie",
+        "hint": "Affichée en tête de la page de la catégorie et sur ses tuiles. Paysage, 1600 px minimum.",
+        "button": "Choisir l'image de la catégorie"
+      },
+      "builder": {
+        "hero": {
+          "media_id": {
+            "title": "Image ou vidéo de fond",
+            "hint": "Remplit le haut de la page, sous le titre. Paysage, 1920 px de large recommandé ; une vidéo est lue en boucle, sans le son.",
+            "button": "Choisir l'image ou la vidéo"
+          },
+          "mobile_media_id": {
+            "title": "Image pour mobile",
+            "hint": "Remplace l'image de fond sur téléphone. Portrait recommandé. Optionnelle.",
+            "button": "Choisir l'image pour mobile"
+          },
+          "poster_media_id": {
+            "title": "Image d'attente de la vidéo",
+            "hint": "Affichée avant la lecture de la vidéo de fond (et si elle ne se lit pas).",
+            "button": "Choisir l'image d'attente"
+          }
+        },
+        "video": {
+          "media_id": {
+            "title": "Fichier vidéo",
+            "hint": "La vidéo de la section, lue quand le visiteur appuie sur lecture.",
+            "button": "Choisir la vidéo"
+          },
+          "poster_media_id": {
+            "title": "Image d'attente",
+            "hint": "Affichée avant la lecture de la vidéo. Paysage 16:9 recommandé.",
+            "button": "Choisir l'image d'attente"
+          }
+        },
+        "hero_slider": {
+          "media_id": {
+            "title": "Image de la diapositive",
+            "hint": "Remplit la diapositive derrière le texte. Paysage, 1920 px de large recommandé.",
+            "button": "Choisir l'image de la diapositive"
+          },
+          "mobile_media_id": {
+            "title": "Image pour mobile",
+            "hint": "Remplace l'image de la diapositive sur téléphone. Portrait recommandé. Optionnelle.",
+            "button": "Choisir l'image pour mobile"
+          }
+        },
+        "image_text": {
+          "media_id": {
+            "title": "Image de la section",
+            "hint": "Affichée à côté du texte. Texte alternatif recommandé.",
+            "button": "Choisir l'image"
+          }
+        },
+        "cta_band": {
+          "background_media_id": {
+            "title": "Image de fond",
+            "hint": "Derrière le texte et le bouton du bandeau. Paysage, assombrie pour la lisibilité.",
+            "button": "Choisir l'image de fond"
+          }
+        },
+        "features": {
+          "media_id": {
+            "title": "Photo de l'élément",
+            "hint": "Remplace l'icône de cet élément. Carrée recommandée. Optionnelle.",
+            "button": "Choisir la photo"
+          }
+        },
+        "logos": {
+          "media_id": {
+            "title": "Logo",
+            "hint": "Affiché dans la bande des logos. PNG ou WebP sur fond transparent recommandé.",
+            "button": "Choisir le logo"
+          }
+        },
+        "timeline": {
+          "media_id": {
+            "title": "Photo de l'étape",
+            "hint": "Affichée avec cette étape de la frise. Optionnelle.",
+            "button": "Choisir la photo"
+          }
+        },
+        "gallery": {
+          "preview_media_ids": {
+            "title": "Photos de l'aperçu",
+            "hint": "Affichées dans l'aperçu de la galerie sur la page, dans l'ordre choisi.",
+            "button": "Ajouter des photos"
+          },
+          "cover_media_id": {
+            "title": "Couverture de l'album",
+            "hint": "Affichée sur la carte de l'album. Paysage recommandé.",
+            "button": "Choisir la couverture"
+          },
+          "album": {
+            "title": "Photos et vidéos de l'album",
+            "hint": "Affichées dans l'album, dans l'ordre choisi. Texte alternatif recommandé.",
+            "button": "Ajouter des photos ou vidéos"
+          }
+        }
+      }
+    }
   }
 }

@@ -268,8 +268,8 @@ v-for="u in usages.usages" :key="u.block_id" :to="u.page_id ? `/admin/pages/${u.
         </template>
         <template #media>
           <div class="flex max-w-3xl flex-col gap-4 pt-4">
-            <MzMediaField v-model="form.cover_media_id" :label="t('admin.shop.products.cover')" />
-            <MzMediaField v-model="form.gallery_media_ids" multiple :label="t('admin.shop.products.gallery')" />
+            <MzMediaField v-model="form.cover_media_id" purpose="shopCover" />
+            <MzMediaField v-model="form.gallery_media_ids" multiple purpose="shopGallery" />
           </div>
         </template>
         <template #variants>
@@ -306,7 +306,7 @@ v-for="u in usages.usages" :key="u.block_id" :to="u.page_id ? `/admin/pages/${u.
                     </UButton>
                   </div>
                   <div v-if="o.display_type === 'swatch'" class="flex flex-wrap gap-3">
-                    <MzMediaField v-for="v in o.values" :key="v.code" v-model="v.swatch_media_id" :label="`${t('admin.shop.variations.productImage')} · ${v.labels.fr || v.code}`" />
+                    <MzMediaField v-for="v in o.values" :key="v.code" v-model="v.swatch_media_id" purpose="swatch" :label="`${t('admin.shop.variations.productImage')} · ${v.labels.fr || v.code}`" />
                   </div>
                 </template>
                 <!-- Product-specific option. -->
@@ -323,7 +323,7 @@ v-for="u in usages.usages" :key="u.block_id" :to="u.page_id ? `/admin/pages/${u.
                     <UInputNumber v-model="v.adjustment" :step="0.5" size="sm" class="w-28" :placeholder="t('admin.shop.variations.adjustment')" :aria-label="t('admin.shop.variations.adjustment')" />
                     <template v-if="o.display_type === 'swatch'">
                       <input v-model="v.swatch_color" type="color" class="size-8 cursor-pointer rounded border border-default bg-default" :aria-label="`${t('admin.shop.variations.color')} ${v.labels.fr}`">
-                      <MzMediaField v-model="v.swatch_media_id" :label="t('admin.shop.variations.image')" />
+                      <MzMediaField v-model="v.swatch_media_id" purpose="swatch" />
                     </template>
                     <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="sm" :aria-label="t('common.delete')" @click="o.values.splice(j, 1)" />
                   </div>

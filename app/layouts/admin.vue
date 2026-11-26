@@ -16,7 +16,35 @@ const navigation = computed<NavigationMenuItem[]>(() => [
   { label: t('admin.dashboard'), icon: 'i-lucide-layout-dashboard', to: '/admin', exact: true },
   { label: t('admin.bookings.title'), icon: 'i-lucide-calendar-check', to: '/admin/bookings' },
   { label: t('admin.goLive.title'), icon: 'i-lucide-rocket', to: '/admin/go-live' },
-  { label: t('admin.products'), icon: 'i-lucide-tent', disabled: true, badge: t('admin.upcoming') },
+  ...(user.value?.permissions.includes('products.read')
+    ? [{
+        label: t('admin.catalog.title'),
+        icon: 'i-lucide-tent',
+        to: '/admin/catalog/stays',
+        defaultOpen: route.path.startsWith('/admin/catalog') && !route.path.startsWith('/admin/catalog/pricing'),
+        children: [
+          { label: t('admin.catalog.nav.stays'), to: '/admin/catalog/stays' },
+          { label: t('admin.catalog.nav.activities'), to: '/admin/catalog/activities' },
+          { label: t('admin.catalog.nav.packages'), to: '/admin/catalog/packages' },
+          { label: t('admin.catalog.nav.extras'), to: '/admin/catalog/extras' },
+          ...(user.value?.permissions.includes('inventory.read') ? [{ label: t('admin.catalog.nav.resources'), to: '/admin/catalog/resources' }] : []),
+        ],
+      } as NavigationMenuItem]
+    : []),
+  ...(user.value?.permissions.includes('pricing.read')
+    ? [{
+        label: t('admin.catalog.pricingTitle'),
+        icon: 'i-lucide-badge-euro',
+        to: '/admin/catalog/pricing/seasons',
+        defaultOpen: route.path.startsWith('/admin/catalog/pricing'),
+        children: [
+          { label: t('admin.catalog.nav.seasons'), to: '/admin/catalog/pricing/seasons' },
+          { label: t('admin.catalog.nav.ratePlans'), to: '/admin/catalog/pricing/rate-plans' },
+          { label: t('admin.catalog.nav.guestCategories'), to: '/admin/catalog/pricing/guest-categories' },
+          { label: t('admin.catalog.nav.policies'), to: '/admin/catalog/pricing/cancellation-policies' },
+        ],
+      } as NavigationMenuItem]
+    : []),
   ...(user.value?.permissions.includes('shop.read')
     ? [{
         label: t('admin.shop.title'),

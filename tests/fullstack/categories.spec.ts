@@ -51,7 +51,7 @@ test('a category from creation to deletion', async ({ page, request }) => {
     await page.locator(`input[data-testid="name-${l}"]`).or(page.getByTestId(`name-${l}`).locator('input')).first().fill(name[l])
   }
   // Cover from the media library, with its alt texts.
-  await page.getByRole('button', { name: /Choisir/ }).first().click()
+  await page.getByRole('button', { name: 'Choisir dans la médiathèque' }).first().click()
   await page.getByRole('button', { name: 'oasis.jpg' }).click()
   await page.keyboard.press('Escape')
   for (const [l, alt] of [['FR', 'Ruches dans l\'oasis'], ['EN', 'Beehives in the oasis'], ['AR', 'خلايا النحل في الواحة']]) {

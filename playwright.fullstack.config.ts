@@ -49,6 +49,8 @@ export default defineConfig({
     { name: 'shop-section', testMatch: /shop-section\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
     // Admin › Settings › Legal entity: the staff account needs settings.write.
     { name: 'legal-entity', testMatch: /legal-entity\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
+    // Catalogue editors (products, pricing and inventory write: manager or super_admin).
+    { name: 'catalog', testMatch: /catalog\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
     // Page builder: the staff account needs content.publish (manager or super_admin).
     { name: 'builder', testMatch: /builder\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, viewport: { width: 1600, height: 1000 }, storageState: staffState } },
     ...(process.env.STRIPE_E2E === '1'

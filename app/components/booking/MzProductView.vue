@@ -17,6 +17,9 @@ onMounted(() => track('view_item', { items: [{ item_id: props.product.id, item_n
 
 const p = computed(() => props.product)
 const gallery = computed(() => (p.value.gallery.length ? p.value.gallery : p.value.cover ? [p.value.cover] : []))
+/** The video, when there is one, is the first (large) tile; the images follow. */
+const video = computed(() => p.value.video ?? null)
+const tiles = computed(() => gallery.value.slice(0, video.value ? 4 : 5))
 const minutes = (n: number | null | undefined) => (n ? (n % 60 === 0 ? t('common.hours', { n: n / 60 }) : t('common.minutes', { n })) : null)
 
 const facts = computed(() => {
@@ -117,18 +120,27 @@ useHead(() => ({
       </header>
     </MzContainer>
 
-    <MzContainer v-if="gallery.length">
-      <div class="grid gap-2 lg:grid-cols-4 lg:grid-rows-2">
+    <MzContainer v-if="gallery.length || video">
+      <div class="grid gap-2 lg:grid-cols-4 lg:grid-rows-2" data-testid="product-gallery">
+        <div v-if="video" class="aspect-4/3 overflow-hidden rounded-sm lg:col-span-2 lg:row-span-2" data-testid="product-video">
+          <MzVideoPlayer
+            :src="video.url"
+            :poster="p.cover"
+            :title="video.alt || t('booking.video.title', { name: p.name })"
+            :play-label="t('booking.video.play')"
+            deferred
+          />
+        </div>
         <MzImage
-          v-for="(img, i) in gallery.slice(0, 5)"
+          v-for="(img, i) in tiles"
           :key="img.id"
           :src="img.url"
           :alt="img.alt ?? p.name"
-          :ratio="i === 0 ? '4/3' : '1/1'"
-          :priority="i === 0"
+          :ratio="i === 0 && !video ? '4/3' : '1/1'"
+          :priority="i === 0 && !video"
           sizes="xs:100vw lg:50vw"
           rounded
-          :class="i === 0 ? 'lg:col-span-2 lg:row-span-2' : 'hidden lg:block'"
+          :class="i === 0 && !video ? 'lg:col-span-2 lg:row-span-2' : 'hidden lg:block'"
         />
       </div>
     </MzContainer>

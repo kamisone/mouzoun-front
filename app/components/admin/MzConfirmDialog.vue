@@ -23,6 +23,9 @@ const { t } = useI18n()
     :description="props.description ?? (props.danger ? t('confirm.irreversible') : undefined)"
     :dismissible="!props.loading"
   >
+    <template v-if="$slots.default" #body>
+      <slot />
+    </template>
     <template #footer>
       <div class="flex w-full flex-wrap justify-end gap-2">
         <UButton :label="t('common.cancel')" color="neutral" variant="ghost" :disabled="props.loading" autofocus @click="open = false" />

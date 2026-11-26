@@ -24,7 +24,6 @@ async function location(request: APIRequestContext, path: string) {
 }
 
 test('renamed content redirects its old addresses, in French and in Arabic', async ({ request }) => {
-  // A product without a bundle VAT split (its decimals do not round-trip through the GET body).
   const list = await staff(request, 'GET', '/shop/products?status=published&per_page=20')
   const id = list.data.find((p: { product_type: string }) => p.product_type !== 'gift_box').id as string
   const product = await staff(request, 'GET', `/shop/products/${id}`)

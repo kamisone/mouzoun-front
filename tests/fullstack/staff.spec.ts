@@ -6,7 +6,8 @@ import { base, day, fillCheckout, mailMatching, ready } from './helpers'
 test('booking request accepted by staff', async ({ browser, page }) => {
   // The guest books in a separate, signed-out context.
   const guest = await (await browser.newContext()).newPage()
-  await guest.goto('/activities/visite-village-mssici')
+  // The on-request activity of the seed (the village visit has fixed departures).
+  await guest.goto('/activities/nuit-sous-les-etoiles')
   await ready(guest)
   await guest.getByTestId('widget-date').fill(day(base + 10))
   await guest.getByTestId('widget-reserve').click()

@@ -13,6 +13,8 @@ import { newItem } from '~/utils/page-builder'
  * - Viewer: the generated fields of the `viewer` group.
  */
 const props = defineProps<{ type: SectionType, tab: string, path: string, errors: FieldError[] }>()
+// Media fields name their purpose per section type (`media.purposes.builder.<type>.<field>`).
+provide('builder-section-type', computed(() => props.type.code))
 const block = defineModel<BlockDraft>({ required: true })
 const api = useAdminApi()
 const toast = useToast()
@@ -304,7 +306,7 @@ const sources = computed(() => ['auto', 'manual'].map(v => ({ label: t(`admin.bu
           <UFormField :label="t('admin.builder.gallery.galleryName')" required>
             <UInput v-model="editor.name" class="w-full" maxlength="120" />
           </UFormField>
-          <MzMediaField v-model="editor.media" multiple :kinds="['image', 'video']" :label="t('admin.builder.gallery.photos')" />
+          <MzMediaField v-model="editor.media" multiple :kinds="['image', 'video']" purpose="builder.gallery.album" />
         </div>
       </template>
       <template #footer>

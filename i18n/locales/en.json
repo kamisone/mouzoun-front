@@ -158,7 +158,14 @@
     "uploadType": "Unsupported format: JPEG, PNG, WebP or AVIF.",
     "uploadTooLarge": "The file is too large.",
     "dateRange": "Dates",
-    "selectDates": "Select dates"
+    "selectDates": "Select dates",
+    "uploadMov": ".mov videos (iPhone, QuickTime) are not accepted. Export the video as MP4 (H.264) from the phone or the editing app, then try again.",
+    "uploadTypeOf": "Format not accepted. Accepted formats: {formats}.",
+    "uploadTooLargeMax": "The file is too large ({max} MB maximum).",
+    "media": {
+      "imageFormats": "JPEG, PNG, WebP or AVIF, {max} MB max.",
+      "videoFormats": "MP4 (H.264) or WebM, {max} MB max."
+    }
   },
   "validation": {
     "required": "This field is required.",
@@ -1900,7 +1907,656 @@
         "https": "An https:// address."
       }
     },
-    "settingsAccount": "My account"
+    "settingsAccount": "My account",
+    "catalog": {
+      "title": "Catalogue",
+      "pricingTitle": "Rates",
+      "nav": {
+        "stays": "Stays",
+        "activities": "Activities",
+        "packages": "Packages",
+        "extras": "Extras",
+        "resources": "Resources",
+        "seasons": "Seasons",
+        "ratePlans": "Rate plans",
+        "guestCategories": "Guest categories",
+        "policies": "Cancellation policies"
+      },
+      "new": {
+        "stays": "New stay",
+        "activities": "New activity",
+        "packages": "New package",
+        "extras": "New extra"
+      },
+      "tabs": {
+        "general": "General",
+        "details": "Details",
+        "media": "Media",
+        "units": "Units",
+        "calendar": "Calendar",
+        "content": "Content",
+        "programme": "Programme",
+        "schedules": "Schedules",
+        "departures": "Departures",
+        "resources": "Resources",
+        "pricing": "Pricing",
+        "seo": "SEO",
+        "related": "Related"
+      },
+      "statuses": {
+        "draft": "Draft",
+        "published": "Published",
+        "archived": "Archived"
+      },
+      "statusDone": {
+        "publish": "Published",
+        "unpublish": "Back to draft",
+        "archive": "Archived"
+      },
+      "kinds": {
+        "accommodation": "Stay",
+        "activity": "Activity",
+        "extra": "Extra",
+        "package": "Package"
+      },
+      "bookingMode": "Booking",
+      "bookingModes": {
+        "instant": "Instant booking",
+        "on_request": "On request",
+        "not_bookable": "Not bookable"
+      },
+      "bookingModeHints": {
+        "instant": "Guests pay or book and it is confirmed at once.",
+        "on_request": "Guests send a request; you accept or decline it.",
+        "not_bookable": "Shown on the site, no online booking."
+      },
+      "onRequestForced": "An on-request activity can only be booked on request.",
+      "organisation": "Organisation",
+      "status": "Status",
+      "featured": "Featured",
+      "place": "Place",
+      "categories": "Categories",
+      "primaryFirst": "The first category is the primary one.",
+      "tags": "Tags",
+      "amenities": "Amenities",
+      "sku": "Internal reference",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "archive": "Archive",
+      "duplicate": "Duplicate",
+      "duplicated": "Copy created as a draft",
+      "view": "View page",
+      "publishedAt": "Published on {date}",
+      "saved": "Saved",
+      "created": "Created",
+      "deleted": "Deleted",
+      "unsaved": "Unsaved changes",
+      "discard": "Discard changes",
+      "saveBar": "Save",
+      "leaveConfirm": "Some changes are not saved. Leave anyway?",
+      "saveFirst": "Save your changes first.",
+      "stale": "Someone saved this product after you opened it. Reload to see their version (your unsaved changes will be lost).",
+      "reload": "Reload",
+      "missing": "missing",
+      "error": "error",
+      "moveDown": "Move down",
+      "addLine": "Add a line",
+      "active": "Active",
+      "daysOfWeek": "Days of the week",
+      "weekdays": {
+        "0": "Mon",
+        "1": "Tue",
+        "2": "Wed",
+        "3": "Thu",
+        "4": "Fri",
+        "5": "Sat",
+        "6": "Sun"
+      },
+      "usedIn": "Used in {n} published package(s) or as a mandatory extra",
+      "bookedNoDelete": "This product has bookings: it can only be archived (the bookings stay valid).",
+      "deleteTitle": "Delete this product?",
+      "deleteHint": "The product leaves the catalogue; its address redirects to the listing. It was never booked.",
+      "typeName": "Type \"{name}\" to confirm",
+      "generalIntro": "French is required. \"Generate\" translates the French texts into English and Arabic; review them.",
+      "fields": {
+        "name": "Name",
+        "subtitle": "Subtitle",
+        "shortDescription": "Short description",
+        "description": "Description",
+        "highlights": "Highlights",
+        "included": "Included",
+        "notIncluded": "Not included",
+        "whatToBring": "What to bring",
+        "requirements": "Requirements",
+        "importantInfo": "Important information",
+        "slug": "Address (slug)",
+        "seoTitle": "SEO title",
+        "seoDescription": "SEO description",
+        "ogImage": "Share image",
+        "cover": "Cover image",
+        "video": "Video",
+        "gallery": "Gallery"
+      },
+      "slugFromName": "made from the name",
+      "slugRedirect": "The old address will redirect to the new one.",
+      "googlePreview": "Google preview",
+      "alt": "Alt text",
+      "altTitle": "Image alt texts",
+      "altRequired": "Required",
+      "altSaved": "Alt text saved",
+      "saveAlt": "Save",
+      "altAfterSave": "Alt texts can be entered after the first save.",
+      "readOnlyPricing": "Read only: editing prices needs the pricing permission.",
+      "pricingSettings": "Shared settings:",
+      "stay": {
+        "kind": "Stay type",
+        "kinds": {
+          "tent_pitch": "Tent pitch",
+          "campervan_pitch": "Van pitch",
+          "caravan_pitch": "Caravan pitch",
+          "furnished_tent": "Furnished tent",
+          "nomad_tent": "Nomad khaima",
+          "bivouac": "Bivouac",
+          "bungalow": "Bungalow",
+          "room": "Room",
+          "dormitory_bed": "Dormitory bed",
+          "other": "Other"
+        },
+        "maxGuests": "Maximum guests",
+        "maxAdults": "Maximum adults",
+        "maxChildren": "Maximum children",
+        "standardOccupancy": "Standard occupancy",
+        "standardOccupancyHint": "Base price for {n} guest(s); above it the per-person supplement applies.",
+        "minNights": "Minimum nights",
+        "maxNights": "Maximum nights",
+        "surface": "Surface (m²)",
+        "checkInFrom": "Check-in from",
+        "checkInUntil": "Check-in until",
+        "checkOutUntil": "Check-out by",
+        "beds": "Beds",
+        "bedType": "Bed type",
+        "bedCount": "Count",
+        "addBed": "Add a bed",
+        "bedTypes": {
+          "single": "Single bed",
+          "double": "Double bed",
+          "bunk": "Bunk beds",
+          "sofa_bed": "Sofa bed",
+          "mattress": "Mattress"
+        }
+      },
+      "activity": {
+        "location": "Location",
+        "locations": {
+          "on_site": "At the camp",
+          "off_site": "Away from the camp"
+        },
+        "scheduling": "Scheduling",
+        "modes": {
+          "fixed_slots": "Fixed departures",
+          "on_request": "On request",
+          "anytime": "Anytime"
+        },
+        "modeHints": {
+          "fixed_slots": "Departures at set times, generated from the schedules.",
+          "on_request": "Guests suggest a day; you confirm.",
+          "anytime": "Guests pick their day, no time and no departure limit."
+        },
+        "duration": "Duration (minutes)",
+        "difficulty": "Difficulty",
+        "difficulties": {
+          "easy": "Easy",
+          "moderate": "Moderate",
+          "challenging": "Challenging",
+          "extreme": "Extreme"
+        },
+        "minParticipants": "Minimum participants",
+        "maxParticipants": "Maximum participants",
+        "minAge": "Minimum age",
+        "cutoff": "Booking cut-off (hours)",
+        "cutoffHint": "No online booking less than N hours before the departure.",
+        "languages": "Guide languages",
+        "languagesHint": "fr, en, ar or other language codes.",
+        "guided": "Guided",
+        "pickup": "Pick-up available",
+        "standalone": "Bookable without a stay",
+        "meetingPlace": "Meeting place"
+      },
+      "package": {
+        "days": "Duration (days)",
+        "nights": "Nights",
+        "pricingMode": "Pricing",
+        "modes": {
+          "fixed": "Fixed price",
+          "sum_of_items": "Sum of the items",
+          "sum_minus_discount": "Sum minus a discount"
+        },
+        "modeHints": {
+          "fixed": "The package has its own price rules (Pricing tab).",
+          "sum_of_items": "The price is the sum of the items' prices.",
+          "sum_minus_discount": "The sum of the items minus a percentage."
+        },
+        "discount": "Discount (%)",
+        "computed": "Price computed from the items",
+        "computedHint": "No price rule on the package itself: use the simulator to see the price item by item."
+      },
+      "extra": {
+        "appliesTo": "Applies to",
+        "targets": {
+          "booking": "The booking",
+          "accommodation": "A stay",
+          "activity": "An activity",
+          "any": "Anything"
+        },
+        "maxQuantity": "Maximum quantity",
+        "stock": "Stock",
+        "stockHint": "Empty = unlimited.",
+        "requiresDate": "Needs a date"
+      },
+      "units": {
+        "mode": "How places are managed",
+        "modeUnit": "Numbered units",
+        "modeUnitHint": "Each pitch or tent has its code (P-01, K-03...).",
+        "modePool": "Interchangeable places",
+        "modePoolHint": "A number of places, unnumbered.",
+        "poolCapacity": "Number of places",
+        "poolCapacityHint": "Applied to every future night (never below the bookings).",
+        "code": "Code",
+        "name": "Name",
+        "zone": "Zone",
+        "status": "Status",
+        "coordinates": "Coordinates",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "notes": "Notes",
+        "statuses": {
+          "active": "Active",
+          "maintenance": "Maintenance",
+          "retired": "Retired"
+        },
+        "none": "No unit.",
+        "add": "Add",
+        "prefix": "Prefix",
+        "from": "From",
+        "to": "To",
+        "bulk": "Create {first} to {last}"
+      },
+      "pricingUnits": {
+        "per_unit_per_night": "Per unit per night",
+        "per_person_per_night": "Per person per night",
+        "per_person": "Per person",
+        "per_unit": "Per unit",
+        "per_booking": "Per booking",
+        "per_hour": "Per hour",
+        "per_day": "Per day"
+      },
+      "calendar": {
+        "previous": "Previous month",
+        "next": "Next month",
+        "cellLabel": "{available} free of {capacity}",
+        "noRow": "not open yet",
+        "reservedShort": "{n} bkd",
+        "closedShort": "Closed",
+        "bulk": "Change a period",
+        "pick": "Click a first night then a last one to pick a period.",
+        "range": "{from} to {to}: {n} night(s)",
+        "onlyDays": "Only these days",
+        "stopSell": "Stop sell",
+        "cta": "Closed to arrival (CTA)",
+        "ctd": "Closed to departure (CTD)",
+        "minNights": "Minimum stay",
+        "clear": "Clear",
+        "capacity": "Capacity",
+        "capacityHint": "Never below the bookings.",
+        "apply": "Apply",
+        "applied": "{n} night(s) changed",
+        "keep": "Unchanged",
+        "on": "Yes",
+        "off": "No"
+      },
+      "closures": {
+        "title": "Closures",
+        "none": "No closure.",
+        "reason": "Reason",
+        "scope": "Applies to",
+        "wholeStay": "The whole stay",
+        "unit": "Unit",
+        "public": "Announced",
+        "publicNotice": "Show on the site",
+        "add": "Close this period"
+      },
+      "schedules": {
+        "start": "Time",
+        "capacity": "Places",
+        "from": "Valid from",
+        "to": "to",
+        "add": "Add a schedule",
+        "save": "Save the schedules",
+        "saved": "Schedules saved: {created} departure(s) created, {deleted} removed",
+        "preview": "The next 14 departures",
+        "noPreview": "No upcoming departure with these schedules.",
+        "invalid": "Incomplete schedules.",
+        "places": "{n} places",
+        "overResources": "More than the resources allow ({max}).",
+        "keptBooked": "{n} departure(s) with bookings were not changed: to handle.",
+        "reserved": "{n} booked"
+      },
+      "departures": {
+        "nextDays": "Next {n} days",
+        "window": "Period",
+        "when": "Departure",
+        "capacity": "Places",
+        "booked": "Booked",
+        "left": "{n} left",
+        "status": "Status",
+        "statuses": {
+          "open": "Open",
+          "closed": "Closed",
+          "full": "Full",
+          "cancelled": "Cancelled"
+        },
+        "guide": "Guide",
+        "language": "Language",
+        "oneOff": "one-off",
+        "reopen": "Reopen",
+        "close": "Close",
+        "cancel": "Cancel the departure",
+        "none": "No departure in this period.",
+        "addOneOff": "Add a one-off departure"
+      },
+      "resources": {
+        "units": "Count",
+        "kind": "Type",
+        "per": "per",
+        "participants": "Participants",
+        "participantsWord": "participant(s)",
+        "available": "{n} active, so {max} participants at most",
+        "max": "Maximum per departure: {n} participants",
+        "over": "Schedules above this maximum: {list}",
+        "add": "Add a requirement",
+        "manage": "Manage resources",
+        "kinds": {
+          "vehicle": "Vehicle (quad…)",
+          "equipment": "Equipment",
+          "animal": "Animal",
+          "guide": "Guide",
+          "room": "Room",
+          "other": "Other"
+        },
+        "seats": "Seats",
+        "user": "Guide account",
+        "intro": "Quads, guides, camels... Activities count them to limit departures."
+      },
+      "itinerary": {
+        "day": "Day",
+        "title": "Title",
+        "description": "Description",
+        "duration": "Duration (min)",
+        "place": "Place",
+        "image": "Image",
+        "add": "Add a step"
+      },
+      "items": {
+        "add": "Add an item",
+        "nights": "Nights",
+        "quantity": "Quantity",
+        "day": "Day",
+        "optional": "Optional",
+        "none": "No item.",
+        "samplePrice": "{price} on {date} (1 adult)"
+      },
+      "check": {
+        "title": "Check a date",
+        "start": "Start",
+        "adults": "Adults",
+        "children": "Children",
+        "run": "Check",
+        "available": "Bookable: {total}",
+        "blocked": "Not bookable on this date"
+      },
+      "prices": {
+        "none": "No price rule.",
+        "ratePlan": "Rate plan",
+        "allPlans": "All plans",
+        "season": "Season",
+        "base": "Base price",
+        "guestCategory": "Guest",
+        "anyGuest": "Any",
+        "unit": "Unit",
+        "amount": "Amount (€)",
+        "extraGuest": "Extra guest",
+        "extraGuestHint": "above the standard occupancy",
+        "minQuantity": "Min. quantity",
+        "maxQuantity": "Max. quantity",
+        "minNights": "Min. nights",
+        "validFrom": "Valid from",
+        "validTo": "to (excluded)",
+        "priority": "Priority",
+        "priorityHint": "The highest wins on a tie.",
+        "ambiguous": "Two rules apply to the same case; priority decides.",
+        "duplicate": "Duplicate the rule",
+        "add": "Add a rule"
+      },
+      "taxes": {
+        "title": "Taxes",
+        "suggest": "Suggested: {name}.",
+        "add": "Add"
+      },
+      "simulator": {
+        "title": "Price simulator",
+        "departure": "Departure",
+        "byDate": "By date",
+        "arrival": "Arrival",
+        "date": "Date",
+        "departureDate": "Departure (date)",
+        "quantity": "Quantity",
+        "defaultPlan": "Default plan",
+        "promo": "Promo code",
+        "run": "Calculate",
+        "inPackage": "in the package",
+        "line": "Line",
+        "rule": "Rule",
+        "amount": "Amount",
+        "included": "included",
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "taxes": "Taxes",
+        "total": "Total",
+        "deposit": "Deposit",
+        "cancellation": "Cancellation",
+        "refundUntil": "{percent} % refunded until {date}",
+        "refundAfter": "{percent} % refunded afterwards"
+      },
+      "related": {
+        "products": "Related products",
+        "extras": "Offered extras",
+        "mandatory": "Mandatory",
+        "blocks": "Page builder blocks are added from Content (product sections)."
+      },
+      "checklist": {
+        "title": "Before publishing",
+        "items": {
+          "fr_name": "French name",
+          "fr_slug": "French address",
+          "fr_short_description": "French short description",
+          "cover": "Cover image",
+          "cover_alt": "Cover image alt text",
+          "price": "At least one active price rule",
+          "cancellation_policy": "A cancellation policy (through a rate plan)",
+          "inventory": "At least one active unit or some places",
+          "departures": "An active schedule with upcoming departures",
+          "package_items": "At least one item",
+          "package_items_published": "Every required item published"
+        },
+        "warnings": {
+          "en_missing": "English missing",
+          "ar_missing": "Arabic missing",
+          "gallery": "No gallery",
+          "gallery_alt": "Gallery images without alt text",
+          "seo_description": "No SEO description",
+          "category": "No category"
+        }
+      },
+      "list": {
+        "search": "Search",
+        "anyStatus": "Any status",
+        "anyMode": "Any mode",
+        "sort": "Sort",
+        "sorts": {
+          "manual": "Site order",
+          "name": "Name",
+          "updated": "Last change"
+        },
+        "selected": "{n} selected",
+        "bulkDone": "{ok} done, {failed} refused",
+        "dragHint": "Drag the rows (or use the arrows) to order the site's listings.",
+        "select": "Select",
+        "selectRow": "Select {name}",
+        "from": "From",
+        "numbers": "At a glance",
+        "updated": "Changed",
+        "order": "Order",
+        "orderSaved": "Order saved",
+        "empty": "Nothing yet.",
+        "missingLocale": "{locale} missing",
+        "units": "{n} unit(s)",
+        "pool": "{n} places",
+        "guests": "{n} guests max",
+        "next": "next departure {date}",
+        "seatsWeek": "{n} places this week",
+        "nights": "{n} night(s)",
+        "items": "{n} item(s)",
+        "stock": "stock {n}",
+        "unlimited": "unlimited",
+        "intro": {
+          "stays": "Pitches, tents and khaimas: content, units, calendar and prices.",
+          "activities": "Activities, schedules and departures.",
+          "packages": "Packages made of a stay, activities and extras.",
+          "extras": "Meals, firewood, transfers... offered with bookings."
+        }
+      },
+      "settings": {
+        "add": "Add",
+        "edit": "Edit",
+        "view": "View",
+        "none": "Nothing yet.",
+        "code": "Code",
+        "name": "Name",
+        "color": "Colour",
+        "priority": "Priority",
+        "priorityHint": "The highest-priority season wins when two periods overlap.",
+        "periods": "Periods",
+        "periodsHint": "End date excluded.",
+        "addPeriod": "Add a period",
+        "from": "From",
+        "to": "To",
+        "seasonsIntro": "Seasons colour the calendar and allow different prices.",
+        "yearView": "Year {year}",
+        "usedBy": "{n} price rule(s)",
+        "usedByPlans": "{n} rate plan(s)",
+        "policy": "Cancellation policy",
+        "mealPlan": "Meals",
+        "meals": {
+          "none": "None",
+          "breakfast": "Breakfast",
+          "half_board": "Half board",
+          "full_board": "Full board"
+        },
+        "deposit": "Deposit",
+        "deposits": {
+          "none": "None",
+          "percent": "Percentage",
+          "fixed": "Fixed amount",
+          "full": "Full amount"
+        },
+        "depositPercent": "Deposit (%)",
+        "depositAmount": "Deposit (€)",
+        "payment": "Payment",
+        "payments": {
+          "pay_on_site": "At the camp",
+          "optional_online": "Online or at the camp",
+          "online_required": "Online only"
+        },
+        "public": "Offered on the site",
+        "order": "Order",
+        "ratePlansIntro": "Each plan sets cancellation, deposit and payment.",
+        "minAge": "Minimum age",
+        "maxAge": "Maximum age",
+        "ages": "Ages",
+        "countsCapacity": "Counts toward capacity",
+        "guestCategoriesIntro": "Age bands priced apart (children at half price...).",
+        "rules": "Rules",
+        "rulesHint": "From the earliest to the latest; the last line (0 hours) applies until arrival.",
+        "moreThan": "More than",
+        "hours": "Hours",
+        "hoursBefore": "hours before:",
+        "refund": "Refund",
+        "percentRefunded": "% refunded",
+        "addRule": "Add a rule",
+        "default": "Default",
+        "ruleText": "> {hours} h: {percent} %",
+        "policiesIntro": "Refund depending on the notice before arrival.",
+        "uses": {
+          "price_rules": "price rule(s)",
+          "bookings": "booking(s)",
+          "rate_plans": "rate plan(s)"
+        }
+      },
+      "errors": {
+        "generic": "Something went wrong.",
+        "invalid_fields": "Some fields need fixing.",
+        "required": "Required",
+        "slug_taken": "Address already used",
+        "too_long": "Too long",
+        "taken": "Already used",
+        "invalid": "Invalid value",
+        "min": "Too small",
+        "range": "Out of range",
+        "format": "Invalid format",
+        "above_max_guests": "Above the maximum guests",
+        "below_min_nights": "Below the minimum nights",
+        "below_min_participants": "Below the minimum",
+        "above_days": "More nights than days",
+        "before_from": "Before the start date",
+        "before_check_in_from": "Before the check-in time",
+        "below_min": "Below the minimum",
+        "use_inventory_tab": "Change the mode in the Units tab.",
+        "wrong_scope": "Category of another type",
+        "not_in_categories": "Not in the categories",
+        "self": "The product itself",
+        "not_bookable_kind": "Only stays, activities and extras",
+        "unknown_extra": "Unknown extra",
+        "unknown_locale": "Unknown language",
+        "publish_blocked": "Required items are missing to publish.",
+        "stale": "Outdated version",
+        "in_use": "Used elsewhere: remove it there first.",
+        "in_use_count": "Still used by {n} {what}.",
+        "booked": "This product has bookings: archive it.",
+        "confirm_name": "Type the exact name to delete.",
+        "below_reserved": "Some nights or departures would hold fewer places than are booked.",
+        "unit_booked": "This unit is allocated to upcoming bookings.",
+        "mode_locked": "The mode cannot change while upcoming bookings exist.",
+        "unit_has_history": "This unit was booked before: set it to Retired.",
+        "slot_booked": "This departure has bookings: cancel them from the bookings screen.",
+        "package_in_package": "No package inside a package",
+        "one_stay_only": "One stay per package",
+        "nights_mismatch": "The nights must match the package",
+        "required_with_stay": "Set the package's number of nights.",
+        "not_allowed_for_kind": "Pricing unit not allowed here",
+        "stays_only": "Stays only",
+        "unit_mode": "In unit mode, capacity follows the units.",
+        "past": "Date in the past",
+        "too_many": "200 at most",
+        "deleted": "Deleted",
+        "unknown": "Unknown",
+        "duplicate": "Duplicate",
+        "overlap": "Overlaps another period",
+        "unknown_reference": "Unknown season, plan or category",
+        "unknown_category": "Unknown category",
+        "not_allowed": "Not allowed",
+        "not_found": "Not found"
+      }
+    }
   },
   "error": {
     "notFound": "Page not found",
@@ -2425,6 +3081,10 @@
       "refund_too_large": "The amount is larger than what can be refunded.",
       "internal_error": "Something went wrong on our side.",
       "validation_failed": "Check the form."
+    },
+    "video": {
+      "play": "Play the video",
+      "title": "{name} on video"
     }
   },
   "legal": {
@@ -3268,5 +3928,166 @@
     "policy": "Learn more",
     "reject": "Reject all",
     "accept": "Accept all"
+  },
+  "media": {
+    "purposes": {
+      "generic": {
+        "image": {
+          "title": "Image",
+          "hint": "",
+          "button": "Choose the image"
+        },
+        "images": {
+          "title": "Images",
+          "hint": "",
+          "button": "Add images"
+        },
+        "video": {
+          "title": "Video",
+          "hint": "",
+          "button": "Choose the video"
+        }
+      },
+      "cover": {
+        "title": "Cover image",
+        "hint": "Shown on the cards (home page, lists) and as the video poster. Landscape, at least 1600 px wide, alt text required.",
+        "button": "Choose the cover image"
+      },
+      "video": {
+        "title": "Presentation video",
+        "hint": "Shown as the first slide of the gallery on the public page. Optional, 1080p recommended.",
+        "button": "Choose the video"
+      },
+      "gallery": {
+        "title": "Photo gallery",
+        "hint": "Shown in the gallery on the public page, in the chosen order. Several images, alt text recommended.",
+        "button": "Add photos"
+      },
+      "itineraryImage": {
+        "title": "Step image",
+        "hint": "Shown with this step of the programme. Landscape recommended.",
+        "button": "Choose the step image"
+      },
+      "ogImage": {
+        "title": "Share image",
+        "hint": "Shown when the page is shared (WhatsApp, Facebook…). Otherwise the cover image. 1200 × 630 px recommended.",
+        "button": "Choose the share image"
+      },
+      "shopCover": {
+        "title": "Main product image",
+        "hint": "Shown on the shop cards and at the top of the product page. Square or landscape, at least 1600 px, alt text required.",
+        "button": "Choose the main image"
+      },
+      "shopGallery": {
+        "title": "Product gallery",
+        "hint": "Shown on the product page, in the chosen order. Several images, alt text recommended.",
+        "button": "Add photos"
+      },
+      "swatch": {
+        "title": "Variant image",
+        "hint": "Shown when the customer picks this variant (and as its swatch). Optional.",
+        "button": "Choose the variant image"
+      },
+      "categoryCover": {
+        "title": "Category image",
+        "hint": "Shown at the top of the category page and on its tiles. Landscape, at least 1600 px.",
+        "button": "Choose the category image"
+      },
+      "builder": {
+        "hero": {
+          "media_id": {
+            "title": "Background image or video",
+            "hint": "Fills the top of the page, behind the title. Landscape, 1920 px wide recommended; a video plays in a loop, muted.",
+            "button": "Choose the image or video"
+          },
+          "mobile_media_id": {
+            "title": "Mobile image",
+            "hint": "Replaces the background on phones. Portrait recommended. Optional.",
+            "button": "Choose the mobile image"
+          },
+          "poster_media_id": {
+            "title": "Video poster",
+            "hint": "Shown before the background video plays (and if it cannot play).",
+            "button": "Choose the poster"
+          }
+        },
+        "video": {
+          "media_id": {
+            "title": "Video file",
+            "hint": "The section's video, played when the visitor taps play.",
+            "button": "Choose the video"
+          },
+          "poster_media_id": {
+            "title": "Poster",
+            "hint": "Shown before the video plays. Landscape 16:9 recommended.",
+            "button": "Choose the poster"
+          }
+        },
+        "hero_slider": {
+          "media_id": {
+            "title": "Slide image",
+            "hint": "Fills the slide behind the text. Landscape, 1920 px wide recommended.",
+            "button": "Choose the slide image"
+          },
+          "mobile_media_id": {
+            "title": "Mobile image",
+            "hint": "Replaces the slide image on phones. Portrait recommended. Optional.",
+            "button": "Choose the mobile image"
+          }
+        },
+        "image_text": {
+          "media_id": {
+            "title": "Section image",
+            "hint": "Shown next to the text. Alt text recommended.",
+            "button": "Choose the image"
+          }
+        },
+        "cta_band": {
+          "background_media_id": {
+            "title": "Background image",
+            "hint": "Behind the band's text and button. Landscape, darkened for readability.",
+            "button": "Choose the background image"
+          }
+        },
+        "features": {
+          "media_id": {
+            "title": "Item photo",
+            "hint": "Replaces this item's icon. Square recommended. Optional.",
+            "button": "Choose the photo"
+          }
+        },
+        "logos": {
+          "media_id": {
+            "title": "Logo",
+            "hint": "Shown in the logo strip. PNG or WebP on a transparent background recommended.",
+            "button": "Choose the logo"
+          }
+        },
+        "timeline": {
+          "media_id": {
+            "title": "Step photo",
+            "hint": "Shown with this step of the timeline. Optional.",
+            "button": "Choose the photo"
+          }
+        },
+        "gallery": {
+          "preview_media_ids": {
+            "title": "Preview photos",
+            "hint": "Shown in the gallery preview on the page, in the chosen order.",
+            "button": "Add photos"
+          },
+          "cover_media_id": {
+            "title": "Album cover",
+            "hint": "Shown on the album card. Landscape recommended.",
+            "button": "Choose the cover"
+          },
+          "album": {
+            "title": "Album photos and videos",
+            "hint": "Shown in the album, in the chosen order. Alt text recommended.",
+            "button": "Add photos or videos"
+          }
+        }
+      }
+    }
   }
 }

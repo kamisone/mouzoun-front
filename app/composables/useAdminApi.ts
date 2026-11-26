@@ -1,4 +1,5 @@
 import { shopAdminApi } from '~/utils/shop-admin-api'
+import { catalogAdminApi } from '~/utils/catalog-admin-api'
 import { seoAdminApi } from '~/utils/seo-admin-api'
 import type { LegalEntityForm, LegalEntityResponse } from '~/utils/legal-entity'
 import type { Media, MediaKind, MediaVisibility, Paginated, User } from '~/utils/types'
@@ -28,6 +29,8 @@ export function useAdminApi() {
   return {
     /** Farm shop back office (`/v1/admin/shop/...`). */
     shop: shopAdminApi(http),
+    /** Stays, activities, packages and extras (`/v1/admin/catalog/...`). */
+    catalog: catalogAdminApi(http),
     /** Redirects, 404 log, sitemap and URL tester (`/v1/admin/seo/...`). */
     seo: seoAdminApi(http),
     /** Machine translation of admin content: the source locale's fields → every other locale. */
