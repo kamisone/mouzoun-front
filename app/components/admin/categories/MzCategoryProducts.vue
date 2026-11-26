@@ -1,17 +1,24 @@
 <script setup lang="ts">
 import type { Json } from '~/utils/shop-admin-api'
+import type { CategoryScope } from '~/composables/useCategoryScope'
 
 /**
- * Products of a category in the category form: thumbnail, status, stock; add (search), remove,
- * drag to reorder (or Alt + ↑/↓ on a row) and pin. Order and pins only matter with the manual
- * sort: with an automatic sort they are shown, not editable. Saved at once (own endpoints).
+ * Products of a category in the category form: thumbnail, status, stock (shop) or kind (stays
+ * and activities); add (search), remove, drag to reorder (or Alt + ↑/↓ on a row) and pin. Order
+ * and pins only matter with the manual sort: with an automatic sort they are shown, not
+ * editable. Saved at once (own endpoints).
  */
-const props = defineProps<{ categoryId: string, defaultSort: string, readOnly?: boolean }>()
+const props = withDefaults(defineProps<{ categoryId: string, defaultSort: string, readOnly?: boolean, scope?: CategoryScope }>(), { readOnly: false, scope: 'shop' })
 const { t } = useI18n()
 const admin = useAdminApi()
 const { act } = useShopAdmin()
+const { api, shop } = useCategoryScope(props.scope)
+/** Catalog editor segment of a bookable product kind. */
+const SEGMENTS: Record<string, string> = { accommodation: 'stays', activity: 'activities', package: 'packages', extra: 'extras' }
+const BOOKABLE = Object.keys(SEGMENTS)
+const editorOf = (p: Json) => (shop ? `/admin/shop/products/${p.product_id}` : `/admin/catalog/${SEGMENTS[p.kind] ?? 'activities'}/${p.product_id}`)
 
-const { data, refresh, pending } = await useAsyncData(`admin-category-products-${props.categoryId}`, () => admin.shop.categories.products(props.categoryId))
+const { data, refresh, pending } = await useAsyncData(`admin-category-products-${props.categoryId}`, () => api.products(props.categoryId))
 const items = ref<Json[]>([])
 watch(data, d => (items.value = [...(d?.data ?? [])]), { immediate: true })
 const manual = computed(() => props.defaultSort === 'manual')
@@ -27,7 +34,7 @@ async function persist(next: Json[], message?: string) {
   items.value = normalise(next)
   // 204: `$fetch` resolves with nothing, so the action returns `true` itself.
   const ok = await act(async () => {
-    await admin.shop.categories.orderProducts(props.categoryId, items.value.map(p => ({ product_id: p.product_id, sort_order: p.sort_order, is_pinned: p.is_pinned })))
+    await api.orderProducts(props.categoryId, items.value.map(p => ({ product_id: p.product_id, sort_order: p.sort_order, is_pinned: p.is_pinned })))
     return true
   })
   if (!ok) items.value = before
@@ -61,23 +68,34 @@ function onDrop(i: number) {
 
 async function remove(p: Json) {
   const ok = await act(async () => {
-    await admin.shop.categories.removeProduct(props.categoryId, p.product_id)
+    await api.removeProduct(props.categoryId, p.product_id)
     return true
   })
   if (ok) await refresh()
 }
 
-// Add: search the shop products.
+// Add: search the shop products, or the bookable ones (stays, activities, packages, extras).
 const toAdd = ref<string[]>([])
 const term = ref('')
-const options = ref<{ value: string, label: string }[]>([])
+const options = ref<{ value: string, label: string, description?: string }[]>([])
+async function search(q: string) {
+  if (shop) {
+    const res = await admin.shop.products.list({ q: q || undefined, per_page: 20 }).catch(() => null)
+    return (res?.data ?? []).map(p => ({ value: p.id, label: p.name }))
+  }
+  const res = await admin.lookup('product', { q, kinds: BOOKABLE }).catch(() => null)
+  // The hint is "kind · status".
+  return (res?.options ?? []).map((o) => {
+    const kind = o.hint?.split(' · ')[0]
+    return { value: o.id, label: o.label, description: kind ? t(`admin.catalog.kinds.${kind}`, kind) : undefined }
+  })
+}
 watchDebounced(term, async (q) => {
-  const res = await admin.shop.products.list({ q: q || undefined, per_page: 20 }).catch(() => null)
-  options.value = (res?.data ?? []).filter(p => !items.value.some(i => i.product_id === p.id)).map(p => ({ value: p.id, label: p.name }))
+  options.value = (await search(q)).filter(o => !items.value.some(i => i.product_id === o.value))
 }, { debounce: 250, immediate: true })
 async function add() {
   if (!toAdd.value.length) return
-  if (await act(() => admin.shop.categories.addProducts(props.categoryId, toAdd.value)) !== undefined) {
+  if (await act(() => api.addProducts(props.categoryId, toAdd.value)) !== undefined) {
     toAdd.value = []
     await refresh()
   }
@@ -102,7 +120,7 @@ const statusColor = (s: string) => (s === 'published' ? 'success' : s === 'draft
         class="min-w-64 flex-1"
       />
       <UButton :label="t('admin.shop.categories.add')" icon="i-lucide-plus" :disabled="!toAdd.length" @click="add" />
-      <UButton :label="t('admin.shop.categories.bulkFromList')" :to="`/admin/shop/products`" color="neutral" variant="link" size="sm" icon="i-lucide-list-checks" />
+      <UButton v-if="shop" :label="t('admin.shop.categories.bulkFromList')" :to="`/admin/shop/products`" color="neutral" variant="link" size="sm" icon="i-lucide-list-checks" />
     </div>
     <p v-if="!pending && !items.length" class="text-small text-muted">{{ t('admin.shop.categories.noProducts') }}</p>
     <ol v-else class="flex flex-col rounded-md border border-default">
@@ -127,10 +145,11 @@ const statusColor = (s: string) => (s === 'published' ? 'success' : s === 'draft
         <span class="size-10 shrink-0 overflow-hidden rounded-sm bg-elevated">
           <img v-if="p.image_url" :src="p.image_url" alt="" class="size-full object-cover" loading="lazy" draggable="false">
         </span>
-        <NuxtLink :to="`/admin/shop/products/${p.product_id}`" class="min-w-0 flex-1 truncate font-medium hover:underline" draggable="false">{{ p.name || p.product_id }}</NuxtLink>
+        <NuxtLink :to="editorOf(p)" class="min-w-0 flex-1 truncate font-medium hover:underline" draggable="false">{{ p.name || p.product_id }}</NuxtLink>
         <UBadge v-if="p.is_primary" color="neutral" variant="outline" size="sm" :label="t('admin.shop.categories.primary')" />
         <UBadge :color="statusColor(p.status)" variant="soft" size="sm" :label="t(`admin.shop.products.statuses.${p.status}`)" />
-        <span class="w-16 shrink-0 text-end text-small tabular-nums">{{ t('admin.shop.categories.stock', { n: p.stock }) }}</span>
+        <span v-if="shop" class="w-16 shrink-0 text-end text-small tabular-nums">{{ t('admin.shop.categories.stock', { n: p.stock }) }}</span>
+        <span v-else class="w-24 shrink-0 text-end text-small text-muted">{{ t(`admin.catalog.kinds.${p.kind}`, p.kind) }}</span>
         <UButton
           :icon="p.is_pinned ? 'i-lucide-pin' : 'i-lucide-pin-off'"
           :color="p.is_pinned ? 'primary' : 'neutral'"

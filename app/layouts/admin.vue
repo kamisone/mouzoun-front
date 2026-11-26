@@ -27,6 +27,7 @@ const navigation = computed<NavigationMenuItem[]>(() => [
           { label: t('admin.catalog.nav.activities'), to: '/admin/catalog/activities' },
           { label: t('admin.catalog.nav.packages'), to: '/admin/catalog/packages' },
           { label: t('admin.catalog.nav.extras'), to: '/admin/catalog/extras' },
+          { label: t('admin.catalog.nav.categories'), to: '/admin/catalog/categories' },
           ...(user.value?.permissions.includes('inventory.read') ? [{ label: t('admin.catalog.nav.resources'), to: '/admin/catalog/resources' }] : []),
         ],
       } as NavigationMenuItem]

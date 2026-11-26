@@ -1,4 +1,5 @@
 import type { TripQuote } from '~/utils/booking-types'
+import { categoriesApi } from '~/utils/shop-admin-api'
 
 /**
  * Back office of what guests book (`/v1/admin/catalog/...`): stays, activities, packages and
@@ -304,6 +305,8 @@ export function catalogAdminApi(http: ReturnType<typeof $fetch.create>) {
     guestCategories: settings('pricing/guest-categories'),
     policies: settings('pricing/cancellation-policies'),
     resources: settings('resources'),
+    /** Stay and activity categories (Admin › Catalogue › Catégories, scope `product`). */
+    categories: categoriesApi(http, '/catalog/categories'),
   }
 }
 

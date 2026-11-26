@@ -42,7 +42,9 @@ export default defineConfig({
     // Farm shop (needs the seed_dev demo shop; the staff account needs shop.* permissions).
     { name: 'shop', testMatch: /shop\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
     // Shop categories: admin tree, form, delete; public pages (shop.catalog + content.write).
-    { name: 'categories', testMatch: /categories\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
+    { name: 'categories', testMatch: /\/categories\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
+    // Stay and activity categories: catalog admin, editor and builder pickers (products.write + content.publish).
+    { name: 'catalog-categories', testMatch: /catalog-categories\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
     // SEO: redirects, 404 log, sitemap, robots (seo.manage + shop.catalog).
     { name: 'seo', testMatch: /seo\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
     // Page-builder shop section (content.publish + shop.settings).

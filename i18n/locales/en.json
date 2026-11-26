@@ -1920,7 +1920,8 @@
         "seasons": "Seasons",
         "ratePlans": "Rate plans",
         "guestCategories": "Guest categories",
-        "policies": "Cancellation policies"
+        "policies": "Cancellation policies",
+        "categories": "Categories"
       },
       "new": {
         "stays": "New stay",
@@ -2555,6 +2556,15 @@
         "unknown_category": "Unknown category",
         "not_allowed": "Not allowed",
         "not_found": "Not found"
+      },
+      "categoryAdmin": {
+        "intro": "Group stays and activities by theme: the pages' “Stays and activities” section filters by category, and the “Categories” section shows them in this order.",
+        "emptyText": "Create themes (Desert adventure, Farm life…) to present stays and activities by category on your pages.",
+        "activeHelp": "Inactive: left out of the pages' “Categories” sections.",
+        "preferDeactivate": "Deactivating can be undone: the category leaves the pages and its products stay filed.",
+        "seoNoPage": "These categories have no page of their own yet: the address is used by the “Categories” section's links; the SEO title and description are for their future page.",
+        "moveHint": "Drag a row above or below another to change the order. With the keyboard: handle, then arrows.",
+        "keyboardHelp": "Up or down arrow: move up or down."
       }
     }
   },

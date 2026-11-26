@@ -47,7 +47,7 @@ export interface AdminProductRow {
   updated_at: string
 }
 
-/** A shop category in the admin list (flat; the screens build the tree). */
+/** A shop or stay/activity category in the admin list (flat; the screens build the tree). */
 export interface AdminCategoryRow {
   id: string
   parent_id: string | null
@@ -84,6 +84,31 @@ export interface CategoryImpact {
 
 type Query = Record<string, string | number | boolean | undefined | null>
 
+/**
+ * One category scope's admin endpoints: the shop's (`/shop/categories`) and the stays and
+ * activities' (`/catalog/categories`) have the same shape (one implementation on the API).
+ */
+export function categoriesApi(http: ReturnType<typeof $fetch.create>, base: string) {
+  const get = <T = Json>(path: string) => http<T>(`${base}${path}`)
+  const send = <T = Json>(method: 'POST' | 'PUT' | 'PATCH' | 'DELETE', path: string, body?: unknown) =>
+    http<T>(`${base}${path}`, { method, body: body as Record<string, unknown> })
+  return {
+    list: () => get<{ data: AdminCategoryRow[], version: string, max_depth: number }>(''),
+    get: (id: string) => get(`/${id}`),
+    save: (body: Json, id?: string) => send(id ? 'PATCH' : 'POST', id ? `/${id}` : '', body),
+    tree: (version: string, items: { id: string, parent_id: string | null, sort_order: number }[]) =>
+      send<{ version: string }>('PUT', '/tree', { version, items }),
+    impact: (id: string) => get<CategoryImpact>(`/${id}/impact`),
+    remove: (id: string, options: Json = {}) => send('DELETE', `/${id}`, options),
+    products: (id: string) => get<{ default_sort: string, data: Json[] }>(`/${id}/products`),
+    orderProducts: (id: string, items: { product_id: string, sort_order: number, is_pinned: boolean }[]) => send('PUT', `/${id}/products`, items),
+    addProducts: (id: string, product_ids: string[]) => send('POST', `/${id}/products`, { product_ids }),
+    removeProduct: (id: string, productId: string) => send('DELETE', `/${id}/products/${productId}`),
+    suggested: () => send<{ created: number }>('POST', '/suggested'),
+  }
+}
+export type CategoriesApi = ReturnType<typeof categoriesApi>
+
 /** Back-office shop endpoints (`/v1/admin/shop`), declared through `useAdminApi().shop`. */
 export function shopAdminApi(http: ReturnType<typeof $fetch.create>) {
   const get = <T = Json>(path: string, query?: Query) => http<T>(`/shop${path}`, { query })
@@ -116,20 +141,7 @@ export function shopAdminApi(http: ReturnType<typeof $fetch.create>) {
       remove: (id: string) => send('DELETE', `/variations/${id}`),
     },
     /** Shop categories (Admin › Boutique › Catégories): tree, form, delete with impact, product order. */
-    categories: {
-      list: () => get<{ data: AdminCategoryRow[], version: string, max_depth: number }>('/categories'),
-      get: (id: string) => get(`/categories/${id}`),
-      save: (body: Json, id?: string) => send(id ? 'PATCH' : 'POST', id ? `/categories/${id}` : '/categories', body),
-      tree: (version: string, items: { id: string, parent_id: string | null, sort_order: number }[]) =>
-        send<{ version: string }>('PUT', '/categories/tree', { version, items }),
-      impact: (id: string) => get<CategoryImpact>(`/categories/${id}/impact`),
-      remove: (id: string, options: Json = {}) => send('DELETE', `/categories/${id}`, options),
-      products: (id: string) => get<{ default_sort: string, data: Json[] }>(`/categories/${id}/products`),
-      orderProducts: (id: string, items: { product_id: string, sort_order: number, is_pinned: boolean }[]) => send('PUT', `/categories/${id}/products`, items),
-      addProducts: (id: string, product_ids: string[]) => send('POST', `/categories/${id}/products`, { product_ids }),
-      removeProduct: (id: string, productId: string) => send('DELETE', `/categories/${id}/products/${productId}`),
-      suggested: () => send<{ created: number }>('POST', '/categories/suggested'),
-    },
+    categories: categoriesApi(http, '/shop/categories'),
     promotions: {
       list: () => get<{ data: Json[] }>('/promotions'),
       save: (body: Json, id?: string) => send(id ? 'PUT' : 'POST', id ? `/promotions/${id}` : '/promotions', body),

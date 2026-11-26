@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { AdminCategoryRow } from '~/utils/shop-admin-api'
+import type { CategoryScope } from '~/composables/useCategoryScope'
 import { canPlace, flatten } from '~/utils/category-tree'
 
 /**
- * Picks shop categories (one or several) from the tree, with search: shipping, promotions, the
- * variation library, the product editor and the parent field of the category form all use it.
+ * Picks categories of one scope (shop by default; `product` for stays and activities), one or
+ * several, from the tree, with search: shipping, promotions, the variation library, the product
+ * editor, the parent field of the category form and the delete dialog all use it.
  * No editing here. `parentOf` turns it into a parent picker: the category itself, its
  * descendants and levels beyond the depth limit are disabled.
  */
@@ -18,11 +20,12 @@ const props = withDefaults(defineProps<{
   /** Ids that cannot be chosen (the category being deleted...). */
   exclude?: string[]
   disabled?: boolean
-}>(), { multiple: false, placeholder: undefined, noneLabel: undefined, parentOf: null, exclude: () => [], disabled: false })
+  scope?: CategoryScope
+}>(), { multiple: false, placeholder: undefined, noneLabel: undefined, parentOf: null, exclude: () => [], disabled: false, scope: 'shop' })
 const model = defineModel<string | string[] | null | undefined>()
 const { t } = useI18n()
-const admin = useAdminApi()
-const { data } = await useAsyncData('admin-shop-categories', () => admin.shop.categories.list())
+const { api, listKey } = useCategoryScope(props.scope)
+const { data } = await useAsyncData(listKey, () => api.list())
 
 const NONE = '__none__'
 const items = computed(() => {

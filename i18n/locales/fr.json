@@ -2119,7 +2119,8 @@
         "seasons": "Saisons",
         "ratePlans": "Plans tarifaires",
         "guestCategories": "Catégories de voyageurs",
-        "policies": "Conditions d'annulation"
+        "policies": "Conditions d'annulation",
+        "categories": "Catégories"
       },
       "new": {
         "stays": "Nouvel hébergement",
@@ -2754,6 +2755,15 @@
         "unknown_category": "Catégorie inconnue",
         "not_allowed": "Non autorisé",
         "not_found": "Introuvable"
+      },
+      "categoryAdmin": {
+        "intro": "Regroupez hébergements et activités par thème : la section « Hébergements et activités » des pages filtre par catégorie, et la section « Catégories » les affiche dans cet ordre.",
+        "emptyText": "Créez des thèmes (Aventure désert, Vie à la ferme…) pour présenter hébergements et activités par catégorie dans les pages.",
+        "activeHelp": "Inactive : absente des sections « Catégories » des pages.",
+        "preferDeactivate": "Désactiver est réversible : la catégorie disparaît des pages et ses produits restent rangés.",
+        "seoNoPage": "Ces catégories n'ont pas encore de page à elles : l'adresse sert aux liens de la section « Catégories » ; le titre et la description SEO serviront à leur future page.",
+        "moveHint": "Glissez une ligne au-dessus ou en dessous d'une autre pour changer l'ordre. Au clavier : poignée puis flèches.",
+        "keyboardHelp": "Flèche haut ou bas : monter ou descendre."
       }
     }
   },

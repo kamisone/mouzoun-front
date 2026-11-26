@@ -5,11 +5,12 @@ import type { DropPosition, MoveKey, Placement, Refusal, TreeItem } from '~/util
 import { canPlace, dropPlacement, flatten, keyPlacement, place } from '~/utils/category-tree'
 
 /**
- * Shop categories as a tree. Drag a row onto another to nest it, between two rows to reorder;
+ * Categories as a tree. Drag a row onto another to nest it, between two rows to reorder;
  * or focus a row's handle and use the arrow keys (↑ ↓ move, → indent, ← outdent), or the row
  * menu (Monter, Descendre, Indenter, Désindenter). Every move emits the same payload
- * (`PUT /admin/shop/categories/tree`); refused moves (cycle, depth) emit `refused`. Moves are
- * announced in an aria-live region. Read-only without `shop.catalog`.
+ * (`PUT …/categories/tree`); refused moves (cycle, depth) emit `refused`. Moves are announced
+ * in an aria-live region. Read-only without the write permission. With `maxDepth` 1 (stays
+ * and activities) it is a flat ordered list: no nesting actions, no "hidden from menu" badge.
  */
 const props = withDefaults(defineProps<{
   rows: AdminCategoryRow[]
@@ -20,7 +21,12 @@ const props = withDefaults(defineProps<{
   status?: 'all' | 'active' | 'inactive' | 'hidden'
   /** Public URL of a category (View on site). */
   siteUrl?: (row: AdminCategoryRow) => string | null
-}>(), { readOnly: false, search: '', status: 'all', siteUrl: undefined })
+  /** Admin form of a category: `${base}/${id}`. */
+  base?: string
+  /** Show the "hidden from menu" state (shop categories only). */
+  menus?: boolean
+}>(), { readOnly: false, search: '', status: 'all', siteUrl: undefined, base: '/admin/shop/categories', menus: true })
+const flat = computed(() => props.maxDepth <= 1)
 const emit = defineEmits<{
   move: [items: TreeItem[], announcement: string]
   refused: [reason: Refusal]
@@ -98,17 +104,19 @@ function keyMove(id: string, key: MoveKey) {
 function onHandleKey(e: KeyboardEvent, id: string) {
   const keys: Record<string, MoveKey> = { ArrowUp: 'up', ArrowDown: 'down', ArrowRight: 'indent', ArrowLeft: 'outdent' }
   const key = keys[e.key]
-  if (!key || !canMove.value) return
+  if (!key || !canMove.value || (flat.value && (key === 'indent' || key === 'outdent'))) return
   e.preventDefault()
   keyMove(id, key)
 }
 
-// Drag and drop (mouse): the top and bottom quarters of a row mean "before" / "after".
+// Drag and drop (mouse): the top and bottom quarters of a row mean "before" / "after" (halves
+// in a flat list: nothing nests).
 const dragging = ref<string | null>(null)
 const over = ref<{ id: string, position: DropPosition } | null>(null)
 function positionIn(e: DragEvent): DropPosition {
   const box = (e.currentTarget as HTMLElement).getBoundingClientRect()
   const y = (e.clientY - box.top) / Math.max(1, box.height)
+  if (flat.value) return y < 0.5 ? 'before' : 'after'
   return y < 0.25 ? 'before' : y > 0.75 ? 'after' : 'inside'
 }
 function onDragStart(e: DragEvent, id: string) {
@@ -143,14 +151,14 @@ function menu(row: AdminCategoryRow): DropdownMenuItem[][] {
     ...(site && row.is_active ? [{ label: t('admin.shop.categories.viewOnSite'), icon: 'i-lucide-external-link', to: site, target: '_blank' }] : []),
   ]
   if (props.readOnly) return [view]
-  const moves: DropdownMenuItem[] = (['up', 'down', 'indent', 'outdent'] as const).map(k => ({
+  const moves: DropdownMenuItem[] = (flat.value ? ['up', 'down'] as const : ['up', 'down', 'indent', 'outdent'] as const).map(k => ({
     label: t(`admin.shop.categories.moves.${k}`),
     icon: { up: 'i-lucide-arrow-up', down: 'i-lucide-arrow-down', indent: 'i-lucide-indent-increase', outdent: 'i-lucide-indent-decrease' }[k],
     disabled: filtering.value || !keyPlacement(props.rows, row.id, k),
     onSelect: () => keyMove(row.id, k),
   }))
   return [
-    [...view, { label: t('admin.shop.categories.addChild'), icon: 'i-lucide-plus', onSelect: () => emit('addChild', row) }],
+    flat.value ? view : [...view, { label: t('admin.shop.categories.addChild'), icon: 'i-lucide-plus', onSelect: () => emit('addChild', row) }],
     moves,
     [
       { label: row.is_active ? t('admin.shop.categories.deactivate') : t('admin.shop.categories.activate'), icon: row.is_active ? 'i-lucide-eye-off' : 'i-lucide-eye', onSelect: () => emit('toggleActive', row) },
@@ -163,9 +171,9 @@ function menu(row: AdminCategoryRow): DropdownMenuItem[][] {
 <template>
   <div class="flex flex-col gap-2">
     <p class="sr-only" aria-live="polite" data-testid="tree-announcement">{{ announcement }}</p>
-    <p v-if="canMove" class="text-caption text-muted">{{ t('admin.shop.categories.moveHint') }}</p>
+    <p v-if="canMove" class="text-caption text-muted">{{ t(flat ? 'admin.catalog.categoryAdmin.moveHint' : 'admin.shop.categories.moveHint') }}</p>
     <p v-else-if="filtering && !props.readOnly" class="text-caption text-muted">{{ t('admin.shop.categories.filterHint') }}</p>
-    <ul role="tree" :aria-label="t('admin.shop.nav.categories')" class="flex flex-col rounded-md border border-default" data-testid="category-tree">
+    <ul role="tree" :aria-label="t(props.menus ? 'admin.shop.nav.categories' : 'admin.catalog.nav.categories')" class="flex flex-col rounded-md border border-default" data-testid="category-tree">
       <li
         v-for="node in nodes"
         :key="node.row.id"
@@ -217,7 +225,7 @@ function menu(row: AdminCategoryRow): DropdownMenuItem[][] {
           <UIcon v-else :name="node.row.icon || 'i-lucide-folder'" class="size-4 text-muted" />
         </span>
         <div class="flex min-w-0 flex-1 flex-col">
-          <NuxtLink :to="`/admin/shop/categories/${node.row.id}`" class="truncate font-medium hover:underline" draggable="false">{{ name(node.row) }}</NuxtLink>
+          <NuxtLink :to="`${props.base}/${node.row.id}`" class="truncate font-medium hover:underline" draggable="false">{{ name(node.row) }}</NuxtLink>
           <span class="truncate text-caption text-muted" dir="ltr">/{{ node.row.translations.fr?.slug }}</span>
         </div>
         <div class="hidden flex-wrap items-center justify-end gap-1 md:flex">
@@ -230,17 +238,17 @@ function menu(row: AdminCategoryRow): DropdownMenuItem[][] {
           {{ node.row.published_count }} / {{ node.row.product_count }}
         </span>
         <UBadge
-          :color="!node.row.is_active ? 'neutral' : node.row.show_in_menu ? 'success' : 'warning'"
+          :color="!node.row.is_active ? 'neutral' : node.row.show_in_menu || !props.menus ? 'success' : 'warning'"
           variant="soft"
           size="sm"
           class="shrink-0"
-          :label="!node.row.is_active ? t('admin.shop.categories.status.inactive') : node.row.show_in_menu ? t('admin.shop.categories.status.active') : t('admin.shop.categories.status.hidden')"
+          :label="!node.row.is_active ? t('admin.shop.categories.status.inactive') : node.row.show_in_menu || !props.menus ? t('admin.shop.categories.status.active') : t('admin.shop.categories.status.hidden')"
         />
         <UDropdownMenu :items="menu(node.row)" :content="{ align: 'end' }">
           <UButton icon="i-lucide-ellipsis" color="neutral" variant="ghost" size="sm" :aria-label="t('admin.shop.categories.actions', { name: name(node.row) })" :data-testid="`category-menu-${node.row.id}`" />
         </UDropdownMenu>
       </li>
     </ul>
-    <p id="move-help" class="sr-only">{{ t('admin.shop.categories.keyboardHelp') }}</p>
+    <p id="move-help" class="sr-only">{{ t(flat ? 'admin.catalog.categoryAdmin.keyboardHelp' : 'admin.shop.categories.keyboardHelp') }}</p>
   </div>
 </template>
