@@ -1,4 +1,5 @@
 import type { APIRequestContext } from '@playwright/test'
+import { tr } from '../i18n'
 import { expect, test } from './fixtures'
 import { day, fillCheckout, ready } from './helpers'
 
@@ -215,4 +216,26 @@ test('the presentation video is uploaded in the editor, a .mov is refused, and t
   await expect(video.locator('video')).toHaveCount(0)
   await video.getByTestId('video-play').click()
   await expect(video.locator('video')).toHaveAttribute('src', /\.mp4$/)
+})
+
+test('catalog list: category and place filters have an "any" option, like the others', async ({ page }) => {
+  await page.goto('/admin/catalog/activities')
+  await ready(page)
+  const picker = page.getByTestId('picker-category')
+  const anyCategory = tr('fr', 'admin.catalog.list.anyCategory')
+  await expect(picker).toContainText(anyCategory)
+  await expect(page.getByTestId('picker-place')).toContainText(tr('fr', 'admin.catalog.list.anyPlace'))
+  const rows = page.locator('tbody tr')
+  const all = await rows.count()
+  await picker.click()
+  await expect(page.getByRole('option').first()).toHaveText(anyCategory)
+  await page.getByRole('option', { name: /Vie à la ferme/ }).click()
+  await expect(page).toHaveURL(/category=/)
+  await expect.poll(() => rows.count()).toBeLessThan(all)
+  // Back to every category: the first option.
+  await picker.click()
+  await page.getByRole('option', { name: anyCategory, exact: true }).click()
+  await expect(page).not.toHaveURL(/category=/)
+  await expect(picker).toContainText(anyCategory)
+  await expect.poll(() => rows.count()).toBe(all)
 })

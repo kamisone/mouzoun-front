@@ -2434,7 +2434,9 @@
           "activities": "Activities, schedules and departures.",
           "packages": "Packages made of a stay, activities and extras.",
           "extras": "Meals, firewood, transfers... offered with bookings."
-        }
+        },
+        "anyCategory": "Any category",
+        "anyPlace": "Any place"
       },
       "settings": {
         "add": "Add",

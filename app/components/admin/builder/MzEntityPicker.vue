@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import type { LookupOption } from '~/utils/page-types'
 
-/** Searchable picker of products, categories, places, FAQs, promotions, galleries or pages (one or several). */
+/**
+ * Searchable picker of products, categories, places, FAQs, promotions, galleries or pages (one or
+ * several). `anyLabel` (single choice, list filters) adds a first option meaning "no filter"
+ * ("Toutes les catégories"), shown while nothing is picked and picked to remove the filter, like
+ * the "Tous les statuts" option of the other filters.
+ */
 const props = withDefaults(defineProps<{
   kind: string
   multiple?: boolean
@@ -9,7 +14,11 @@ const props = withDefaults(defineProps<{
   /** Product kinds allowed (`x-kinds`), category scope allowed (`x-scope`). */
   kinds?: string[]
   scope?: string
-}>(), { multiple: false, kinds: undefined, scope: undefined })
+  anyLabel?: string
+}>(), { multiple: false, kinds: undefined, scope: undefined, anyLabel: undefined })
+/** Value of the "any" option (an id is a uuid, so it never collides). */
+const ANY = '__any__'
+const withAny = computed(() => !!props.anyLabel && !props.multiple)
 const { t } = useI18n()
 const { money } = useMoney()
 const model = defineModel<string | string[] | undefined>()
@@ -46,7 +55,7 @@ const items = computed(() => {
   const all = new Map<string, LookupOption>()
   for (const id of ids.value) if (known.value[id]) all.set(id, known.value[id]!)
   for (const o of options.value) all.set(o.id, o)
-  return [...all.values()].map(o => ({
+  const list = [...all.values()].map(o => ({
     label: o.label,
     value: o.id,
     description: o.price_minor != null || o.availability
@@ -54,6 +63,7 @@ const items = computed(() => {
       : (o.hint ?? undefined),
     avatar: o.image_url ? { src: o.image_url, alt: '' } : undefined,
   }))
+  return withAny.value ? [{ label: props.anyLabel!, value: ANY, description: undefined, avatar: undefined }, ...list] : list
 })
 function remove(id: string) {
   model.value = props.multiple ? ids.value.filter(x => x !== id) : undefined
@@ -70,7 +80,7 @@ function moveUp(i: number) {
   <div class="flex flex-col gap-2">
     <USelectMenu
       v-model:search-term="search"
-      :model-value="props.multiple ? ids : (ids[0] ?? undefined)"
+      :model-value="props.multiple ? ids : (ids[0] ?? (withAny ? ANY : undefined))"
       :items="items"
       value-key="value"
       :multiple="props.multiple"
@@ -79,7 +89,7 @@ function moveUp(i: number) {
       class="w-full"
       :aria-label="props.label"
       :data-testid="`picker-${props.kind}`"
-      @update:model-value="v => (model = props.multiple ? (v as string[]) : ((v as string) || undefined))"
+      @update:model-value="v => (model = props.multiple ? (v as string[]) : (v === ANY ? undefined : ((v as string) || undefined)))"
     />
     <ol v-if="props.multiple && ids.length" class="flex flex-col gap-1 text-small">
       <li v-for="(id, i) in ids" :key="id" class="flex items-center gap-2 rounded-xs bg-muted px-2 py-1">

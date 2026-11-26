@@ -2633,7 +2633,9 @@
           "activities": "Activités, horaires et départs.",
           "packages": "Formules composées d'un hébergement, d'activités et d'extras.",
           "extras": "Repas, bois, transferts... proposés avec les réservations."
-        }
+        },
+        "anyCategory": "Toutes les catégories",
+        "anyPlace": "Tous les lieux"
       },
       "settings": {
         "add": "Ajouter",
