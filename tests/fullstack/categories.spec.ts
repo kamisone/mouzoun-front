@@ -1,4 +1,5 @@
-import { type APIRequestContext, type Page, expect, test } from '@playwright/test'
+import type { APIRequestContext, Page } from '@playwright/test'
+import { expect, test } from './fixtures'
 import { ready } from './helpers'
 
 /**
@@ -9,6 +10,9 @@ import { ready } from './helpers'
  * address answers 301 to the replacement. Needs the demo shop (`seed_dev`) and a staff account
  * with shop.catalog and content.write (cover alt texts).
  */
+// Public category pages need a visible shop: catalog-only, whatever ran before.
+test.use({ shopMode: 'catalog_only' })
+
 const API = process.env.FULLSTACK_API ?? 'http://127.0.0.1:18090'
 const ORIGIN = process.env.FULLSTACK_ORIGIN ?? 'http://127.0.0.1:3210'
 

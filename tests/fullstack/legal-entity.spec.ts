@@ -1,11 +1,14 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures'
 import { ready } from './helpers'
 
 /**
  * Admin › Settings › Legal entity against the real API: a wrong SIREN is shown next to its field
  * (never saved); a valid identity and mediator are saved, and the checklist lines turn green.
+ * The `shop` fixture records the legal entity and the mediator first and puts them back after
+ * the test, so the shop specs still start from the seed's placeholders.
  */
-test('the company facts are edited in the admin form', async ({ page }) => {
+test('the company facts are edited in the admin form', async ({ page, shop }) => {
+  await shop.remember()
   await page.goto('/admin/settings/legal-entity')
   await ready(page)
   const field = (code: string) => page.locator(`[data-field="${code}"]`)

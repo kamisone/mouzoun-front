@@ -1,6 +1,5 @@
 import { mkdirSync } from 'node:fs'
-import { test } from '@playwright/test'
-import { mockApi } from './fixtures'
+import { mockApi, test } from './fixtures'
 
 /**
  * Review screenshots (not a test): SCREENSHOTS=docs/screenshots/after npm run test:e2e -- screenshots

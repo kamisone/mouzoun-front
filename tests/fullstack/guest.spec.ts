@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures'
 import { base, bookPayAtCamp, day, fillCheckout, mailMatching, noSeriousA11yIssues, prefix, ready } from './helpers'
 
 /**
@@ -42,9 +42,14 @@ test('stay + extra + activity, deposit paid online, then the booking page', asyn
   // Complete the trip: an extra of the stay and an activity during the stay.
   await page.getByTestId('upsell-add').first().click()
   await expect(page.getByTestId('trip-items').locator('li li')).not.toHaveCount(0)
-  await page.getByTestId('upsell-activity').first().click()
-  await page.getByTestId('slot-chips').getByRole('radio').and(page.locator(':enabled')).first().click()
-  await expect(page.getByRole('dialog')).toBeHidden()
+  // The time picker is a dialog named after the activity (its row's title).
+  const upsell = page.getByTestId('upsell-activity').first()
+  const activity = (await page.locator('li').filter({ has: upsell }).locator('p').first().textContent())!.trim()
+  await upsell.click()
+  const slotDialog = page.getByRole('dialog', { name: activity })
+  await expect(slotDialog).toBeVisible()
+  await slotDialog.getByTestId('slot-chips').getByRole('radio').and(page.locator(':enabled')).first().click()
+  await expect(slotDialog).toBeHidden()
   await expect(page.getByTestId('trip-items').locator(':scope > li')).toHaveCount(2)
   await page.getByTestId('trip-continue').click()
 

@@ -1,5 +1,5 @@
-import { expect, test, type Page, type Route } from '@playwright/test'
-import { API_BASE, STAFF, seriousViolations } from './fixtures'
+import type { Page, Route } from '@playwright/test'
+import { API_BASE, STAFF, seriousViolations, expect, test } from './fixtures'
 
 /**
  * Guest accounts against a mocked API: sign in by code (wrong code, then pasted), RTL, the

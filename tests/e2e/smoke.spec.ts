@@ -1,5 +1,4 @@
-import { expect, test } from '@playwright/test'
-import { mockApi, seriousViolations } from './fixtures'
+import { mockApi, seriousViolations, expect, test } from './fixtures'
 
 for (const [path, lang, dir] of [['/', 'fr-FR', 'ltr'], ['/en', 'en-GB', 'ltr'], ['/ar', 'ar-MA', 'rtl']] as const) {
   test(`home ${path} renders with lang=${lang} dir=${dir}`, async ({ page }) => {

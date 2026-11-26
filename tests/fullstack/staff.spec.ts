@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures'
 import { base, day, fillCheckout, mailMatching, ready } from './helpers'
 
 /** Back office against the real API, with the staff session of the setup project. */

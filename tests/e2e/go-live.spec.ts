@@ -1,5 +1,6 @@
-import { expect, test, type Page } from '@playwright/test'
-import { API_BASE, STAFF, seriousViolations } from './fixtures'
+import type { Page } from '@playwright/test'
+import { tr } from '../i18n'
+import { API_BASE, STAFF, seriousViolations, expect, test } from './fixtures'
 
 /** Go-live checklist and booking switch (mocked API). */
 
@@ -56,7 +57,7 @@ test('when everything is ready, booking opens after confirmation', async ({ page
   await page.goto('/admin/go-live')
   await expect(page.getByTestId('payment-status')).toContainText('Stripe en production')
   await page.getByTestId('go-live-open').click()
-  await page.getByRole('dialog').getByRole('button', { name: 'Ouvrir les réservations' }).click()
+  await page.getByRole('dialog', { name: tr('fr', 'admin.goLive.confirmTitle') }).getByRole('button', { name: tr('fr', 'admin.goLive.open') }).click()
   await expect(page.getByTestId('go-live-status')).toContainText('Ouverte au public')
   await expect(page.getByTestId('go-live-close')).toBeVisible()
 })

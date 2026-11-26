@@ -35,6 +35,12 @@ export function useShopCart() {
   const api = useShopApi()
   const cart = useState<Cart | null>('shop-cart', () => null)
   const open = useState('shop-cart-open', () => false)
+  /** What opened the drawer (focus returns there on close): set on the client only. */
+  const trigger = useState<HTMLElement | null>('shop-cart-trigger', () => null)
+  function openFrom(el: Element | null | undefined) {
+    trigger.value = el instanceof HTMLElement ? markRaw(el) : null
+    open.value = true
+  }
   const busy = useState('shop-cart-busy', () => false)
   const error = useState<string | null>('shop-cart-error', () => null)
   const { t } = useI18n()
@@ -59,13 +65,18 @@ export function useShopCart() {
   return {
     cart,
     open,
+    trigger,
+    openFrom,
     busy,
     error,
     count: computed(() => cart.value?.item_count ?? 0),
     load: () => run(() => api.cart.get()).catch(() => {}),
     add: async (variantId: string, quantity = 1) => {
+      // The button that was pressed: it is disabled (loading) while the request runs, so by the
+      // time the drawer opens focus has left it.
+      const from = import.meta.client ? document.activeElement : null
       await run(() => api.cart.add(variantId, quantity))
-      open.value = true
+      openFrom(from)
     },
     setQuantity: (id: string, quantity: number) => {
       const line = cart.value?.items.find(i => i.id === id)

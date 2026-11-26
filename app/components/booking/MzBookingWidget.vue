@@ -21,6 +21,14 @@ const { data: config } = useBookingConfig()
 const { money } = useMoney()
 const { track } = useAnalytics()
 
+// Phones: the fixed bottom bar's height, so the cookie banner sits above it (MzCookieBanner).
+const bottomBar = useTemplateRef<HTMLElement>('bottomBar')
+const { height: barHeight } = useElementSize(bottomBar, undefined, { box: 'border-box' })
+watch(barHeight, (h) => {
+  if (import.meta.client) document.documentElement.style.setProperty('--mz-bottom-bar', `${Math.round(h)}px`)
+}, { immediate: true })
+onBeforeUnmount(() => document.documentElement.style.removeProperty('--mz-bottom-bar'))
+
 const kind = computed(() => props.product.kind)
 const dates = ref({ start: params.value.checkin, end: params.value.checkout })
 const party = ref<Party>({ ...params.value.party })
@@ -168,7 +176,7 @@ function issueText() {
     </aside>
 
     <!-- Mobile: bottom bar + sheet -->
-    <div class="fixed inset-x-0 bottom-0 z-(--z-sticky) flex items-center justify-between gap-4 border-t border-default bg-default px-6 py-3 lg:hidden">
+    <div ref="bottomBar" class="fixed inset-x-0 bottom-0 z-(--z-sticky) flex items-center justify-between gap-4 border-t border-default bg-default px-6 py-3 lg:hidden">
       <div class="min-w-0">
         <MzPrice v-if="quoted && !issue" :cents="quoted.total_minor" show-zero />
         <MzPrice v-else-if="fromPrice" :cents="fromPrice" from :unit="kind === 'accommodation' ? 'night' : 'person'" />

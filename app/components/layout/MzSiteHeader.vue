@@ -11,6 +11,12 @@ const localePath = useLocalePath()
 const route = useRoute()
 const { y } = useWindowScroll()
 const open = ref(false)
+/** The menu button: focus returns there when the menu closes (Safari does not focus on click). */
+const menuTrigger = shallowRef<HTMLElement | null>(null)
+function openMenu(e: MouseEvent) {
+  menuTrigger.value = e.currentTarget as HTMLElement
+  open.value = true
+}
 watch(() => route.fullPath, () => { open.value = false })
 
 /** At the very top of the page: an overlay header is transparent there (see main.css). */
@@ -67,7 +73,8 @@ const accountLabel = computed(() => (account.value ? t('account.nav.myAccount') 
           class="-ms-4 lg:hidden"
           :aria-expanded="open"
           aria-controls="mobile-menu"
-          @click="open = true"
+          data-testid="menu-open"
+          @click="openMenu"
         />
       </div>
 
@@ -102,7 +109,7 @@ const accountLabel = computed(() => (account.value ? t('account.nav.myAccount') 
             variant="ghost"
             :aria-label="`${t('shop.cart.title')} · ${t('shop.cart.items', { n: shopCart.count.value }, shopCart.count.value)}`"
             data-testid="shop-cart-badge"
-            @click="shopCart.open.value = true"
+            @click="shopCart.openFrom($event.currentTarget as Element)"
           />
         </UChip>
         <!-- Outline over the photo, solid once the header is: CSS picks one (main.css). -->
@@ -118,10 +125,11 @@ const accountLabel = computed(() => (account.value ? t('account.nav.myAccount') 
     <MzCartDrawer v-if="shopOpen" />
 
     <!-- Full-screen menu: no radius or ring, a slow fade instead of the default scale-in. -->
-    <UModal
+    <MzOverlay
       v-model:open="open"
       fullscreen
       :title="t('nav.menu')"
+      :trigger="menuTrigger"
       :ui="{
         content: 'bg-default rounded-none ring-0 shadow-none data-[state=open]:animate-[fade-in_300ms_var(--ease-editorial)] data-[state=closed]:animate-[fade-out_200ms_var(--ease-editorial)]',
         header: 'h-(--ui-header-height) px-6',
@@ -146,6 +154,6 @@ const accountLabel = computed(() => (account.value ? t('account.nav.myAccount') 
           <MzSocialLinks size="sm" class="justify-center" />
         </div>
       </template>
-    </UModal>
+    </MzOverlay>
   </header>
 </template>

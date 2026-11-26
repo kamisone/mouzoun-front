@@ -1,4 +1,5 @@
-import { type FrameLocator, type Page, expect, test } from '@playwright/test'
+import type { FrameLocator, Page } from '@playwright/test'
+import { expect, test } from './fixtures'
 import { base, day, fillCheckout, ready } from './helpers'
 
 /**

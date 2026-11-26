@@ -3,6 +3,11 @@
  * Cookie banner (CNIL): shown until the visitor chooses; "Refuse" is a button exactly like
  * "Accept"; closing it without choosing is not consent. The choice lasts 6 months and can be
  * changed from the footer ("Cookies").
+ *
+ * Not a dialog: it blocks nothing (no overlay, no focus trap, the page stays usable), so it is a
+ * region named by its title. It comes right after the skip link in the page (layouts/default.vue)
+ * so the keyboard reaches it early; focus is never moved into it. It sits above a fixed bottom
+ * action bar (`--mz-bottom-bar`, set by the booking widget on phones) instead of covering it.
  */
 const { t } = useI18n()
 const localePath = useLocalePath()
@@ -15,11 +20,9 @@ onMounted(init)
 <template>
   <section
     v-if="open"
-    role="dialog"
-    aria-modal="false"
     aria-labelledby="cookie-title"
     aria-describedby="cookie-text"
-    class="fixed inset-x-4 bottom-4 z-(--z-toast) mx-auto flex max-w-2xl flex-col gap-4 rounded-md border border-default bg-elevated p-6 shadow-lifted"
+    class="fixed inset-x-4 bottom-[calc(1rem+var(--mz-bottom-bar,0px))] z-(--z-toast) mx-auto flex max-w-2xl flex-col gap-4 rounded-md border border-default bg-elevated p-6 shadow-lifted"
     data-testid="cookie-banner"
   >
     <h2 id="cookie-title" class="font-display text-h4 text-highlighted">{{ t('consent.title') }}</h2>

@@ -1,5 +1,19 @@
-import type { Page } from '@playwright/test'
+import { type Page, test as base, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
+import type { ConsentChoice } from '../../app/utils/consent'
+import { withConsent } from '../consent'
+
+/**
+ * `test` of the mocked suite: pages open with the cookie choice already made (`consent`,
+ * default `'granted'`), so the banner never shows; `test.use({ consent: null })` to see it.
+ */
+export const test = base.extend<{ consent: ConsentChoice | null }>({
+  consent: ['granted', { option: true }],
+  storageState: async ({ storageState, consent, baseURL }, use) => {
+    await use(consent ? withConsent(storageState, consent, baseURL!) : storageState)
+  },
+})
+export { expect }
 
 export const API_BASE = 'http://127.0.0.1:3299'
 

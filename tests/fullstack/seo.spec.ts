@@ -1,4 +1,5 @@
-import { type APIRequestContext, expect, test } from '@playwright/test'
+import type { APIRequestContext } from '@playwright/test'
+import { expect, test } from './fixtures'
 import { ready } from './helpers'
 
 /**
@@ -9,6 +10,9 @@ import { ready } from './helpers'
  * page. Needs the demo data (`seed_dev`: shop, pages, renamed activity) and a staff account with
  * seo.manage and shop.catalog.
  */
+// Shop pages, their redirects and the sitemap's shop entries need a visible shop.
+test.use({ shopMode: 'catalog_only' })
+
 const API = process.env.FULLSTACK_API ?? 'http://127.0.0.1:18090'
 const ORIGIN = process.env.FULLSTACK_ORIGIN ?? 'http://127.0.0.1:3210'
 
@@ -65,7 +69,9 @@ test('a missing address shows in "Erreurs 404" with a suggestion and becomes a r
   expect((await request.get(missing)).status()).toBe(404)
   // Counted by the Nuxt server (batches every 10 s), written by the API every minute.
   await expect.poll(async () => (await staff(request, 'GET', `/seo/not-found?q=${encodeURIComponent(missing)}`)).data.length, { timeout: 120_000, intervals: [5_000] }).toBe(1)
-  await page.goto('/admin/seo?tab=not-found')
+  // Searched by its address: the list is sorted by visits and paginated, so a new row with one
+  // visit is not always on the first page.
+  await page.goto(`/admin/seo?tab=not-found&q=${encodeURIComponent(missing)}`)
   await ready(page)
   const row = page.getByTestId(`not-found-${missing}`)
   await expect(row).toBeVisible()

@@ -6,12 +6,13 @@ import { defineConfig, devices } from '@playwright/test'
  * booking from the back office (go-live checklist), then guests run in French on desktop and in
  * Arabic on a phone, and staff in the back office.
  *
- *   API: PAYMENTS_FAKE=true EMAIL_PROVIDER=smtp SMTP_HOST=127.0.0.1 SMTP_PORT=1025 SMTP_TLS=none
- *        APP_PORT=18090 CORS_ORIGINS=http://127.0.0.1:3210 COOKIE_SECURE=false
- *        PUBLIC_SITE_URL=http://127.0.0.1:3210 ./target/debug/mouzoun-api
- *   Staff: cargo run --bin seed_dev -- staff e2e-staff@mouzoun.test <password> manager
+ *   Stack: tests/fullstack/scripts/stack.sh prepare (throwaway database, seed, staff account),
+ *          then tests/fullstack/scripts/stack.sh api (API on :18090 with PAYMENTS_FAKE, Mailpit
+ *          and the .env SMTP credentials blanked: Mailpit refuses SMTP authentication).
  *
  *   E2E_STAFF_EMAIL=… E2E_STAFF_PASSWORD=… npx playwright test -c playwright.fullstack.config.ts
+ *
+ * See tests/README.md (fixtures, named dialogs, global state, order check).
  *
  * Stripe TEST mode: give the API test keys (STRIPE_SECRET_KEY / STRIPE_PUBLISHABLE_KEY /
  * STRIPE_WEBHOOK_SECRET from `stripe listen --forward-to http://127.0.0.1:18090/v1/payments/webhooks/stripe`)
@@ -28,6 +29,8 @@ const staffState = 'playwright/.auth/staff-state.json'
 
 export default defineConfig({
   testDir: 'tests/fullstack',
+  // One database for the whole suite: specs that publish the same builder page or change shop
+  // settings would race in parallel workers. `shop-state` is serial on its own as well.
   workers: 1,
   timeout: 90_000,
   reporter: 'list',
@@ -37,20 +40,27 @@ export default defineConfig({
     { name: 'fr-desktop', testMatch: /guest\.spec\.ts/, dependencies: ['setup'], use: desktop },
     { name: 'ar-mobile', testMatch: /guest\.spec\.ts/, dependencies: ['setup'], use: { ...devices['Pixel 7'], viewport: { width: 390, height: 844 } } },
     { name: 'staff', testMatch: /staff\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
-    // Farm shop (needs the seed_dev demo shop; the staff account needs shop.* permissions).
-    { name: 'shop', testMatch: /shop\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
-    // Farm shop (needs the seed_dev demo shop; the staff account needs shop.* permissions).
-    { name: 'shop', testMatch: /shop\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
+    // Specs that change the shop's global state (mode, legal entity, compliance data): one at a
+    // time, in file order, whatever `--workers` says. Each declares the mode it starts from and
+    // the `shop` fixture restores what it changed (tests/fullstack/fixtures.ts, README.md).
+    // Farm shop, page-builder shop section, Admin › Settings › Legal entity (shop.*,
+    // content.publish, settings.write).
+    {
+      name: 'shop-state',
+      testMatch: [/\/shop\.spec\.ts/, /\/shop-section\.spec\.ts/, /\/legal-entity\.spec\.ts/],
+      dependencies: ['setup'],
+      workers: 1,
+      fullyParallel: false,
+      use: { ...desktop, storageState: staffState },
+    },
+    // The cookie banner, starting with no choice stored (every other spec starts with it given).
+    { name: 'consent', testMatch: /\/consent\.spec\.ts/, dependencies: ['setup'], use: desktop },
     // Shop categories: admin tree, form, delete; public pages (shop.catalog + content.write).
     { name: 'categories', testMatch: /\/categories\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
     // Stay and activity categories: catalog admin, editor and builder pickers (products.write + content.publish).
     { name: 'catalog-categories', testMatch: /catalog-categories\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
     // SEO: redirects, 404 log, sitemap, robots (seo.manage + shop.catalog).
     { name: 'seo', testMatch: /seo\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
-    // Page-builder shop section (content.publish + shop.settings).
-    { name: 'shop-section', testMatch: /shop-section\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
-    // Admin › Settings › Legal entity: the staff account needs settings.write.
-    { name: 'legal-entity', testMatch: /legal-entity\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
     // Catalogue editors (products, pricing and inventory write: manager or super_admin).
     { name: 'catalog', testMatch: /catalog\.spec\.ts/, dependencies: ['setup'], use: { ...desktop, storageState: staffState } },
     // Page builder: the staff account needs content.publish (manager or super_admin).

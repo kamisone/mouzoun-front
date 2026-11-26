@@ -1,4 +1,5 @@
-import { expect, test } from '@playwright/test'
+import { tr } from '../i18n'
+import { expect, test } from './fixtures'
 
 // Runs in the "mobile" (360 px) and "tablet" (768 px) projects; desktop (1280 px) runs the smoke tests.
 for (const path of ['/', '/ar', '/_styleguide']) {
@@ -10,12 +11,13 @@ for (const path of ['/', '/ar', '/_styleguide']) {
   })
 }
 
-test('the mobile menu is full screen, with large links, and closes with Escape', async ({ page }) => {
+test('the mobile menu is full screen, with large links, and closes with Escape back to its button', async ({ page }) => {
   await page.goto('/')
-  await page.getByRole('button', { name: 'Menu' }).click()
-  // By name: the cookie banner is a dialog too, and becomes reachable again once the menu closes.
-  const dialog = page.getByRole('dialog', { name: 'Menu', exact: true })
+  const button = page.getByRole('button', { name: tr('fr', 'nav.menu') })
+  await button.click()
+  const dialog = page.getByRole('dialog', { name: tr('fr', 'nav.menu'), exact: true })
   await expect(dialog).toBeVisible()
+  await expect(dialog).toHaveAttribute('aria-modal', 'true')
   const viewport = page.viewportSize()!
   await expect.poll(async () => Math.round((await dialog.boundingBox())!.width)).toBe(viewport.width)
   const link = dialog.getByRole('link', { name: 'Séjourner' })
@@ -23,6 +25,7 @@ test('the mobile menu is full screen, with large links, and closes with Escape',
   expect(Number.parseFloat(await link.evaluate(el => getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(32)
   await page.keyboard.press('Escape')
   await expect(dialog).toBeHidden()
+  await expect(button).toBeFocused()
 })
 
 test('touch targets of the header are at least 44 px', async ({ page }) => {

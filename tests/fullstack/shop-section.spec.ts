@@ -1,5 +1,6 @@
-import { type APIRequestContext, expect, test } from '@playwright/test'
-import { completeFoodInformation, ready } from './helpers'
+import { tr } from '../i18n'
+import { expect, test } from './fixtures'
+import { ready } from './helpers'
 
 /**
  * "Produits de la boutique" end to end against the real API: added to the home page in the
@@ -8,36 +9,13 @@ import { completeFoodInformation, ready } from './helpers'
  * single-variant product goes in the cart (the drawer opens with the line), the multi-variant one
  * offers "Choisir les options"; once in Arabic. Needs the demo data (`seed_dev`) and a staff
  * account with content.publish and shop.settings.
+ *
+ * Starts in catalog-only mode (declared below) whatever ran before; the `shop` fixture opens the
+ * shop mid-test and puts the mode and the compliance data back afterwards.
  */
-const API = process.env.FULLSTACK_API ?? 'http://127.0.0.1:18090'
-const ORIGIN = process.env.FULLSTACK_ORIGIN ?? 'http://127.0.0.1:3210'
+test.use({ shopMode: 'catalog_only' })
 
-async function staff(request: APIRequestContext, method: 'GET' | 'PUT' | 'PATCH', path: string, data?: unknown) {
-  const res = await request.fetch(`${API}/v1/admin${path}`, { method, data, headers: { Origin: ORIGIN } })
-  expect(res.ok(), `${method} ${path}: ${res.status()} ${await res.text()}`).toBeTruthy()
-  return res.status() === 204 ? null : res.json()
-}
-
-/** Fills the seeded placeholders the French compliance checklist needs, then opens the shop. */
-async function openShop(request: APIRequestContext) {
-  const entities = await staff(request, 'GET', '/shop/legal-entities')
-  const fr = entities.data.find((e: { code: string }) => e.code === 'mouzoun_fr')
-  await request.fetch(`${API}/v1/admin/shop/legal-entities/${fr.id}`, { method: 'PUT', headers: { Origin: ORIGIN }, data: {
-    legal_name: 'MOUZOUN TEST SAS', legal_form: 'SAS', share_capital_minor: 100000,
-    address: { line1: '1 rue de Test', postal_code: '75001', city: 'Paris', country_code: 'FR' },
-    registration: { siren: '732829320', siret: '73282932000074', rcs_city: 'Paris', vat_number: 'FR44732829320' },
-    email: 'boutique@example.com', host: { name: 'Google Cloud France SARL' },
-  } })
-  const tax = await staff(request, 'GET', '/shop/tax-rates')
-  for (const r of tax.rates.filter((x: { country_code: string, is_active: boolean, is_confirmed: boolean }) => x.country_code === 'FR' && x.is_active && !x.is_confirmed)) {
-    await request.fetch(`${API}/v1/admin/shop/tax-rates/${r.id}`, { method: 'PUT', headers: { Origin: ORIGIN }, data: { ...r, is_confirmed: true } })
-  }
-  await staff(request, 'PATCH', '/shop/settings', { 'payments.stripe.enabled': true, 'shop.consumer_mediator': { name: 'Médiateur test', url: 'https://mediateur.example' } })
-  await completeFoodInformation(request, API, ORIGIN)
-  await staff(request, 'PATCH', '/shop/settings', { 'shop.status': 'open' })
-}
-
-test('a shop section added in the builder sells from the home page', async ({ page, request }) => {
+test('a shop section added in the builder sells from the home page', async ({ page, shop }) => {
   test.setTimeout(180_000)
   const title = `Nos dattes ${Date.now().toString(36)}`
 
@@ -74,7 +52,7 @@ test('a shop section added in the builder sells from the home page', async ({ pa
   await expect(section.getByTestId('shop-card-price').first()).toBeVisible()
 
   // ---- Open shop: link, add to cart, options -------------------------------------------------
-  await openShop(request)
+  await shop.mode('open')
   await expect.poll(async () => {
     await page.goto('/')
     return section.getByTestId('shop-card-add').count()
@@ -90,10 +68,12 @@ test('a shop section added in the builder sells from the home page', async ({ pa
   await ready(page)
   const name = (await single.locator('h3').textContent())!.trim()
   await single.getByTestId('shop-card-add').click()
-  const drawer = page.getByRole('dialog')
+  const drawer = page.getByRole('dialog', { name: tr('fr', 'shop.cart.title') })
   await expect(drawer).toBeVisible()
   await expect(drawer).toContainText(name)
   await page.keyboard.press('Escape')
+  await expect(drawer).toBeHidden()
+  await expect(single.getByTestId('shop-card-add')).toBeFocused()
   const optionsHref = await multi.getByTestId('shop-card-options').getAttribute('href')
   await multi.getByTestId('shop-card-options').click()
   await expect(page).toHaveURL(new RegExp(`${optionsHref}$`))
@@ -105,4 +85,14 @@ test('a shop section added in the builder sells from the home page', async ({ pa
   await expect(arCards.first()).toBeVisible()
   for (const a of await arCards.all()) expect(await a.getAttribute('href')).toMatch(/^\/ar\/boutique\/p\//)
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
+  // The cart drawer opens at the end of the reading direction (the left in Arabic), named in
+  // Arabic; Escape closes it and focus goes back to the card's button.
+  const arAdd = page.locator('section[data-section-type="shop_products"]').getByTestId('shop-card-add').first()
+  await arAdd.click()
+  const arDrawer = page.getByRole('dialog', { name: tr('ar', 'shop.cart.title') })
+  await expect(arDrawer).toBeVisible()
+  await expect(arDrawer).toHaveAttribute('data-side', 'left')
+  await page.keyboard.press('Escape')
+  await expect(arDrawer).toBeHidden()
+  await expect(arAdd).toBeFocused()
 })

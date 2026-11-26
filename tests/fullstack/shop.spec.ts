@@ -1,15 +1,23 @@
-import { type APIRequestContext, expect, test } from '@playwright/test'
-import { completeFoodInformation, ready } from './helpers'
+import type { APIRequestContext } from '@playwright/test'
+import { tr } from '../i18n'
+import { expect, test } from './fixtures'
+import { ready } from './helpers'
 
 /**
  * Farm shop end to end against the real API (simulated card provider, PAYMENTS_FAKE=true):
- * catalog-only mode hides buying; the cookie banner offers "refuse" as plainly as "accept";
- * the shop opens only once the French compliance checklist passes; then a guest in Paris adds
- * two variants, applies a code, reads the recap, ticks the terms and presses "Commander avec
- * obligation de paiement", pays by card (fake Stripe session → signed webhook pipeline), sees
- * the order paid; staff ship it with Colissimo, and the order page shows the tracking link.
+ * catalog-only mode hides buying; the shop opens only once the French compliance checklist
+ * passes; then a guest in Paris adds two variants (Escape closes the cart drawer and focus goes
+ * back to "Ajouter au panier"), applies a code, reads the recap, ticks the terms and presses
+ * "Commander avec obligation de paiement", pays by card (fake Stripe session → signed webhook
+ * pipeline), sees the order paid; staff ship it with Colissimo, and the order page shows the
+ * tracking link.
  * Needs the demo shop (`seed_dev`) and the staff account of the suite (shop.* permissions).
+ * The cookie banner has its own spec (consent.spec.ts).
+ *
+ * Starts in catalog-only mode (declared below); the `shop` fixture puts back the mode and the
+ * compliance data after each test, so the order of the specs does not matter.
  */
+test.use({ shopMode: 'catalog_only' })
 const API = process.env.FULLSTACK_API ?? 'http://127.0.0.1:18090'
 
 async function staffApi(request: APIRequestContext, method: 'GET' | 'POST' | 'PATCH', path: string, data?: unknown) {
@@ -22,48 +30,7 @@ async function staffSend(request: APIRequestContext, method: 'PUT' | 'PATCH', pa
   return request.fetch(`${API}/v1/admin${path}`, { method, data, headers: { Origin: process.env.FULLSTACK_ORIGIN ?? 'http://127.0.0.1:3210' } })
 }
 
-/** Fills the seeded placeholders (test identity, confirmed rates, mediator) so the shop can open. */
-async function makeCompliant(request: APIRequestContext) {
-  const entities = await staffApi(request, 'GET', '/shop/legal-entities')
-  const fr = entities.data.find((e: { code: string }) => e.code === 'mouzoun_fr')
-  await staffSend(request, 'PUT', `/shop/legal-entities/${fr.id}`, {
-    legal_name: 'MOUZOUN TEST SAS', legal_form: 'SAS', share_capital_minor: 100000,
-    address: { line1: '1 rue de Test', postal_code: '75001', city: 'Paris', country_code: 'FR' },
-    registration: { siren: '732829320', siret: '73282932000074', rcs_city: 'Paris', vat_number: 'FR44732829320' },
-    email: 'boutique@example.com', host: { name: 'Google Cloud France SARL' },
-  })
-  const tax = await staffApi(request, 'GET', '/shop/tax-rates')
-  for (const r of tax.rates.filter((x: { country_code: string, is_active: boolean, is_confirmed: boolean }) => x.country_code === 'FR' && x.is_active && !x.is_confirmed)) {
-    await staffSend(request, 'PUT', `/shop/tax-rates/${r.id}`, { ...r, is_confirmed: true })
-  }
-  await staffApi(request, 'PATCH', '/shop/settings', { 'payments.stripe.enabled': true, 'shop.consumer_mediator': { name: 'Médiateur test', url: 'https://mediateur.example' } })
-  await completeFoodInformation(request, API, process.env.FULLSTACK_ORIGIN ?? 'http://127.0.0.1:3210')
-}
-
-test('the cookie banner refuses as easily as it accepts, and comes back from the footer', async ({ page }) => {
-  await page.goto('/boutique')
-  await ready(page)
-  const banner = page.getByTestId('cookie-banner')
-  await expect(banner).toBeVisible()
-  const reject = page.getByTestId('cookie-reject')
-  const accept = page.getByTestId('cookie-accept')
-  // Same size and style: refusing is not harder than accepting.
-  const [r, a] = [await reject.boundingBox(), await accept.boundingBox()]
-  expect(Math.round(r!.width)).toBe(Math.round(a!.width))
-  expect(Math.round(r!.height)).toBe(Math.round(a!.height))
-  expect(await reject.getAttribute('class')).toBe(await accept.getAttribute('class'))
-  await reject.click()
-  await expect(banner).toBeHidden()
-  expect(await page.evaluate(() => localStorage.getItem('mz-consent'))).toBe('denied')
-  await page.reload()
-  await ready(page)
-  await expect(banner).toBeHidden()
-  await page.getByTestId('footer-cookies').click()
-  await expect(banner).toBeVisible()
-})
-
-test('catalog-only mode shows the products but no buying', async ({ page, request }) => {
-  await staffApi(request, 'PATCH', '/shop/settings', { 'shop.status': 'catalog_only' })
+test('catalog-only mode shows the products but no buying', async ({ page }) => {
   await page.goto('/boutique')
   await ready(page)
   await expect(page.getByTestId('shop-coming-soon')).toBeVisible()
@@ -73,22 +40,29 @@ test('catalog-only mode shows the products but no buying', async ({ page, reques
   await expect(page.getByTestId('add-to-cart')).toHaveCount(0)
 })
 
-test('a guest buys two variants by card and follows the parcel', async ({ page, request }) => {
-  // Placeholders block the opening until the checklist passes.
+test('a guest buys two variants by card and follows the parcel', async ({ page, request, shop }) => {
+  // The seed's placeholders block the opening until the checklist passes.
   const refused = await staffSend(request, 'PATCH', '/shop/settings', { 'shop.status': 'open' })
   expect(refused.status()).toBe(409)
-  await makeCompliant(request)
+  expect((await refused.json()).error.code).toBe('compliance_checklist')
   // Once the checklist passes, opening needs nothing else.
-  await staffApi(request, 'PATCH', '/shop/settings', { 'shop.status': 'open' })
+  await shop.mode('open')
   const code = `E2E${Date.now() % 100000}`
   await staffApi(request, 'POST', '/shop/promotions', { code, scope: 'shop', discount_type: 'percent', percent: '10', is_active: true, applies_to_all: true, translations: { fr: { name: 'E2E' } } })
 
   await page.goto('/boutique/p/dattes-medjool')
   await ready(page)
   await page.getByRole('radio', { name: '500 g' }).click()
-  await page.getByTestId('add-to-cart').click()
-  await expect(page.getByTestId('shop-cart-badge')).toBeVisible()
+  const add = page.getByTestId('add-to-cart')
+  await add.click()
+  // The drawer is a modal dialog named "Votre panier"; Escape closes it and focus goes back to
+  // the button that opened it.
+  const drawer = page.getByRole('dialog', { name: tr('fr', 'shop.cart.title') })
+  await expect(drawer).toBeVisible()
+  await expect(drawer).toHaveAttribute('aria-modal', 'true')
   await page.keyboard.press('Escape')
+  await expect(drawer).toBeHidden()
+  await expect(add).toBeFocused()
   await page.getByRole('radio', { name: '1 kg' }).click()
   await expect(page).toHaveURL(/variant=/)
   await page.getByTestId('add-to-cart').click()
@@ -116,7 +90,9 @@ test('a guest buys two variants by card and follows the parcel', async ({ page, 
   await page.getByLabel('Carte, Apple Pay, Google Pay').check()
   await expect(page.getByTestId('checkout-recap')).toContainText('MOUZOUN TEST SAS')
   // The terms box is never pre-ticked; the button states the obligation to pay.
-  await expect(page.getByTestId('checkout-terms').locator('button, input').first()).not.toBeChecked()
+  // The test id is on the checkbox itself (Nuxt UI forwards attributes to it).
+  await expect(page.getByTestId('checkout-terms')).toHaveRole('checkbox')
+  await expect(page.getByTestId('checkout-terms')).not.toBeChecked()
   await expect(page.getByTestId('place-order')).toHaveText('Commander avec obligation de paiement')
   await page.getByTestId('checkout-terms').click()
   await page.getByTestId('place-order').click()

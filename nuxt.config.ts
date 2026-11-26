@@ -109,6 +109,11 @@ export default defineNuxtConfig({
     '/*/account': { ssr: false, swr: false, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } },
     '/wishlists/**': { swr: false, headers: { 'X-Robots-Tag': 'noindex' } },
     '/*/wishlists/**': { swr: false, headers: { 'X-Robots-Tag': 'noindex' } },
+    // Sitemaps: cached by the API in Redis and dropped on every SEO change (seo.changed); the
+    // `/**` cache here would keep serving renamed addresses for 5 minutes. (`swr: false` does
+    // not undo the inherited `cache` in Nitro: `cache: false` does.)
+    '/sitemap.xml': { cache: false },
+    '/sitemaps/**': { cache: false },
     // Availability-dependent search results: short cache only.
     '/stays': { swr: 30 },
     '/*/stays': { swr: 30 },

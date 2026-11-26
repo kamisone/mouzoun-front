@@ -52,6 +52,9 @@ npm test            # Vitest: formatting, localisation, WCAG contrast, component
 npm run build && npm run test:e2e   # Playwright smoke + accessibility (npx playwright install chromium once)
 ```
 
+Full-stack tests (real API and database), fixtures, the rule that dialog locators are named, the
+shop-state fixtures and the order check: [tests/README.md](tests/README.md).
+
 ## CI/CD — push to `dev` = deployed
 
 `.github/workflows/deploy-dev.yml`: typecheck + build → image `<DOCKER_HUB_USERNAME>/mouzoun_front:v<run_number>`

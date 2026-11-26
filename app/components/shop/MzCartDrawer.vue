@@ -1,5 +1,9 @@
 <script setup lang="ts">
-/** Side drawer opened after "add to cart" and from the header basket. */
+/**
+ * Side drawer opened after "add to cart" and from the header basket: a modal dialog named
+ * "Panier" (`MzOverlay`), at the end of the reading direction. On close, focus returns to the
+ * button that opened it, or to the header basket when that button is gone.
+ */
 const { t } = useI18n()
 const store = useShopCart()
 const shopPath = useShopPath()
@@ -7,7 +11,16 @@ const cart = store.cart
 </script>
 
 <template>
-  <USlideover v-model:open="store.open.value" :title="t('shop.cart.title')" side="right" :ui="{ body: 'flex flex-col gap-4' }">
+  <MzOverlay
+    v-model:open="store.open.value"
+    kind="drawer"
+    side="end"
+    :title="t('shop.cart.title')"
+    :trigger="store.trigger.value"
+    fallback-focus="[data-testid='shop-cart-badge']"
+    :ui="{ body: 'flex flex-col gap-4' }"
+    :content="{ 'data-testid': 'cart-drawer' }"
+  >
     <template #body>
       <MzEmptyState v-if="!cart || !cart.items.length" icon="i-lucide-shopping-basket" :title="t('shop.cart.empty')" />
       <template v-else>
@@ -22,5 +35,5 @@ const cart = store.cart
         <UButton :to="shopPath('cart')" :label="t('shop.cart.view')" color="neutral" variant="outline" block @click="store.open.value = false" />
       </div>
     </template>
-  </USlideover>
+  </MzOverlay>
 </template>

@@ -1,6 +1,6 @@
 import { createServer, type Server } from 'node:http'
-import { expect, type Page, test } from '@playwright/test'
-import { API_BASE } from './fixtures'
+import type { Page } from '@playwright/test'
+import { API_BASE, expect, test } from './fixtures'
 
 /**
  * Gallery section: preview → "View all photos" → albums → lightbox, keyboard and swipe, the back
