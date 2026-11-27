@@ -81,9 +81,16 @@ watch(model, (v) => {
   if (editor.value && document.activeElement !== editor.value && editor.value.innerHTML !== (v ?? '')) editor.value.innerHTML = v ?? ''
 })
 
+/**
+ * Copies the editor's HTML into the model. Without the element nothing is written: when a tab
+ * switch removes the focused editor, the browser blurs it after Vue cleared the ref, and reading
+ * "no element" as "empty text" used to wipe the language being edited (then autosaved). Typing
+ * already synced on input, so there is nothing to keep at that point.
+ */
 function sync() {
-  const html = editor.value?.innerHTML ?? ''
-  model.value = html.replace(/<br>$/, '').trim() || undefined
+  const el = editor.value
+  if (!el) return
+  model.value = el.innerHTML.replace(/<br>$/, '').trim() || undefined
 }
 function exec(command: string, value?: string) {
   editor.value?.focus()
@@ -126,7 +133,7 @@ function paste(e: ClipboardEvent) {
       @input="sync(); keepRange()"
       @keyup="keepRange"
       @mouseup="keepRange"
-      @blur="sync"
+      @blur="sync()"
       @paste="paste"
     />
   </div>

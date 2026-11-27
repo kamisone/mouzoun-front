@@ -1,4 +1,5 @@
-import { expect, test } from './fixtures'
+import { tr } from '../i18n'
+import { API, ORIGIN, expect, test } from './fixtures'
 import { noSeriousA11yIssues, ready } from './helpers'
 
 /**
@@ -88,4 +89,40 @@ test('the home page built from sections is accessible, in French and in Arabic (
     })
     await noSeriousA11yIssues(page)
   }
+})
+
+test('text typed just before switching to the layout tab is kept and saved', async ({ page, request }) => {
+  const tag = Date.now().toString(36)
+  const body = `Délai de rétractation ${tag}`
+  await page.goto('/admin/pages')
+  await ready(page)
+  await page.getByTestId('open-builder-home').click()
+  await expect(page.getByTestId('section-list')).toBeVisible()
+  const rows = page.getByTestId('section-list').locator('> li')
+  const before = await rows.count()
+  await page.getByTestId('add-section').click()
+  await page.getByTestId('add-type-rich_text').click()
+  await expect(rows).toHaveCount(before + 1)
+  const form = page.getByTestId('section-form-rich_text')
+  const editor = form.locator('[data-field="body"] [contenteditable="true"]')
+  await editor.click()
+  await page.keyboard.type(body)
+  // Straight to "Mise en page" while the editor still has the focus: it is removed, then blurred.
+  await form.getByRole('tab', { name: tr('fr', 'admin.builder.groups.layout') }).click()
+  await expect(page.getByTestId('save-status')).toHaveText(/Brouillon enregistré/, { timeout: 15_000 })
+  // The saved draft has the text.
+  const pages = await (await request.fetch(`${API}/v1/admin/pages`, { headers: { Origin: ORIGIN } })).json()
+  const home = pages.pages.find((p: { page_type: string }) => p.page_type === 'home')
+  const draft = await (await request.fetch(`${API}/v1/admin/pages/${home.id}/builder`, { headers: { Origin: ORIGIN } })).json()
+  const saved = draft.blocks.find((b: { content: Record<string, { body?: string }> }) => b.content.fr?.body?.includes(tag))
+  expect(saved, 'the section saved with its text').toBeTruthy()
+  // Back on "Contenu", the editor shows it.
+  await form.getByRole('tab', { name: tr('fr', 'admin.builder.groups.content') }).click()
+  await expect(editor).toContainText(body)
+
+  // Leave the home draft as it was.
+  await rows.nth(before).getByRole('button', { name: tr('fr', 'admin.builder.actions') }).click()
+  await page.getByRole('menuitem', { name: tr('fr', 'common.delete') }).click()
+  await expect(rows).toHaveCount(before)
+  await expect(page.getByTestId('save-status')).toHaveText(/Brouillon enregistré/, { timeout: 15_000 })
 })
