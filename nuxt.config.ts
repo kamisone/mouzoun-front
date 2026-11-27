@@ -41,6 +41,9 @@ export default defineNuxtConfig({
     domains: imageDomains,
     format: ['avif', 'webp'],
     quality: 75,
+    // @nuxt/image 2 has no `xs` screen: `sizes="xs:80px"` (thumbnails) gave no src at all and
+    // `xs:100vw` entries were dropped. Same values as app/utils/image-sizes.ts.
+    screens: { 'xs': 320, 'sm': 640, 'md': 768, 'lg': 1024, 'xl': 1280, '2xl': 1536 },
   },
 
   eslint: { config: { stylistic: false } },
@@ -119,6 +122,10 @@ export default defineNuxtConfig({
     // not undo the inherited `cache` in Nitro: `cache: false` does.)
     '/sitemap.xml': { cache: false },
     '/sitemaps/**': { cache: false },
+    // Resized images (@nuxt/image IPX): Nitro's route cache cannot store binary bodies, so the
+    // `/**` swr served `{}` (JSON) from the second request on: images showed only their alt
+    // text. IPX sends its own long-lived Cache-Control, so browsers and the CDN still cache them.
+    '/_ipx/**': { cache: false },
     // Availability-dependent search results: short cache only.
     '/stays': { swr: 30 },
     '/*/stays': { swr: 30 },
