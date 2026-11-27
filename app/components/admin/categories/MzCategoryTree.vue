@@ -148,7 +148,7 @@ function menu(row: AdminCategoryRow): DropdownMenuItem[][] {
   const site = props.siteUrl?.(row)
   const view: DropdownMenuItem[] = [
     { label: t('common.edit'), icon: 'i-lucide-pencil', onSelect: () => emit('edit', row) },
-    ...(site && row.is_active ? [{ label: t('admin.shop.categories.viewOnSite'), icon: 'i-lucide-external-link', to: site, target: '_blank' }] : []),
+    ...(site && row.is_active ? [{ label: t('admin.shop.categories.viewOnSite'), icon: 'i-lucide-external-link', to: site, locale: false, target: '_blank' }] : []),
   ]
   if (props.readOnly) return [view]
   const moves: DropdownMenuItem[] = (flat.value ? ['up', 'down'] as const : ['up', 'down', 'indent', 'outdent'] as const).map(k => ({

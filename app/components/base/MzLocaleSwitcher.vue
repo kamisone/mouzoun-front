@@ -28,8 +28,10 @@ const current = computed(() => locales.value.find(l => l.code === locale.value))
 const items = computed<DropdownMenuItem[]>(() =>
   locales.value.map(l => ({
     label: l.name ?? l.code,
+    // `locale: false`: the path is already localized. Nuxt UI's link otherwise prefixes any path
+    // without a locale with the current one, so French (unprefixed) became `/en/…` from English.
     ...(props.mode === 'route'
-      ? { to: switchLocalePath(l.code) }
+      ? { to: switchLocalePath(l.code), locale: false }
       : { onSelect: () => choose(l.code) }),
     trailingIcon: l.code === locale.value ? 'i-lucide-check' : undefined,
     'aria-current': l.code === locale.value ? 'true' : undefined,
