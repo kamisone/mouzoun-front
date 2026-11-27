@@ -47,3 +47,32 @@ describe('MzRichTextField token picker', () => {
     wrapper.unmount()
   })
 })
+
+/**
+ * Line breaks: the API keeps `<p>` and `<br>` but drops `<div>` (keeping its text), so lines the
+ * browser makes as `<div>` (or text typed straight into an emptied box) are saved as paragraphs.
+ */
+describe('MzRichTextField line breaks', () => {
+  async function typed(html: string) {
+    const { wrapper, updates } = await mount('page', '')
+    const editor = wrapper.find('[contenteditable="true"]')
+    ;(editor.element as HTMLElement).innerHTML = html
+    await editor.trigger('input')
+    wrapper.unmount()
+    return updates.at(-1)
+  }
+
+  it.each([
+    ['div lines', '<p>Un</p><div>Deux</div><div><br></div><div>Trois</div>', '<p>Un</p><p>Deux</p><p><br></p><p>Trois</p>'],
+    ['text typed into an emptied box', 'Un<div>Deux</div>', '<p>Un</p><p>Deux</p>'],
+    ['inline marks at the root', 'Un <b>gras</b><br>suite', '<p>Un <b>gras</b><br>suite</p>'],
+    ['a div around a list', '<div><ul><li>a</li></ul></div>', '<ul><li>a</li></ul>'],
+    ['paragraphs and line breaks kept', '<p>Un<br>deux</p><p><br></p><p>Trois</p>', '<p>Un<br>deux</p><p><br></p><p>Trois</p>'],
+  ])('%s', async (_, html, saved) => {
+    expect(await typed(html)).toBe(saved)
+  })
+
+  it('a box with only empty lines is empty', async () => {
+    expect(await typed('<p><br></p><div><br></div>')).toBeUndefined()
+  })
+})

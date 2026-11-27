@@ -76,6 +76,8 @@ function insertToken(token: string) {
 
 onMounted(() => {
   if (editor.value) editor.value.innerHTML = model.value ?? ''
+  // Enter makes a new <p> (Chrome's default is <div>, which the API does not keep).
+  if (typeof document.execCommand === 'function') document.execCommand('defaultParagraphSeparator', false, 'p')
 })
 watch(model, (v) => {
   if (editor.value && document.activeElement !== editor.value && editor.value.innerHTML !== (v ?? '')) editor.value.innerHTML = v ?? ''
@@ -90,7 +92,54 @@ watch(model, (v) => {
 function sync() {
   const el = editor.value
   if (!el) return
-  model.value = el.innerHTML.replace(/<br>$/, '').trim() || undefined
+  model.value = paragraphs(el.innerHTML.replace(/<br>$/, '').trim()) || undefined
+}
+
+const BLOCKS = new Set(['P', 'UL', 'OL', 'H3', 'H4', 'BLOCKQUOTE'])
+/**
+ * The HTML in the subset the API keeps: a line the browser made as a `<div>` becomes a `<p>`,
+ * and text typed straight into the box (after "select all, delete") is wrapped in a `<p>`. The
+ * API drops `<div>` but keeps its text, so lines used to be glued together on save.
+ * The editor itself is left alone (the caret stays put); only the saved value changes.
+ */
+function paragraphs(html: string): string {
+  const tpl = document.createElement('template')
+  tpl.innerHTML = html
+  const root = tpl.content
+  if (!root.textContent?.trim()) return ''
+  let para: HTMLParagraphElement | null = null
+  let node = root.firstChild
+  while (node) {
+    const next = node.nextSibling
+    if (node instanceof HTMLElement && node.tagName === 'DIV') {
+      if ([...node.children].some(c => BLOCKS.has(c.tagName) || c.tagName === 'DIV')) {
+        // A wrapper around blocks (lists, other lines): unwrap it, then look at its children.
+        const first = node.firstChild
+        node.replaceWith(...node.childNodes)
+        node = first ?? next
+        continue
+      }
+      const p = document.createElement('p')
+      p.append(...node.childNodes)
+      node.replaceWith(p)
+      para = null
+    }
+    else if (node instanceof HTMLElement && BLOCKS.has(node.tagName)) {
+      para = null
+    }
+    else if (node.nodeType === Node.TEXT_NODE && !node.textContent?.trim() && !para) {
+      node.remove()
+    }
+    else {
+      if (!para) {
+        para = document.createElement('p')
+        node.before(para)
+      }
+      para.append(node)
+    }
+    node = next
+  }
+  return tpl.innerHTML
 }
 function exec(command: string, value?: string) {
   editor.value?.focus()
