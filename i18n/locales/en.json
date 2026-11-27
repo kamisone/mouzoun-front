@@ -732,6 +732,8 @@
         "empty": "No file in the library."
       },
       "richtext": {
+        "heading": "Sub-heading",
+        "smallHeading": "Small heading",
         "toolbar": "Formatting",
         "bold": "Bold",
         "italic": "Italic",

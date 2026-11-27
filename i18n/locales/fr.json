@@ -732,6 +732,8 @@
         "empty": "Aucun fichier dans la médiathèque."
       },
       "richtext": {
+        "heading": "Sous-titre",
+        "smallHeading": "Petit titre",
         "toolbar": "Mise en forme",
         "bold": "Gras",
         "italic": "Italique",

@@ -732,6 +732,8 @@
         "empty": "لا توجد ملفات في المكتبة."
       },
       "richtext": {
+        "heading": "عنوان فرعي",
+        "smallHeading": "عنوان صغير",
         "toolbar": "التنسيق",
         "bold": "عريض",
         "italic": "مائل",

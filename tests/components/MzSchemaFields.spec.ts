@@ -1,10 +1,19 @@
-import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { flushPromises } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { mockNuxtImport, mountSuspended } from '@nuxt/test-utils/runtime'
+import { enableAutoUnmount, flushPromises } from '@vue/test-utils'
+import { afterEach, describe, expect, it } from 'vitest'
 import MzSchemaFields from '~/components/admin/builder/MzSchemaFields.vue'
 import type { FieldError, Json, SchemaNode } from '~/utils/page-types'
 
 /** The form generator: one widget per `x-widget`, groups, languages, server errors by path. */
+
+// Pickers and media fields load from the API when mounted: answered here at once, so no request
+// is left running (and re-rendering) after the file ends, when the DOM globals are gone.
+mockNuxtImport('useAdminApi', () => () => ({
+  lookup: async () => ({ options: [] }),
+  media: { get: async (id: string) => ({ id, url: '' }), list: async () => ({ data: [], total: 0 }) },
+  pages: { legalTokens: async () => ({ tokens: [] }) },
+}))
+enableAutoUnmount(afterEach)
 const defs: Record<string, SchemaNode> = {
   media_id: { 'type': 'string', 'format': 'uuid', 'x-widget': 'media', 'x-ref': 'media' },
   link: { 'type': 'object', 'x-widget': 'link', 'properties': { type: { type: 'string' }, route: { type: 'string' }, new_tab: { type: 'boolean' } } },

@@ -3,7 +3,7 @@ import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Ref } from 'vue'
 
 /**
- * Minimal rich text editor (paragraphs, bold, italic, lists, links) producing the HTML subset the
+ * Minimal rich text editor (paragraphs, sub-headings, bold, italic, lists, links) producing the HTML subset the
  * API keeps; the API sanitises it again and refuses scripts. Pasted text is inserted as plain text.
  * On legal pages, "Insert company field" adds a token such as `{{seller.siren}}` at the cursor:
  * the page shows the value from Admin › Settings › Legal entity (the list comes from the API, so
@@ -146,6 +146,11 @@ function exec(command: string, value?: string) {
   document.execCommand(command, false, value)
   sync()
 }
+/** Sub-heading (`h3`) or small heading (`h4`), as in the legal page templates; again: paragraph. */
+function heading(tag: 'h3' | 'h4') {
+  const current = String(document.queryCommandValue?.('formatBlock') ?? '').toLowerCase()
+  exec('formatBlock', current === tag ? '<p>' : `<${tag}>`)
+}
 function link() {
   const url = window.prompt(t('admin.builder.richtext.linkPrompt'), 'https://')
   if (url && /^(https:|mailto:|tel:)/.test(url)) exec('createLink', url)
@@ -160,6 +165,8 @@ function paste(e: ClipboardEvent) {
 <template>
   <div class="rounded-sm border border-default focus-within:ring-1 focus-within:ring-primary">
     <div class="flex gap-1 border-b border-default p-1" role="toolbar" :aria-label="t('admin.builder.richtext.toolbar')">
+      <UButton icon="i-lucide-heading-3" size="xs" color="neutral" variant="ghost" :aria-label="t('admin.builder.richtext.heading')" data-testid="richtext-h3" @mousedown.prevent="heading('h3')" />
+      <UButton icon="i-lucide-heading-4" size="xs" color="neutral" variant="ghost" :aria-label="t('admin.builder.richtext.smallHeading')" data-testid="richtext-h4" @mousedown.prevent="heading('h4')" />
       <UButton icon="i-lucide-bold" size="xs" color="neutral" variant="ghost" :aria-label="t('admin.builder.richtext.bold')" @mousedown.prevent="exec('bold')" />
       <UButton icon="i-lucide-italic" size="xs" color="neutral" variant="ghost" :aria-label="t('admin.builder.richtext.italic')" @mousedown.prevent="exec('italic')" />
       <UButton icon="i-lucide-list" size="xs" color="neutral" variant="ghost" :aria-label="t('admin.builder.richtext.list')" @mousedown.prevent="exec('insertUnorderedList')" />

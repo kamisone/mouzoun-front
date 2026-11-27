@@ -76,3 +76,25 @@ describe('MzRichTextField line breaks', () => {
     expect(await typed('<p><br></p><div><br></div>')).toBeUndefined()
   })
 })
+
+/** Headings: the toolbar turns the current line into a sub-heading (h3) or small heading (h4). */
+describe('MzRichTextField headings', () => {
+  it('formats the line as h3 or h4, and back to a paragraph', async () => {
+    const calls: [string, string | undefined][] = []
+    let current = 'p'
+    const exec = vi.fn((command: string, _ui?: boolean, value?: string) => {
+      calls.push([command, value])
+      return true
+    })
+    Object.assign(document, { execCommand: exec, queryCommandValue: () => current })
+    const { wrapper } = await mount('page', '<p>Titre</p>')
+    await wrapper.find('[data-testid="richtext-h3"]').trigger('mousedown')
+    expect(calls.at(-1)).toEqual(['formatBlock', '<h3>'])
+    current = 'h3'
+    await wrapper.find('[data-testid="richtext-h3"]').trigger('mousedown')
+    expect(calls.at(-1)).toEqual(['formatBlock', '<p>'])
+    await wrapper.find('[data-testid="richtext-h4"]').trigger('mousedown')
+    expect(calls.at(-1)).toEqual(['formatBlock', '<h4>'])
+    wrapper.unmount()
+  })
+})
