@@ -3,14 +3,13 @@ import { socialLinks } from '~/utils/social'
 
 /**
  * Footer: always dark (night), generous, small link columns, social profiles, newsletter, language switch, legal
- * links and the credits of the placeholder photos (CC licences require them).
+ * links.
  */
 const { t } = useI18n()
 const toast = useToast()
 const localePath = useLocalePath()
 const appConfig = useAppConfig()
 const site = computed(() => appConfig.site)
-const { all } = usePhoto()
 const year = new Date().getFullYear()
 const { reopen } = useConsent()
 // Seller identity and legal pages (French law: mentions légales, CGV...), from the shop config.
@@ -20,11 +19,6 @@ const legalLinks = computed(() => {
   return (['notice', 'cgv', 'privacy', 'cookies', 'withdrawal', 'shipping'] as const)
     .filter(k => pages[k])
     .map(k => ({ key: k, label: t(`footer.legalPages.${k}`), to: localePath(`/${pages[k]}`) }))
-})
-// Consumer mediator (Consumer Code L616-1): shown once it is set.
-const mediator = computed(() => {
-  const m = shop.value?.consumer_mediator
-  return m?.name && m.url?.startsWith('https://') ? { name: m.name, url: m.url } : null
 })
 const email = ref('')
 
@@ -122,17 +116,7 @@ function subscribe() {
             <span>{{ t('footer.legal') }}</span>
             <span>{{ t('footer.privacy') }}</span>
           </template>
-          <a v-if="mediator" :href="mediator.url" target="_blank" rel="noopener" class="hover:text-default" data-testid="footer-mediator">{{ t('footer.mediator', { name: mediator.name }) }}</a>
           <button type="button" class="hover:text-default" data-testid="footer-cookies" @click="reopen">{{ t('footer.cookies') }}</button>
-          <details class="group">
-            <summary class="cursor-pointer list-none hover:text-default">{{ t('footer.photoCredits') }}</summary>
-            <ul class="mt-4 flex flex-col gap-1">
-              <li v-for="p in all()" :key="p.slug">
-                <a :href="p.credit.sourcePage" target="_blank" rel="noopener" class="hover:text-default">{{ p.credit.author }}</a>,
-                {{ p.credit.place }} — <a :href="p.credit.licenseUrl" target="_blank" rel="noopener" class="hover:text-default">{{ p.credit.license }}</a>
-              </li>
-            </ul>
-          </details>
           <MzLocaleSwitcher variant="text" size="sm" />
         </div>
       </MzContainer>

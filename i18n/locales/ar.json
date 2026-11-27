@@ -116,7 +116,6 @@
     "emailPlaceholder": "بريدك الإلكتروني",
     "subscribe": "اشترك",
     "newsletterSoon": "يُفتح الاشتراك قريبًا.",
-    "photoCredits": "حقوق الصور",
     "seller": "متجر تديره {name} ({form})",
     "cookies": "إعدادات ملفات تعريف الارتباط",
     "legalPages": {
@@ -126,8 +125,7 @@
       "cookies": "ملفات تعريف الارتباط",
       "withdrawal": "حق التراجع",
       "shipping": "التوصيل والإرجاع"
-    },
-    "mediator": "وسيط الاستهلاك: {name}"
+    }
   },
   "price": {
     "free": "مجاني",

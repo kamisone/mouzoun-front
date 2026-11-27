@@ -116,7 +116,6 @@
     "emailPlaceholder": "Your email address",
     "subscribe": "Subscribe",
     "newsletterSoon": "Subscriptions open soon.",
-    "photoCredits": "Photo credits",
     "seller": "Shop operated by {name} ({form})",
     "cookies": "Cookie settings",
     "legalPages": {
@@ -126,8 +125,7 @@
       "cookies": "Cookies",
       "withdrawal": "Right of withdrawal",
       "shipping": "Delivery and returns"
-    },
-    "mediator": "Consumer mediator: {name}"
+    }
   },
   "price": {
     "free": "Free",

@@ -116,7 +116,6 @@
     "emailPlaceholder": "Votre adresse e-mail",
     "subscribe": "S'inscrire",
     "newsletterSoon": "Les inscriptions ouvrent bientôt.",
-    "photoCredits": "Crédits photos",
     "seller": "Boutique exploitée par {name} ({form})",
     "cookies": "Gérer les cookies",
     "legalPages": {
@@ -126,8 +125,7 @@
       "cookies": "Cookies",
       "withdrawal": "Droit de rétractation",
       "shipping": "Livraison et retours"
-    },
-    "mediator": "Médiateur de la consommation : {name}"
+    }
   },
   "price": {
     "free": "Gratuit",
