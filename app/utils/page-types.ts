@@ -252,7 +252,8 @@ export interface PublishCheck {
   /** Not blocking (photo descriptions missing in other languages). */
   warnings?: FieldError[]
   published_revision: number | null
-  diff: { added: SectionRef[], removed: SectionRef[], changed: SectionRef[], moved: boolean }
+  /** `page_type`: the draft's type differs from the published one ("Change type" in Admin › Pages). */
+  diff: { page_type?: { from: string, to: string } | null, added: SectionRef[], removed: SectionRef[], changed: SectionRef[], moved: boolean }
 }
 
 export interface PageSummary {

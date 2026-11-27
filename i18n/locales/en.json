@@ -606,6 +606,24 @@
         "legal": "Legal page",
         "landing": "Landing page"
       },
+      "pageActions": "Page actions",
+      "changeType": {
+        "action": "Change type",
+        "title": "Change the type of “{title}”",
+        "intro": "The type chosen at creation can be fixed. The home page keeps its own.",
+        "live": "The live page keeps its current type until the next publication.",
+        "legalChecks": "A legal page is checked as when publishing: French text complete in every section, known company fields.",
+        "save": "Change type",
+        "done": "Type changed: {type}.",
+        "publishToApply": "Publish the page to apply the change on the site.",
+        "errors": {
+          "french_required": "A section is missing its French title or text.",
+          "unknown_tokens": "Unknown company fields: {tokens}.",
+          "invalid_sections": "{n} section(s) to fix in the builder.",
+          "home_type_locked": "The home page keeps its type.",
+          "failed": "The type could not be changed."
+        }
+      },
       "status": {
         "draft": "Draft",
         "published": "Published",
@@ -775,7 +793,8 @@
         "done": "Revision {n} published",
         "scheduled": "Revision {n} scheduled",
         "failed": "Publishing failed.",
-        "warnings": "To complete ({n}), not blocking"
+        "warnings": "To complete ({n}), not blocking",
+        "typeChanged": "Type"
       },
       "revisions": {
         "title": "Revision history",

@@ -126,3 +126,64 @@ test('text typed just before switching to the layout tab is kept and saved', asy
   await expect(rows).toHaveCount(before)
   await expect(page.getByTestId('save-status')).toHaveText(/Brouillon enregistré/, { timeout: 15_000 })
 })
+
+/**
+ * A page created with the wrong type is fixed from Admin › Pages: "Change type" in the row menu.
+ * Becoming legal runs the publishing checks (here an unknown company field first), then the row
+ * shows the new type. The live page keeps the old one until the next publication, whose dialog
+ * lists the change.
+ */
+test('a page created with the wrong type becomes a legal page from the pages list', async ({ page, request }) => {
+  const tag = Date.now().toString(36)
+  const title = `Mentions ${tag}`
+  const h = { Origin: ORIGIN }
+  const created = await request.post(`${API}/v1/admin/pages`, { headers: h, data: { page_type: 'page', translations: { fr: { title, slug: `mentions-${tag}` } } } })
+  expect(created.status()).toBe(201)
+  const { id } = await created.json()
+  const draft = async (body: string) => {
+    const tree = await (await request.get(`${API}/v1/admin/pages/${id}/builder`, { headers: h })).json()
+    const saved = await request.put(`${API}/v1/admin/pages/${id}/builder`, {
+      headers: { ...h, 'If-Match': `"${tree.draft_version}"` },
+      data: { blocks: [{ id: crypto.randomUUID(), type: 'rich_text', settings: { max_width: 'normal' }, content: { fr: { title, body } } }] },
+    })
+    expect(saved.status()).toBe(200)
+  }
+  await draft('<p>Éditeur : {{seller.nope}}</p>')
+  // Published as a plain page (unknown tokens only matter on legal pages).
+  expect((await request.post(`${API}/v1/admin/pages/${id}/publish`, { headers: h, data: {} })).status()).toBe(201)
+
+  await page.goto('/admin/pages')
+  await ready(page)
+  const row = page.locator('li', { hasText: title })
+  await expect(row).toContainText(tr('fr', 'admin.builder.pageTypes.page'))
+  await page.getByTestId(`page-actions-${id}`).click()
+  await page.getByRole('menuitem', { name: tr('fr', 'admin.builder.changeType.action') }).click()
+  const dialog = page.getByRole('dialog', { name: tr('fr', 'admin.builder.changeType.title', { title }) })
+  await expect(dialog).toBeVisible()
+  await dialog.getByRole('radio', { name: tr('fr', 'admin.builder.pageTypes.legal') }).check()
+  await expect(dialog).toContainText(tr('fr', 'admin.builder.changeType.legalChecks'))
+  await expect(dialog).toContainText(tr('fr', 'admin.builder.changeType.live'))
+  await dialog.getByTestId('change-type-save').click()
+  await expect(dialog.getByTestId('change-type-error')).toContainText('{{seller.nope}}')
+
+  // Fixed in the draft: the change goes through and the row shows it.
+  await draft('<p>Éditeur : {{seller.legal_name}}</p>')
+  await dialog.getByTestId('change-type-save').click()
+  await expect(dialog).toBeHidden()
+  await expect(row).toContainText(tr('fr', 'admin.builder.pageTypes.legal'))
+  const tree = await (await request.get(`${API}/v1/admin/pages/${id}/builder`, { headers: h })).json()
+  expect(tree.page.page_type).toBe('legal')
+
+  // Not live yet: the publish dialog lists the change.
+  await page.goto(`/admin/pages/${id}/builder`)
+  await ready(page)
+  await page.getByTestId('publish-open').click()
+  await expect(page.getByTestId('publish-type-change')).toContainText(`${tr('fr', 'admin.builder.pageTypes.page')} → ${tr('fr', 'admin.builder.pageTypes.legal')}`)
+  await page.keyboard.press('Escape')
+  await page.goto('/admin/pages')
+  await ready(page)
+
+  // The home page has no such menu.
+  const home = (await (await request.get(`${API}/v1/admin/pages`, { headers: h })).json()).pages.find((p: { page_type: string }) => p.page_type === 'home')
+  await expect(page.getByTestId(`page-actions-${home.id}`)).toHaveCount(0)
+})

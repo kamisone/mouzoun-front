@@ -606,6 +606,24 @@
         "legal": "Page légale",
         "landing": "Page d'atterrissage"
       },
+      "pageActions": "Actions de la page",
+      "changeType": {
+        "action": "Changer le type",
+        "title": "Changer le type de « {title} »",
+        "intro": "Le type choisi à la création peut être corrigé. La page d'accueil garde le sien.",
+        "live": "La page en ligne garde son type actuel jusqu'à la prochaine publication.",
+        "legalChecks": "Une page légale est vérifiée comme à la publication : texte français complet dans chaque section, champs société connus.",
+        "save": "Changer le type",
+        "done": "Type changé : {type}.",
+        "publishToApply": "Publiez la page pour appliquer le changement en ligne.",
+        "errors": {
+          "french_required": "Il manque le titre ou le texte français dans une section.",
+          "unknown_tokens": "Champs société inconnus : {tokens}.",
+          "invalid_sections": "{n} section(s) à corriger dans le constructeur.",
+          "home_type_locked": "La page d'accueil garde son type.",
+          "failed": "Le type n'a pas pu être changé."
+        }
+      },
       "status": {
         "draft": "Brouillon",
         "published": "Publiée",
@@ -775,7 +793,8 @@
         "done": "Révision {n} publiée",
         "scheduled": "Révision {n} programmée",
         "failed": "La publication a échoué.",
-        "warnings": "À compléter ({n}), non bloquant"
+        "warnings": "À compléter ({n}), non bloquant",
+        "typeChanged": "Type"
       },
       "revisions": {
         "title": "Historique des révisions",

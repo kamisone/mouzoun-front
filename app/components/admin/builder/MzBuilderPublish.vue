@@ -83,11 +83,12 @@ async function publish() {
         <section>
           <h3 class="mb-2 text-small font-medium">{{ check.published_revision ? t('admin.builder.publish.changes', { n: check.published_revision }) : t('admin.builder.publish.first') }}</h3>
           <ul class="flex flex-col gap-1 text-small" data-testid="publish-diff">
+            <li v-if="check.diff.page_type" data-testid="publish-type-change"><UBadge :label="t('admin.builder.publish.typeChanged')" color="info" variant="subtle" size="sm" /> {{ t(`admin.builder.pageTypes.${check.diff.page_type.from}`) }} → {{ t(`admin.builder.pageTypes.${check.diff.page_type.to}`) }}</li>
             <li v-for="s in check.diff.added" :key="`a${s.id}`"><UBadge :label="t('admin.builder.publish.added')" color="success" variant="subtle" size="sm" /> {{ s.name ?? s.title ?? b.typeOf(s.type)?.name }}</li>
             <li v-for="s in check.diff.changed" :key="`c${s.id}`"><UBadge :label="t('admin.builder.publish.changed')" color="info" variant="subtle" size="sm" /> {{ s.name ?? s.title ?? b.typeOf(s.type)?.name }}</li>
             <li v-for="s in check.diff.removed" :key="`r${s.id}`"><UBadge :label="t('admin.builder.publish.removed')" color="error" variant="subtle" size="sm" /> {{ s.name ?? s.title ?? b.typeOf(s.type)?.name }}</li>
             <li v-if="check.diff.moved">{{ t('admin.builder.publish.moved') }}</li>
-            <li v-if="!check.diff.added.length && !check.diff.changed.length && !check.diff.removed.length && !check.diff.moved" class="text-muted">{{ t('admin.builder.publish.noChange') }}</li>
+            <li v-if="!check.diff.page_type && !check.diff.added.length && !check.diff.changed.length && !check.diff.removed.length && !check.diff.moved" class="text-muted">{{ t('admin.builder.publish.noChange') }}</li>
           </ul>
         </section>
         <URadioGroup v-model="mode" :items="[{ label: t('admin.builder.publish.now'), value: 'now' }, { label: t('admin.builder.publish.schedule'), value: 'schedule' }]" orientation="horizontal" />

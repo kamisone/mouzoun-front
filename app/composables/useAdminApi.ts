@@ -124,6 +124,8 @@ export function useAdminApi() {
       list: () => http<{ pages: PageSummary[] }>('/pages'),
       create: (body: { page_type: string, translations: Record<string, PageText> }) => http<{ id: string }>('/pages', { method: 'POST', body }),
       builder: (id: string) => http<BuilderTree>(`/pages/${id}/builder`),
+      /** Fixes the type chosen at creation (page, landing, post, legal); the live page follows. */
+      changeType: (id: string, pageType: string) => http<{ id: string, page_type: string }>(`/pages/${id}/type`, { method: 'PUT', body: { page_type: pageType } }),
       /** Whole draft; `version` is the draft_version the client edited (409 when stale). */
       save: (id: string, version: number, body: { blocks: BlockDraft[], translations?: Record<string, PageText> }) =>
         http<BuilderTree>(`/pages/${id}/builder`, { method: 'PUT', body, headers: { 'If-Match': `"${version}"` } }),
